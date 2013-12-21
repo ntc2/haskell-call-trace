@@ -17,6 +17,7 @@ import Unsafe.Coerce (unsafeCoerce)
 -- Log types.
 
 class Signature call where
+  name :: call -> String
   type Arg call
   type Ret call
 
