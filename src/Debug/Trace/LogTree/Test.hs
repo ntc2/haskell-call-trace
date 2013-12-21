@@ -59,6 +59,7 @@ instance (c2 :=>: c) => (c1 :&&: c2) :=>: c
 ----------------------------------------------------------------
 
 deriving instance Show (LogTree ((~) String))
+deriving instance Show (LogEvent ((~) String))
 
 instance Signature String where
   type Arg String = String

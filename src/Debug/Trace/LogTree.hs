@@ -8,9 +8,9 @@ module Debug.Trace.LogTree where
 
 import GHC.Prim (Constraint)
 
-import Control.Applicative ((<*))
+import Control.Applicative ((<*), (*>))
 import Data.Typeable (cast , Typeable)
-import Text.Parsec hiding (token)
+import Text.Parsec hiding (token , eof , anyToken)
 import Unsafe.Coerce (unsafeCoerce)
 
 ----------------------------------------------------------------
@@ -42,11 +42,6 @@ stream2Forest :: LogStream c -> Either ParseError (LogForest c)
 stream2Forest = parse (forest <* eof) "<no file>"
 
 ----------------------------------------------------------------
-
--- XXX: need this for 'eof'; fix later.
-instance Show (LogEvent c) where
-  show (BeginCall {}) = "<BeginCall _ _>"
-  show (EndCall {}) = "<EndCall _ _>"
 
 type P c a = Parsec (LogStream c) () a
 
@@ -135,16 +130,29 @@ beginCall , endCall :: P c (LogEvent c)
 -- will the pattern match failure cause proper back tracking, or do I
 -- need to wrap this?
 
-beginCall = token test where
+beginCall = token "<BeginCall {}>" test where
   test t@(BeginCall {}) = Just t
   test _                = Nothing
 
-endCall = token test where
+endCall = token "<EndCall {}>" test where
   test t@(EndCall {}) = Just t
   test _              = Nothing
 
-token :: (LogEvent c -> Maybe a) -> P c a
-token test = tokenPrim show update test where
+token :: String -> (LogEvent c -> Maybe a) -> P c a
+token msg test = tokenPrim (const msg) update test where
   update p _ _ = p
+
+----------------------------------------------------------------
+-- Re-implementation of 'eof' and 'anyToken' that do not require
+-- 'Show' of the tokens.
+--
+-- See
+-- http://hackage.haskell.org/package/parsec-3.1.4/docs/src/Text-Parsec-Combinator.html#eof
+
+eof :: Stream s m t => ParsecT s u m ()
+eof = (try anyToken *> unexpected "token") <|> return ()
+
+anyToken ::Stream s m t => ParsecT s u m t
+anyToken = tokenPrim (const "<anyToken>") (\pos _ _ -> pos) Just
 
 ----------------------------------------------------------------
