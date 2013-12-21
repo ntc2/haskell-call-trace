@@ -14,7 +14,9 @@ module Debug.Trace.LogTree.Test where
 
 import GHC.Prim (Constraint)
 
+import Control.Monad.Trans.Maybe
 import Control.Monad.Writer
+
 import Text.Parsec
 
 import Debug.Trace.LogTree
@@ -65,19 +67,22 @@ instance Signature String where
   type Arg String = String
   type Ret String = String
 
-f , f' :: Int -> Writer (LogStream ((~) String)) String
+f , f' :: Int -> MaybeT (Writer (LogStream ((~) String))) String
 f n = do
   tell [BeginCall "f" (show n)]
   r <- f' n
   tell [EndCall "f" r]
   return r
 f' 0 = return ""
+f' 5 = do
+  _ <- f 2
+  fail ""
 f' n = do
   r <- f (n - 1)
   return $ "X" ++ r
 
 testStream :: Int -> LogStream ((~) String)
-testStream = execWriter . f
+testStream = execWriter . runMaybeT . f
 
 testForest :: Int -> Either ParseError (LogForest ((~) String))
 testForest = stream2Forest . testStream
@@ -87,5 +92,8 @@ testForest = stream2Forest . testStream
 main = do
   print $ testStream 4
   print $ testForest 4
+  putStrLn ""
+  print $ testStream 6
+  print $ testForest 6
 
 ----------------------------------------------------------------
