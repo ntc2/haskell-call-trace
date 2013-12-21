@@ -45,7 +45,8 @@ stream2Forest = parse (forest <* eof) "<no file>"
 
 -- XXX: need this for 'eof'; fix later.
 instance Show (LogEvent c) where
-  show _ = "<LogEvent>"
+  show (BeginCall {}) = "<BeginCall _ _>"
+  show (EndCall {}) = "<EndCall _ _>"
 
 type P c a = Parsec (LogStream c) () a
 
