@@ -29,10 +29,6 @@ import Debug.Trace.LogTree.Simple.Curry
 -- creating a knot, where recursive calls in 'e' are still to 'f' and
 -- hence trigger recursive logging.
 
--- XXX: The 'tagged' package on hackage provides 'Proxy' and 'Tagged'
--- types with some operations.
-data Proxy t = Proxy
-
 logB :: UncurryM t => Proxy t -> GetArg t -> GetMonad t ()
 logB = undefined
 

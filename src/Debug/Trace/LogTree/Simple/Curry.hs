@@ -2,6 +2,7 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 
 module Debug.Trace.LogTree.Simple.Curry where
 
@@ -60,17 +61,7 @@ instance (Monad m , Monad (t m)) => UncurryM (t m r) where
   type GetMonad (t m r) = (t m)
 
 ----------------------------------------------------------------
-
-{-
-class Curry a b where
-  type Curried a b
-  collectCall :: (t ~ Curried a b , UncurryM t)
-              => t -> Curried (GetArg t) (GetMonad t (GetRet t) , GetArg t)
-
-instance (Monad m , Monad (t m)) => Curry () (t m r) where
-  type Curried () (t m r) = t m r
-  collectCall tmr = (tmr , ())
--}
+-- Type level computation of curried types.
 
 class Curry a b where
   type Curried a b
@@ -81,15 +72,32 @@ instance Curry () b where
 instance Curry as b => Curry (a , as) b where
   type Curried (a , as) b = a -> Curried as b
 
-class UncurryM t => Collect t where
-  collectCall :: t -> Curried (GetArg t) (GetMonad t (GetRet t) , GetArg t)
+----------------------------------------------------------------
+-- Collection of curried (tupled) arguments while calling.
 
-instance (Monad m , Monad (t m)) => Collect (t m r) where
-  collectCall tmr = (tmr , ())
+-- XXX: The 'tagged' package on hackage provides 'Proxy' and 'Tagged'
+-- types with some operations.
+data Proxy t = Proxy
 
-{-
-instance Collect b => Collect (a -> b) where
-  collectCall f a = <need an accumulator!>
--}
+class (UncurryM b , UncurryM c) => Collect b c where
+  collectCallHelper :: Proxy c
+                    -> (GetArg b -> GetArg c)
+                    -> b
+                    -> Curried (GetArg b)
+                               (GetArg c , GetMonad b (GetRet b))
+
+instance (UncurryM c , Monad m , Monad (t m))
+      => Collect (t m r) c where
+  collectCallHelper _ acc tmr = (acc () , tmr)
+
+instance (UncurryM b , UncurryM c , Collect b c)
+      => Collect (a -> b) c where
+  collectCallHelper p acc f x =
+    collectCallHelper p (\xs -> acc (x , xs)) (f x)
+
+collectCall :: forall t. Collect t t
+            => t -> Curried (GetArg t)
+                            (GetArg t , GetMonad t (GetRet t))
+collectCall = collectCallHelper (Proxy::Proxy t) id
 
 ----------------------------------------------------------------
