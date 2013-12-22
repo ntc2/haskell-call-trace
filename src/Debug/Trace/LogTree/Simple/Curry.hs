@@ -22,12 +22,11 @@ class Monad (GetMonad t) => UncurryM t where
 --
 --   a1 -> ... -> an -> m a
 --
--- where 'm' is the identity monad, or any monad with a transformer at
--- the outside.  I expect this covers all standard non-arrow
--- monads!
+-- where 'm' is any monad with a transformer at the outside.  I expect
+-- this covers all standard non-arrow monads I'd want to use!
 --
 -- How it works: the naive problem is that '((->) r) :: * -> *' has
--- the same kind as a monad -- and has is a standard monad instance,
+-- the same kind as a monad -- and has a standard monad instance,
 -- but that's beside the point, since the open-world assumption for
 -- type classes means if the types unify then they overlap -- and so
 -- it's difficult to write a base case that just looks for monads.
@@ -48,16 +47,12 @@ class Monad (GetMonad t) => UncurryM t where
 --
 -- If for some reason I want to use a custom monad which is not a
 -- transformer and which is not transformed, then I'll need another
--- instance, but that case seems unlikely.
+-- instance, but that case seems unlikely. If it does happen, it's as
+-- simple as copying and adapting the 't m r' instances.
 instance UncurryM b => UncurryM (a -> b) where
   type GetArg (a -> b) = (a , GetArg b)
   type GetRet (a -> b) = GetRet b
   type GetMonad (a -> b) = GetMonad b
-
-instance UncurryM (Identity a) where
-  type GetArg (Identity a) = ()
-  type GetRet (Identity a) = a
-  type GetMonad (Identity a) = Identity
 
 instance (Monad m , Monad (t m)) => UncurryM (t m r) where
   type GetArg (t m r) = ()
@@ -91,9 +86,6 @@ class UncurryM t => Collect t where
 
 instance (Monad m , Monad (t m)) => Collect (t m r) where
   collectCall tmr = (tmr , ())
-
-instance Collect (Identity r) where
-  collectCall i = (i , ())
 
 {-
 instance Collect b => Collect (a -> b) where

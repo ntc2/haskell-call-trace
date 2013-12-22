@@ -72,13 +72,6 @@ Failed, modules loaded: Debug.Trace.LogTree, Debug.Trace.LogTree.SimpleCall.
 -- versions below are only "smaller" because the definitions of the
 -- type functions 'GetRet' and 'GetMonad' have been expanded.
 
-instance (UncurryM t , GetRet t ~ r , GetMonad t ~ Identity) => Collect (Identity r) t where
-  simpleLoggerHelper p acc idr = do
-    logB p (acc ())
-    r <- idr
-    logE p r
-    return r
-
 instance (UncurryM t , GetRet t ~ r , GetMonad t ~ (trans m) , Monad (trans m) , Monad m)
       => Collect (trans m r) t where
   simpleLoggerHelper p acc tmr = do
