@@ -8,7 +8,7 @@ module Debug.Trace.LogTree.SimpleLogger where
 
 import Control.Monad.Identity
 
-import Debug.Trace.LogTree.SimpleCall
+import Debug.Trace.LogTree.Simple.Curry
 
 ----------------------------------------------------------------
 -- An event logger with a simple interface.
