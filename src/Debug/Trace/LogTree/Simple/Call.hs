@@ -5,7 +5,7 @@
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE FlexibleContexts #-}
 
-module Debug.Trace.LogTree.SimpleCall where
+module Debug.Trace.LogTree.Simple.Call where
 
 import GHC.TypeLits
 

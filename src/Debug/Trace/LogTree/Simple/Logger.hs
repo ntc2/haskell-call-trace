@@ -4,7 +4,7 @@
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
-module Debug.Trace.LogTree.SimpleLogger where
+module Debug.Trace.LogTree.Simple.Logger where
 
 import Control.Monad.Identity
 
