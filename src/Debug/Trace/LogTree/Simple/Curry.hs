@@ -101,3 +101,18 @@ collectCall :: forall t. Collect t t
 collectCall = collectCallHelper (Proxy::Proxy t) id
 
 ----------------------------------------------------------------
+-- Collect arguments and result and then call continuation.
+
+class UncurryM t => CollectAndCallCont t where
+  collectAndCallCont ::
+    ((GetArg t , GetMonad t (GetRet t)) -> r) ->
+    t -> Curried (GetArg t) r
+
+instance (Monad m , Monad (t m)) => CollectAndCallCont (t m r) where
+  collectAndCallCont k tmr = k (() , tmr)
+
+instance CollectAndCallCont b => CollectAndCallCont (a -> b) where
+  collectAndCallCont k f x =
+    collectAndCallCont (\(xs , r) -> k ((x , xs) , r)) (f x)
+
+----------------------------------------------------------------
