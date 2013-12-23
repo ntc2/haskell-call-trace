@@ -3,12 +3,27 @@
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE ConstraintKinds #-}
+{-# LANGUAGE UndecidableInstances #-}
 
 module Debug.Trace.LogTree.Simple.Logger where
 
-import Control.Monad.Identity
+import GHC.TypeLits
 
+import Control.Monad.Writer
+import Data.Proxy
+
+import Debug.Trace.LogTree
+import Debug.Trace.LogTree.Simple.Call
 import Debug.Trace.LogTree.Simple.Curry
+
+----------------------------------------------------------------
+-- XXX: hack to make this file type check temporarily.
+
+import Data.Typeable
+instance Typeable (Proxy (SimpleCall a b c d)) where
 
 ----------------------------------------------------------------
 -- An event logger with a simple interface.
@@ -29,17 +44,37 @@ import Debug.Trace.LogTree.Simple.Curry
 -- creating a knot, where recursive calls in 'e' are still to 'f' and
 -- hence trigger recursive logging.
 
-logB :: UncurryM t => Proxy t -> GetArg t -> GetMonad t ()
-logB = undefined
+class Monad m => EventLogger c m where
+  logEvent :: LogEvent c -> m ()
 
-logE :: UncurryM t => Proxy t -> GetRet t -> GetMonad t ()
-logE = undefined
+-- Need 'UndecidableInstances' here!
+instance MonadWriter [LogEvent c] m => EventLogger c m where
+  logEvent e = tell [e]
 
-simpleLogger :: forall t. Collect t t => t -> t
-simpleLogger = simpleLoggerHelper (Proxy::Proxy t) id
+-- Note: the 'GetArg t `Curried` GetMonad t (GetRet t)' is just a
+-- fancy way to write 't' (that GHC prefers).
+simpleLogger :: forall tag before t after c
+              . ( SingI tag
+                , CollectAndCallCont t
+                , EventLogger c (GetMonad t)
+                , c (Proxy (SimpleCall tag before t after)) )
+             => Proxy (tag::Symbol)
+             -> GetMonad t before
+             -> GetMonad t after
+             -> t
+             -> GetArg t `Curried` GetMonad t (GetRet t)
+simpleLogger _ ms1 ms2 f = collectAndCallCont k f where
+  k :: (GetArg t , GetMonad t (GetRet t)) -> GetMonad t (GetRet t)
+  k (arg , mret) = do
+    let call = Proxy::Proxy (SimpleCall tag before t after)
+    s1 <- ms1
+    logEvent (BeginCall call {- s1 -} arg::LogEvent c)
+    ret <- mret
+    s2 <- ms2
+    logEvent (EndCall call ret {- s2 -}::LogEvent c)
+    return ret
 
-class (UncurryM b , UncurryM t) => Collect b t where
-  simpleLoggerHelper :: Proxy t -> (GetArg b -> GetArg t) -> b -> b
+----------------------------------------------------------------
 
 -- BUG?: GHC doesn't like it when I lift a particular set of
 -- constraints and give them a name:
@@ -67,18 +102,5 @@ Failed, modules loaded: Debug.Trace.LogTree, Debug.Trace.LogTree.SimpleCall.
 -- whereas the expanded versions below are fine.  Of course, the
 -- versions below are only "smaller" because the definitions of the
 -- type functions 'GetRet' and 'GetMonad' have been expanded.
-
-instance (UncurryM t , GetRet t ~ r , GetMonad t ~ (trans m) , Monad (trans m) , Monad m)
-      => Collect (trans m r) t where
-  simpleLoggerHelper p acc tmr = do
-    logB p (acc ())
-    r <- tmr
-    logE p r
-    return r
-
-instance (UncurryM t , UncurryM b , Collect b t , GetRet t ~ GetRet b , GetMonad t ~ GetMonad b)
-      => Collect (a -> b) t where
-  simpleLoggerHelper p acc f x =
-    simpleLoggerHelper p (\xs -> acc (x , xs)) (f x)
 
 ----------------------------------------------------------------

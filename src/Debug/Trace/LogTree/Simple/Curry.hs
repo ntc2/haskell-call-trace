@@ -7,6 +7,7 @@
 module Debug.Trace.LogTree.Simple.Curry where
 
 import Control.Monad.Identity
+import Data.Proxy
 
 ----------------------------------------------------------------
 -- Type-level uncurry for type signatures that end in a monad.
@@ -74,10 +75,6 @@ instance Curry as b => Curry (a , as) b where
 
 ----------------------------------------------------------------
 -- Collection of curried (tupled) arguments while calling.
-
--- XXX: The 'tagged' package on hackage provides 'Proxy' and 'Tagged'
--- types with some operations.
-data Proxy t = Proxy
 
 class (UncurryM b , UncurryM c) => Collect b c where
   collectCallHelper :: Proxy c

@@ -9,14 +9,15 @@ module Debug.Trace.LogTree.Simple.Call where
 
 import GHC.TypeLits
 
-import Debug.Trace.LogTree
+import Data.Proxy
 
+import Debug.Trace.LogTree
 import Debug.Trace.LogTree.Simple.Curry
 
 ----------------------------------------------------------------
 -- A generic call-signature type for a generic logger.
 
-data SimpleCall (tag::Symbol) before sig after where
+data SimpleCall (tag::Symbol) before sig after
 
 -- The 'GHC.TypeLits' docs are at
 --
@@ -26,11 +27,12 @@ data SimpleCall (tag::Symbol) before sig after where
 -- messages print kind parameters):
 --
 -- http://stackoverflow.com/questions/12569386/cant-use-ghci-inferred-type-signature-for-function-returning-sing-d-symbol
-instance (SingI tag , UncurryM sig) => Signature (SimpleCall tag before sig after) where
+instance (SingI tag , UncurryM sig)
+      => Signature (Proxy (SimpleCall tag before sig after)) where
   -- Get the value-level string corresponding to the type-level string
   -- 'tag'.
   name _ = fromSing (sing::Sing tag)
-  type Arg (SimpleCall tag before sig after) = GetArg sig
-  type Ret (SimpleCall tag before sig after) = GetRet sig
+  type Arg (Proxy (SimpleCall tag before sig after)) = GetArg sig
+  type Ret (Proxy (SimpleCall tag before sig after)) = GetRet sig
 
 ----------------------------------------------------------------
