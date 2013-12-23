@@ -1,14 +1,14 @@
-{-# LANGUAGE FlexibleInstances
-           , MultiParamTypeClasses
-           , ConstraintKinds
-           , UndecidableInstances
-           , TypeOperators
-           -- , KindSignatures
-           , TypeFamilies
-           , StandaloneDeriving
-           -- , ExistentialQuantification
-           #-}
+-- See
+-- http://stackoverflow.com/questions/3079537/orphaned-instances-in-haskell
+{-# OPTIONS_GHC -fno-warn-orphans #-}
 
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE ConstraintKinds #-}
+{-# LANGUAGE UndecidableInstances #-}
+{-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE StandaloneDeriving #-}
 
 module Debug.Trace.LogTree.Test where
 
@@ -22,6 +22,7 @@ import Text.Parsec
 import Debug.Trace.LogTree
 
 ----------------------------------------------------------------
+-- Unused constraint logic stuff.
 
 -- XXX: I can't partially apply a synonym:
 {-
@@ -40,9 +41,9 @@ class Unit t
 instance Unit t
 
 instance Show (LogTree (Show :&&: c)) where
-  show (CallAndReturn call _ ls _) =
+  show (CallAndReturn call _ _ ls _ _) =
     "<CallAndReturn (" ++ show call ++ ") _ " ++ show ls ++ " _>"
-  show (CallAndError call _ ls e) =
+  show (CallAndError call _ _ ls e) =
     "<CallAndError (" ++ show call ++ ") _ " ++ show ls ++ " (" ++ show e ++ ")>"
 {-
 f , f' :: Int -> Writer (LogStream (Show :&&: Unit)) Int
@@ -64,14 +65,20 @@ deriving instance Show (LogTree ((~) String))
 deriving instance Show (LogEvent ((~) String))
 
 instance Signature String where
+  name = id
+  type Before String = String
   type Arg String = String
   type Ret String = String
+  type After String = String
+
+----------------------------------------------------------------
+-- Manual logging example.
 
 f , f' :: Int -> MaybeT (Writer (LogStream ((~) String))) String
 f n = do
-  tell [BeginCall "f" (show n)]
+  tell [BeginCall "f" "" (show n)]
   r <- f' n
-  tell [EndCall "f" r]
+  tell [EndCall "f" "" (show n) r ""]
   return r
 f' 0 = return ""
 f' 5 = do
@@ -89,6 +96,7 @@ testForest = stream2Forest . testStream
 
 ----------------------------------------------------------------
 
+main :: IO ()
 main = do
   print $ testStream 4
   print $ testForest 4
