@@ -9,6 +9,8 @@
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE StandaloneDeriving #-}
+{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE FlexibleContexts #-}
 
 module Debug.Trace.LogTree.Test where
 
@@ -16,10 +18,11 @@ import GHC.Prim (Constraint)
 
 import Control.Monad.Trans.Maybe
 import Control.Monad.Writer
-
+import Data.Proxy
 import Text.Parsec
 
 import Debug.Trace.LogTree
+import Debug.Trace.LogTree.Simple.Logger
 
 ----------------------------------------------------------------
 -- Unused constraint logic stuff.
@@ -87,6 +90,26 @@ f' 5 = do
 f' n = do
   r <- f (n - 1)
   return $ "X" ++ r
+
+----------------------------------------------------------------
+-- Auto logging example.
+
+class (Signature t , Show (Before t) , Show (Arg t) , Show (Ret t) , Show (After t)) => AllShow t
+instance (Signature t , Show (Before t) , Show (Arg t) , Show (Ret t) , Show (After t)) => AllShow t
+
+type GTy = Int -> MaybeT (Writer (LogStream AllShow)) String
+
+g , g' :: GTy
+g = simpleLogger (Proxy::Proxy "g") (return ()) (return ()) g'
+g' 0 = return ""
+g' 5 = do
+  _ <- g 2
+  fail ""
+g' n = do
+  r <- g (n - 1)
+  return $ "X" ++ r
+
+----------------------------------------------------------------
 
 testStream :: Int -> LogStream ((~) String)
 testStream = execWriter . runMaybeT . f
