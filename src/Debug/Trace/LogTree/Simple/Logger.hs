@@ -20,12 +20,6 @@ import Debug.Trace.LogTree.Simple.Call
 import Debug.Trace.LogTree.Simple.Curry
 
 ----------------------------------------------------------------
--- XXX: hack to make this file type check temporarily.
-
-import Data.Typeable
-instance Typeable (Proxy (SimpleCall a b c d)) where
-
-----------------------------------------------------------------
 -- An event logger with a simple interface.
 --
 -- Specify the function you want to trace, along with a 'Symbol' to
@@ -44,6 +38,7 @@ instance Typeable (Proxy (SimpleCall a b c d)) where
 -- creating a knot, where recursive calls in 'e' are still to 'f' and
 -- hence trigger recursive logging.
 
+-- XXX: this class and instance probably belong somewhere else.
 class Monad m => EventLogger c m where
   logEvent :: LogEvent c -> m ()
 
@@ -68,10 +63,10 @@ simpleLogger _ ms1 ms2 f = collectAndCallCont k f where
   k (arg , mret) = do
     let call = Proxy::Proxy (SimpleCall tag before t after)
     s1 <- ms1
-    logEvent (BeginCall call {- s1 -} arg::LogEvent c)
+    logEvent (BeginCall call s1 arg::LogEvent c)
     ret <- mret
     s2 <- ms2
-    logEvent (EndCall call ret {- s2 -}::LogEvent c)
+    logEvent (EndCall call s1 arg ret s2::LogEvent c)
     return ret
 
 ----------------------------------------------------------------

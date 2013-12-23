@@ -1,39 +1,41 @@
-{-# LANGUAGE KindSignatures
-           , TypeFamilies
-           , ExistentialQuantification
-           , ConstraintKinds
-           #-}
+{-# LANGUAGE KindSignatures #-}
+{-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE ExistentialQuantification #-}
+{-# LANGUAGE ConstraintKinds #-}
+
 
 module Debug.Trace.LogTree where
 
 import GHC.Prim (Constraint)
 
 import Control.Applicative ((<*), (*>))
-import Data.Typeable (cast , Typeable)
 import Text.Parsec hiding (token , eof , anyToken)
-import Unsafe.Coerce (unsafeCoerce)
 
 ----------------------------------------------------------------
 -- Log types.
 
 class Signature call where
   name :: call -> String
+  type Before call
   type Arg call
   type Ret call
+  type After call
 
 type SigWith (c :: * -> Constraint) call =
-  (Signature call , Eq call , Typeable call , c call)
+  (Signature call , c call)
 
 data LogEvent (c :: * -> Constraint)
-  = forall call. SigWith c call => BeginCall call (Arg call)
-  | forall call. SigWith c call => EndCall   call (Ret call)
+  = forall call. SigWith c call =>
+    BeginCall call (Before call) (Arg call)
+  | forall call. SigWith c call =>
+    EndCall   call (Before call) (Arg call) (Ret call) (After call)
 type LogStream c = [LogEvent c]
 
 data LogTree (c :: * -> Constraint)
   = forall call. SigWith c call =>
-    CallAndReturn call (Arg call) (LogForest c) (Ret call)
+    CallAndReturn call (Before call) (Arg call) (LogForest c) (Ret call) (After call)
   | forall call. SigWith c call =>
-    CallAndError  call (Arg call) (LogForest c) (Maybe (LogTree c))
+    CallAndError  call (Before call) (Arg call) (LogForest c) (Maybe (LogTree c))
 type LogForest c = [LogTree c]
 
 ----------------------------------------------------------------
@@ -57,41 +59,13 @@ tree = try callAndReturn <|> callAndError
 callAndReturn , callAndError :: P c (LogTree c)
 
 callAndReturn = do
-  BeginCall call arg <- beginCall
+  BeginCall {} <- beginCall
   children <- forest
-  EndCall call' ret <- endCall
--- XXX: why can't GHC figure out that 'ret' has the right type when
--- 'call' and 'call'' are known to have the same type under the
--- 'cast'?  Surely type functions are known to be functions, and so
--- 'call ~ call'' will imply 'Ret call ~ Ret call''!
-{-
-  case cast call' of
-    Just call' | call == call' ->
-      return $ CallAndReturn call arg children ret
-    _ ->
-      fail "Inconsistent input stream: you logged a return without a corresponding call!"
--}
--- XXX: this also fails:
-{-
-  case (cast call', gcast ret) of
-    (Just call' , Just ret) | call == call' ->
-      return $ CallAndReturn call arg children ret
-    _ ->
-      fail "Inconsistent input stream: you logged a return without a corresponding call!"
--}
--- with "Could not deduce (Ret call ~ c0 b0)", so I guess a type
--- function name is not a type constructor for the purposes of
--- 'gcast'.  Maybe: if we think of the type function call 'Ret call'
--- as already reduced, than certainly there's no way to know what form
--- it takes.
-  case cast call' of
-    Just call' | call == call' ->
-      return $ CallAndReturn call arg children (unsafeCoerce ret)
-    _ ->
-      fail "Inconsistent input stream: you logged a return without a corresponding call!"
+  EndCall call before arg ret after <- endCall
+  return $ CallAndReturn call before arg children ret after
 
 callAndError = do
-  BeginCall call arg <- beginCall
+  BeginCall call before arg <- beginCall
   children <- forest <* eof
   return $
     -- May be more understandable to have two different error nodes,
@@ -101,12 +75,16 @@ callAndError = do
     --
     -- The idea now is that the last arg is 'Nothing' if the error
     -- happened here, in the current call, and it's 'Just c' if the
-    -- error was already present in the last child call 'c'.
+    -- error was already present in the last child call 'c'.  This
+    -- gives easy reconstruction of a inward stack trace: keep
+    -- following the 'Just's until you arrive at the frame the error
+    -- originated from.  May be useful to also have an easy stack
+    -- trace in the success case ...
     case last children of
       l | not (null children) , CallAndError {} <- l ->
-        CallAndError call arg (init children) (Just l)
+        CallAndError call before arg (init children) (Just l)
       _ ->
-        CallAndError call arg children Nothing
+        CallAndError call before arg children Nothing
 
 ----------------------------------------------------------------
 -- Token parsers.

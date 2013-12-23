@@ -32,7 +32,9 @@ instance (SingI tag , UncurryM sig)
   -- Get the value-level string corresponding to the type-level string
   -- 'tag'.
   name _ = fromSing (sing::Sing tag)
+  type Before (Proxy (SimpleCall tag before sig after)) = before
   type Arg (Proxy (SimpleCall tag before sig after)) = GetArg sig
   type Ret (Proxy (SimpleCall tag before sig after)) = GetRet sig
+  type After (Proxy (SimpleCall tag before sig after)) = after
 
 ----------------------------------------------------------------
