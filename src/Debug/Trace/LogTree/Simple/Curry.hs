@@ -6,7 +6,6 @@
 
 module Debug.Trace.LogTree.Simple.Curry where
 
-import Control.Monad.Identity
 import Data.Proxy
 
 ----------------------------------------------------------------

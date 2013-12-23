@@ -1,3 +1,4 @@
+module Debug.Trace.LogTree.Process.Tree where
 
 -- Fancy line drawing characters copied from the 'tree' program. File
 -- color.c in version 1.6.0, from
