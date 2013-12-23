@@ -42,15 +42,6 @@ instance (c1 t , c2 t) => (c1 :&&: c2) t
 
 class Unit t
 instance Unit t
-
-instance Show (LogTree (Show :&&: c)) where
-  show (CallAndReturn call _ _ ls _ _) =
-    "<CallAndReturn (" ++ show call ++ ") _ " ++ show ls ++ " _>"
-  show (CallAndError call _ _ ls e) =
-    "<CallAndError (" ++ show call ++ ") _ " ++ show ls ++ " (" ++ show e ++ ")>"
-{-
-f , f' :: Int -> Writer (LogStream (Show :&&: Unit)) Int
--}
 -- but this doesn't really give implication. We can almost get
 -- implication for constraints built from the combinators with
 class (c1 :: * -> Constraint) :=>: (c2 :: * -> Constraint)
@@ -64,8 +55,8 @@ instance (c2 :=>: c) => (c1 :&&: c2) :=>: c
 
 ----------------------------------------------------------------
 
-deriving instance Show (LogTree ((~) String))
-deriving instance Show (LogEvent ((~) String))
+deriving instance Show (LogTree AllShow)
+deriving instance Show (LogEvent AllShow)
 
 instance Signature String where
   name = id
@@ -77,54 +68,51 @@ instance Signature String where
 ----------------------------------------------------------------
 -- Manual logging example.
 
-f , f' :: Int -> MaybeT (Writer (LogStream ((~) String))) String
-f n = do
+type FTy = Int -> MaybeT (Writer (LogStream AllShow)) String
+
+fManual :: FTy
+f' :: FTy -> FTy
+fManual n = do
   tell [BeginCall "f" "" (show n)]
-  r <- f' n
+  r <- f' fManual n
   tell [EndCall "f" "" (show n) r ""]
   return r
-f' 0 = return ""
-f' 5 = do
+f' _ 0 = return ""
+f' f 5 = do
   _ <- f 2
   fail ""
-f' n = do
+f' f n = do
   r <- f (n - 1)
   return $ "X" ++ r
 
 ----------------------------------------------------------------
 -- Auto logging example.
 
-class (Signature t , Show (Before t) , Show (Arg t) , Show (Ret t) , Show (After t)) => AllShow t
-instance (Signature t , Show (Before t) , Show (Arg t) , Show (Ret t) , Show (After t)) => AllShow t
+class (Signature t , Show t , Show (Before t) , Show (Arg t) , Show (Ret t) , Show (After t)) => AllShow t
+instance (Signature t , Show t , Show (Before t) , Show (Arg t) , Show (Ret t) , Show (After t)) => AllShow t
 
-type GTy = Int -> MaybeT (Writer (LogStream AllShow)) String
-
-g , g' :: GTy
-g = simpleLogger (Proxy::Proxy "g") (return ()) (return ()) g'
-g' 0 = return ""
-g' 5 = do
-  _ <- g 2
-  fail ""
-g' n = do
-  r <- g (n - 1)
-  return $ "X" ++ r
+fSimple :: FTy
+fSimple = simpleLogger (Proxy::Proxy "g") (return ()) (return ()) (f' fSimple)
 
 ----------------------------------------------------------------
 
-testStream :: Int -> LogStream ((~) String)
-testStream = execWriter . runMaybeT . f
+testStream :: FTy -> Int -> LogStream AllShow
+testStream f = execWriter . runMaybeT . f
 
-testForest :: Int -> Either ParseError (LogForest ((~) String))
-testForest = stream2Forest . testStream
+testForest :: FTy -> Int -> Either ParseError (LogForest AllShow)
+testForest f = stream2Forest . testStream f
 
 ----------------------------------------------------------------
 
 main :: IO ()
 main = do
-  print $ testStream 4
-  print $ testForest 4
-  putStrLn ""
-  print $ testStream 6
-  print $ testForest 6
+  forM_ [fManual , fSimple] $ \f -> do
+    print $ testStream f 4
+    print $ testForest f 4
+    putStrLn ""
+    print $ testStream f 6
+    print $ testForest f 6
+    putStrLn ""
+    putStrLn ""
 
 ----------------------------------------------------------------
