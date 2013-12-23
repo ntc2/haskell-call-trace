@@ -24,8 +24,8 @@ class Monad (GetMonad t) => UncurryM t where
 --
 --   a1 -> ... -> an -> m a
 --
--- where 'm' is any monad with a transformer at the outside.  I expect
--- this covers all standard non-arrow monads I'd want to use!
+-- where 'm' is 'IO', or any monad with a transformer at the outside.
+-- I expect this covers all standard non-arrow monads I'd want to use!
 --
 -- How it works: the naive problem is that '((->) r) :: * -> *' has
 -- the same kind as a monad -- and has a standard monad instance,
@@ -61,6 +61,11 @@ instance (Monad m , Monad (t m)) => UncurryM (t m r) where
   type GetRet (t m r) = r
   type GetMonad (t m r) = (t m)
 
+instance UncurryM (IO r) where
+  type GetArg (IO r) = ()
+  type GetRet (IO r) = r
+  type GetMonad (IO r) = IO
+
 ----------------------------------------------------------------
 -- Type level computation of curried types.
 
@@ -83,6 +88,10 @@ class (UncurryM b , UncurryM c) => Collect b c where
                     -> Curried (GetArg b)
                                (GetArg c , GetMonad b (GetRet b))
 
+instance UncurryM c
+      => Collect (IO r) c where
+  collectCallHelper _ acc tmr = (acc () , tmr)
+
 instance (UncurryM c , Monad m , Monad (t m))
       => Collect (t m r) c where
   collectCallHelper _ acc tmr = (acc () , tmr)
@@ -104,6 +113,9 @@ class UncurryM t => CollectAndCallCont t where
   collectAndCallCont ::
     ((GetArg t , GetMonad t (GetRet t)) -> r) ->
     t -> Curried (GetArg t) r
+
+instance CollectAndCallCont (IO r) where
+  collectAndCallCont k tmr = k (() , tmr)
 
 instance (Monad m , Monad (t m)) => CollectAndCallCont (t m r) where
   collectAndCallCont k tmr = k (() , tmr)
