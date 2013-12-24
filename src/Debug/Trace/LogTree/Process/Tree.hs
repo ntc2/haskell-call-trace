@@ -1,4 +1,41 @@
+{-# LANGUAGE TypeOperators #-}
+
+
 module Debug.Trace.LogTree.Process.Tree where
+
+import Debug.Trace.LogTree
+
+-- First restrict to one log class at a time, then generalize to something like:
+--
+--   class (c :=>: UnixTree c tag , Signature call) => UnixTree c (tag::Symbol) call where
+{-
+
+XXX: this inability to use type sigs is *really* annoying. I wonder if this is easy to fix?
+
+XXX: maybe a type family would work???
+
+class Signature call => UnixTree call where
+  callAndReturn' :: callAndReturnTy c call ([String],[String])
+  callAndError'  :: callAndErrorTy  c call [String]
+-}
+class Signature call => UnixTree call where
+  callAndReturn' :: call -> Before call -> Arg call -> LogForest c -> Ret call -> After call ->
+    ([String] , [String])
+  callAndError'  :: call -> Before call -> Arg call -> LogForest c -> Maybe (LogTree c) ->
+    ([String] , [String])
+
+unixTree :: LogTree UnixTree -> [String]
+unixTree (CallAndReturn call before arg children ret after) =
+  [(enter !! 0) ++ " = " ++ (exit !! 0)] ++ map ('\t':) calls
+  where
+    (enter , exit) = callAndReturn' call before arg children ret after
+    calls = concat $ map unixTree children
+
+unixTree (CallAndError  call before arg children how) =
+  [(enter !! 0) ++ " = " ++ (err !! 0)] ++ map ('\t':) calls
+  where
+    (enter , err) = callAndError' call before arg children how
+    calls = concat $ map unixTree (children ++ maybe [] (:[]) how)
 
 -- Fancy line drawing characters copied from the 'tree' program. File
 -- color.c in version 1.6.0, from

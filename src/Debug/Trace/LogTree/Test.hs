@@ -14,44 +14,15 @@
 
 module Debug.Trace.LogTree.Test where
 
-import GHC.Prim (Constraint)
-
 import Control.Monad.Trans.Maybe
 import Control.Monad.Writer
 import Data.Proxy
 import Text.Parsec
 
 import Debug.Trace.LogTree
+import Debug.Trace.LogTree.Process.Tree
 import Debug.Trace.LogTree.Simple.Logger
-
-----------------------------------------------------------------
--- Unused constraint logic stuff.
-
--- XXX: I can't partially apply a synonym:
-{-
-type ShowWith c t = (Show t , c t)
--}
--- Did I work around this in a similar example when I was doing the
--- het lists for Max? The point is that I'd like a 'Show' instance
--- that works for 'LogTree c' with any constraint 'c' that implies
--- 'Show'.
---
--- Making a some special classes kind of works, e.g.:
-class (c1 t , c2 t) => (c1 :&&: c2) t
-instance (c1 t , c2 t) => (c1 :&&: c2) t
-
-class Unit t
-instance Unit t
--- but this doesn't really give implication. We can almost get
--- implication for constraints built from the combinators with
-class (c1 :: * -> Constraint) :=>: (c2 :: * -> Constraint)
-instance c :=>: c
-instance (c1 :=>: c) => (c1 :&&: c2) :=>: c
-{-
-instance (c2 :=>: c) => (c1 :&&: c2) :=>: c
--}
--- except the last instance overlaps with the previous one, so we
--- might need something like instance chains here.
+import Debug.Trace.LogTree.Simple.Call
 
 ----------------------------------------------------------------
 
@@ -95,6 +66,41 @@ fSimple :: FTy
 fSimple = simpleLogger (Proxy::Proxy "g") (return ()) (return ()) (f' fSimple)
 
 ----------------------------------------------------------------
+-- Auto logging with unix tree post processor.
+
+-- instance (SingI tag , UncurryM sig)
+--       => Signature (
+
+-- type MkSimpleCall (tag::Symbol) before after t = SimpleCall
+
+type FTy' = Int -> MaybeT (Writer (LogStream UnixTree)) String
+
+fSimple' :: FTy'
+f'' :: FTy'
+fSimple' = simpleLogger (Proxy::Proxy "f") (return ()) (return ()) f''
+f'' 0 = return ""
+f'' 5 = do
+  _ <- fSimple' 2
+  fail ""
+f'' n = do
+  r <- fSimple' (n - 1)
+  return $ "X" ++ r
+
+-- Nice: if you forget an instance the error message tells you exactly
+-- what the sig is of course :D
+instance UnixTree (Proxy (SimpleCall "f" () FTy' ())) where
+  callAndReturn' _ _ (arg,()) _ ret _ =
+    (["f " ++ show arg] , [show ret])
+  callAndError'  _ _ (arg,()) _ how =
+    (["f " ++ show arg] , [maybe "<error: here>" (const "<error: there>") how])
+
+testUnixTree :: FTy' -> Int -> String
+testUnixTree f = either show (unlines . unixTree . head)
+               . stream2Forest
+               . execWriter
+               . runMaybeT . f
+
+----------------------------------------------------------------
 
 testStream :: FTy -> Int -> LogStream AllShow
 testStream f = execWriter . runMaybeT . f
@@ -114,5 +120,9 @@ main = do
     print $ testForest f 6
     putStrLn ""
     putStrLn ""
+
+  putStrLn $ testUnixTree fSimple' 4
+  putStrLn ""
+  putStrLn $ testUnixTree fSimple' 6
 
 ----------------------------------------------------------------
