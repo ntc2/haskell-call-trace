@@ -121,7 +121,7 @@ instance C' cs c => C'' cs c where
 data H c where
   H :: c a => a -> H c
 
-data Where = Here | LeftNow | LeftLater Where | RightNow | RightLater Where
+data Where = Here | LeftLater Where | RightLater Where
 
 class CoerceH (w::Where) cs c where
   coerceH :: Proxy w -> H cs -> H c
@@ -129,40 +129,10 @@ class CoerceH (w::Where) cs c where
 instance CoerceH Here c c where
   coerceH _ h = h
 
-instance CoerceH LeftNow (c :&&: c') c where
-  coerceH _ (H x) = H x
-
-instance CoerceH RightNow (c' :&&: c) c where
-  coerceH _ (H x) = H x
-
 instance CoerceH w cs c => CoerceH (LeftLater w) (cs :&&: c') c where
   coerceH _ h =
-    coerceH (Proxy::Proxy w)
-      (coerceH (Proxy::Proxy LeftNow) h :: H cs)
+    coerceH (Proxy::Proxy w) (pi1 h)
 
 instance CoerceH w cs c => CoerceH (RightLater w) (c' :&&: cs) c where
   coerceH _ h =
-    coerceH (Proxy::Proxy w)
-      (coerceH (Proxy::Proxy RightNow) h :: H cs)
-
-
-
-{-
-f :: CoerceH w (c1 :&&: c2 :&&: c3 :&&: c4) c1 => H (c1 :&&: c2) -> H c1
-f = coerceH Proxy
--}
-
-{-
-instance CoerceH w cs c => CoerceH (LeftLater w) (cs :&&: c') c where
-  coerceH (H x) =
-    case (coerceH (H x) :: H cs) of
-      H y -> coerceH (H y)
--}
-
-{-
-instance CoerceH Here (c :&&: cs) c where
-  coerceH (H x) = H x
-
-instance CoerceH w cs c => CoerceH (There w) (c' :&&: cs) c where
-  coerceH (H x) = (coerceH :: ) (H x)
--}
+    coerceH (Proxy::Proxy w) (pi2 h)
