@@ -12,7 +12,9 @@ import Debug.Trace.LogTree
 
 XXX: this inability to use type sigs is *really* annoying. I wonder if this is easy to fix?
 
-XXX: maybe a type family would work???
+UPDATE: there is a moderately easy fix: use GADT type signatures and
+restrict to a particular constructor. See
+:/experiments/using-gadts-to-avoid-signatures.hs.
 
 class Signature call => UnixTree call where
   callAndReturn' :: callAndReturnTy c call ([String],[String])
