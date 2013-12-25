@@ -3,7 +3,6 @@
 {-# LANGUAGE ExistentialQuantification #-}
 {-# LANGUAGE ConstraintKinds #-}
 
-
 module Debug.Trace.LogTree where
 
 import GHC.Prim (Constraint)
