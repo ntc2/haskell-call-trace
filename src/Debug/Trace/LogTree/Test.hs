@@ -20,7 +20,7 @@ import Data.Proxy
 import Text.Parsec
 
 import Debug.Trace.LogTree
-import Debug.Trace.LogTree.Process.Tree
+import Debug.Trace.LogTree.Process.UnixTree
 import Debug.Trace.LogTree.Simple.Logger
 import Debug.Trace.LogTree.Simple.Call
 

@@ -1,7 +1,7 @@
 {-# LANGUAGE TypeOperators #-}
 
 
-module Debug.Trace.LogTree.Process.Tree where
+module Debug.Trace.LogTree.Process.UnixTree where
 
 import Debug.Trace.LogTree
 
