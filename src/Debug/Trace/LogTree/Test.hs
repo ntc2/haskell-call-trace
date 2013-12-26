@@ -11,6 +11,7 @@
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE GADTs #-}
 
 module Debug.Trace.LogTree.Test where
 
@@ -26,7 +27,8 @@ import Debug.Trace.LogTree.Simple.Call
 
 ----------------------------------------------------------------
 
-deriving instance Show (LogTree AllShow)
+deriving instance Show (LogTree AllShow call name)
+deriving instance Show (Ex2T (LogTree AllShow))
 deriving instance Show (LogEvent AllShow)
 
 instance Signature String where
@@ -59,8 +61,10 @@ f' f n = do
 ----------------------------------------------------------------
 -- Auto logging example.
 
-class (Signature t , Show t , Show (Before t) , Show (Arg t) , Show (Ret t) , Show (After t)) => AllShow t
-instance (Signature t , Show t , Show (Before t) , Show (Arg t) , Show (Ret t) , Show (After t)) => AllShow t
+class    (Signature t , Show t , Show (Before t) , Show (Arg t) , Show (Ret t) , Show (After t))
+  => AllShow t
+instance (Signature t , Show t , Show (Before t) , Show (Arg t) , Show (Ret t) , Show (After t))
+  => AllShow t
 
 fSimple :: FTy
 fSimple = simpleLogger (Proxy::Proxy "g") (return ()) (return ()) (f' fSimple)
@@ -89,10 +93,16 @@ f'' n = do
 -- Nice: if you forget an instance the error message tells you exactly
 -- what the sig is of course :D
 instance UnixTree (Proxy (SimpleCall "f" () FTy' ())) where
-  callAndReturn' _ _ (arg,()) _ ret _ =
+  callAndReturn t =
     (["f " ++ show arg] , [show ret])
-  callAndError'  _ _ (arg,()) _ how =
+    where
+      (arg,()) = _arg t
+      ret = _ret t
+  callAndError t =
     (["f " ++ show arg] , [maybe "<error: here>" (const "<error: there>") how])
+    where
+      (arg,()) = _arg' t
+      how = _how t
 
 testUnixTree :: FTy' -> Int -> String
 testUnixTree f = either show (unlines . unixTree . head)
