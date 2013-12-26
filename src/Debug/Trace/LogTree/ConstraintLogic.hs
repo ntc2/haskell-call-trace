@@ -55,7 +55,8 @@ data Reify c a where
 type Implies c1 c2 = forall a. Reify c1 a -> Reify c2 a
 
 -- The reason we want constraint implication!
-coerceLogTree :: forall c1 c2. Implies c1 c2 -> LogTree c1 -> LogTree c2
+coerceLogTree :: forall c1 c2.
+  Implies c1 c2 -> Ex2T (LogTree c1) -> Ex2T (LogTree c2)
 -- There are a few subtleties here:
 --
 -- - The actual constraint needed for constructing 'LogTree c' is
@@ -74,20 +75,21 @@ coerceLogTree :: forall c1 c2. Implies c1 c2 -> LogTree c1 -> LogTree c2
 --   '(call::call)' on the call argument we can scope. I didn't know
 --   GHC supported such local signatures on arguments until I tried it
 --   ... not sure what I would have done if it hadn't worked ...
-coerceLogTree impl (CallAndReturn (call::call) before arg children ret after) =
+coerceLogTree impl (Ex2T (CallAndReturn (call::call) before arg children ret after)) =
   case impl (Reify::Reify c1 call) of
-    Reify -> CallAndReturn call before arg children' ret after
+    Reify -> Ex2T $ CallAndReturn call before arg children' ret after
   where
     children' = map (coerceLogTree impl) children
-coerceLogTree impl (CallAndError (call::call) before arg children who) =
+coerceLogTree impl (Ex2T (CallAndError (call::call) before arg children who)) =
   case impl (Reify::Reify c1 call) of
-    Reify -> CallAndError call before arg children' who'
+    Reify -> Ex2T $ CallAndError call before arg children' who'
   where
     children' = map (coerceLogTree impl) children
     who' = fmap (coerceLogTree impl) who
 
 -- And using the other definition of implication.
-coerceLogTree' :: forall c1 c2. Implies' c1 c2 -> LogTree c1 -> LogTree c2
+coerceLogTree' :: forall c1 c2.
+  Implies' c1 c2 -> Ex2T (LogTree c1) -> Ex2T (LogTree c2)
 -- XXX: need to come back to this and understand how much of this
 -- complexity is necessary.  Essentially, I ended up giving nearly
 -- every computation and explicit type sig, and specialized the types
@@ -119,24 +121,26 @@ coerceLogTree' :: forall c1 c2. Implies' c1 c2 -> LogTree c1 -> LogTree c2
 --     In the expression: map (coerceLogTree' impl) children
 --
 -- What is an "untouchable" variable?
-coerceLogTree' impl (CallAndReturn (call::call) before arg children ret after) =
+coerceLogTree' impl (Ex2T (CallAndReturn (call::call) before arg children ret after)) =
   impl' callAndReturn call before arg children' ret after
   where
     callAndReturn :: c2 call =>
-      call -> Before call -> Arg call -> LogForest c2 -> Ret call -> After call -> LogTree c2
-    callAndReturn = CallAndReturn
+      call -> Before call -> Arg call -> LogForest c2 -> Ret call -> After call
+           -> Ex2T (LogTree c2)
+    callAndReturn = ((.).(.).(.).(.).(.).(.)) Ex2T CallAndReturn
 
     impl' :: forall b. (c2 call => b) -> (c1 call => b)
     impl' = impl
 
     children' :: LogForest c2
     children' = map (coerceLogTree' impl) children
-coerceLogTree' impl (CallAndError (call::call) before arg children who) =
+coerceLogTree' impl (Ex2T (CallAndError (call::call) before arg children who)) =
   impl' callAndError call before arg children' who'
   where
     callAndError :: c2 call =>
-      call -> Before call -> Arg call -> LogForest c2 -> Maybe (LogTree c2) -> LogTree c2
-    callAndError = CallAndError
+      call -> Before call -> Arg call -> LogForest c2 -> Maybe (Ex2T (LogTree c2))
+           -> Ex2T (LogTree c2)
+    callAndError = ((.).(.).(.).(.).(.)) Ex2T CallAndError
 
     impl' :: forall b. (c2 call => b) -> (c1 call => b)
     impl' = impl
@@ -144,7 +148,7 @@ coerceLogTree' impl (CallAndError (call::call) before arg children who) =
     children' :: LogForest c2
     children' = map (coerceLogTree' impl) children
 
-    who' :: Maybe (LogTree c2)
+    who' :: Maybe (Ex2T (LogTree c2))
     who' = fmap (coerceLogTree' impl) who
 
 ----------------------------------------------------------------

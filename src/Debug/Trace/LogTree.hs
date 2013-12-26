@@ -6,7 +6,16 @@
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE PolyKinds #-}
 
-module Debug.Trace.LogTree where
+module Debug.Trace.LogTree
+  ( Ex2T(..)
+  , Signature(..)
+  , LogEvent(..)
+  , LogStream
+  , LogTree(..)
+  , LogForest
+  , stream2Forest
+  )
+where
 
 import GHC.Prim (Constraint)
 import GHC.TypeLits (Symbol)
