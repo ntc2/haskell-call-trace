@@ -1,5 +1,8 @@
 {-# LANGUAGE TypeOperators #-}
-
+{-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE GADTs #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE DataKinds #-}
 
 module Debug.Trace.LogTree.Process.UnixTree where
 
@@ -20,24 +23,25 @@ class Signature call => UnixTree call where
   callAndReturn' :: callAndReturnTy c call ([String],[String])
   callAndError'  :: callAndErrorTy  c call [String]
 -}
-class Signature call => UnixTree call where
-  callAndReturn' :: call -> Before call -> Arg call -> LogForest c -> Ret call -> After call ->
+
+class UnixTree call where
+  callAndReturn :: LogTree UnixTree call "CallAndReturn" ->
     ([String] , [String])
-  callAndError'  :: call -> Before call -> Arg call -> LogForest c -> Maybe (LogTree c) ->
+  callAndError  :: LogTree UnixTree call "CallAndError" ->
     ([String] , [String])
 
-unixTree :: LogTree UnixTree -> [String]
-unixTree (CallAndReturn call before arg children ret after) =
+unixTree :: Ex2T (LogTree UnixTree) -> [String]
+unixTree (Ex2T t@(CallAndReturn {})) =
   [(enter !! 0) ++ " = " ++ (exit !! 0)] ++ map ('\t':) calls
   where
-    (enter , exit) = callAndReturn' call before arg children ret after
-    calls = concat $ map unixTree children
-
-unixTree (CallAndError  call before arg children how) =
+    (enter , exit) = callAndReturn t
+    calls = concatMap unixTree (_children t)
+unixTree (Ex2T t@(CallAndError {})) =
   [(enter !! 0) ++ " = " ++ (err !! 0)] ++ map ('\t':) calls
   where
-    (enter , err) = callAndError' call before arg children how
-    calls = concat $ map unixTree (children ++ maybe [] (:[]) how)
+    (enter , err) = callAndError t
+    calls = concatMap unixTree (_children' t ++
+                                maybe [] (:[]) (_how t))
 
 -- Fancy line drawing characters copied from the 'tree' program. File
 -- color.c in version 1.6.0, from
