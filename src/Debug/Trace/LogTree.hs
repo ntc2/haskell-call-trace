@@ -2,13 +2,23 @@
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE ExistentialQuantification #-}
 {-# LANGUAGE ConstraintKinds #-}
+{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE GADTs #-}
+{-# LANGUAGE PolyKinds #-}
 
 module Debug.Trace.LogTree where
 
 import GHC.Prim (Constraint)
+import GHC.TypeLits (Symbol)
 
 import Control.Applicative ((<*), (*>))
 import Text.Parsec hiding (token , eof , anyToken)
+
+-- XXX: move this somewhere else
+--
+-- A type family with two existentially quantified type indices.
+data Ex2T f where
+  Ex2T :: f a b -> Ex2T f
 
 ----------------------------------------------------------------
 -- Log types.
@@ -30,12 +40,39 @@ data LogEvent (c :: * -> Constraint)
     EndCall   call (Before call) (Arg call) (Ret call) (After call)
 type LogStream c = [LogEvent c]
 
-data LogTree (c :: * -> Constraint)
-  = forall call. SigWith c call =>
-    CallAndReturn call (Before call) (Arg call) (LogForest c) (Ret call) (After call)
-  | forall call. SigWith c call =>
-    CallAndError  call (Before call) (Arg call) (LogForest c) (Maybe (LogTree c))
-type LogForest c = [LogTree c]
+-- Would like to put the constraint on the whole data type, since we
+-- have it for all constructors, but apparently this is not compatible
+-- with GADT syntax:
+{-
+{-# LANGUAGE DatatypeContexts #-}
+
+data (Signature call , c call) => LogTree (c :: * -> Constraint) call (name :: Symbol) where
+
+    No context is allowed on a GADT-style data declaration
+    (You can put a context on each contructor, though.)
+-}
+-- But it gets better: since we can't have ad-hoc polymorphic field
+-- names (patiently awaiting Gundry's record fix ...), we can't have
+-- common projections (e.g. '_call') for both constructors, since they
+-- have different 'con' indices.  So, prime the duplicated fields for
+-- now :P
+data LogTree (c :: * -> Constraint) call (name :: Symbol) where
+  CallAndReturn :: SigWith c call =>
+    { _call     :: call
+    , _before   :: Before call
+    , _arg      :: Arg call
+    , _children :: LogForest c
+    , _ret      :: Ret call
+    , _after    :: After call
+    } -> LogTree c call "CallAndReturn"
+  CallAndError :: SigWith c call =>
+    { _call'     :: call
+    , _before'   :: Before call
+    , _arg'      :: Arg call
+    , _children' :: LogForest c
+    , _how       :: Maybe (Ex2T (LogTree c))
+    } -> LogTree c call "CallAndError"
+type LogForest c = [Ex2T (LogTree c)]
 
 ----------------------------------------------------------------
 -- Parsers from log streams into log trees.
@@ -50,23 +87,23 @@ type P c a = Parsec (LogStream c) () a
 forest :: P c (LogForest c)
 forest = many tree
 
-tree :: P c (LogTree c)
+tree :: P c (Ex2T (LogTree c))
 tree = try callAndReturn <|> callAndError
 
 ----------------------------------------------------------------
 
-callAndReturn , callAndError :: P c (LogTree c)
+callAndReturn , callAndError :: P c (Ex2T (LogTree c))
 
 callAndReturn = do
   BeginCall {} <- beginCall
   children <- forest
   EndCall call before arg ret after <- endCall
-  return $ CallAndReturn call before arg children ret after
+  return . Ex2T $ CallAndReturn call before arg children ret after
 
 callAndError = do
   BeginCall call before arg <- beginCall
   children <- forest <* eof
-  return $
+  return . Ex2T $
     -- May be more understandable to have two different error nodes,
     -- e.g. 'CallAndErrorHere' and 'CallAndErrorThere', and then we
     -- wouldn't use 'Maybe' in the last arg to distinguish the two
@@ -80,7 +117,7 @@ callAndError = do
     -- originated from.  May be useful to also have an easy stack
     -- trace in the success case ...
     case last children of
-      l | not (null children) , CallAndError {} <- l ->
+      l | not (null children) , Ex2T (CallAndError {}) <- l ->
         CallAndError call before arg (init children) (Just l)
       _ ->
         CallAndError call before arg children Nothing
