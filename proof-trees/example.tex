@@ -1,0 +1,60 @@
+\documentclass{article}
+\usepackage{proof}
+\usepackage{bussproofs}
+\usepackage{hyperref}
+
+\begin{document}
+
+\title{Proof Tree Examples}
+\author{Nathan Collins}
+
+\maketitle
+\section{Proof Setting Packages}
+See \url{http://www.logicmatters.net/latex-for-logicians/nd/}.
+
+\section{Using \texttt{proofs.sty}}
+Appears to support arbitrarily many premises.
+
+The syntax is
+\begin{verbatim}
+\infer[<optional rule name>]
+  {<conclusion>}
+  {<premise 1> & ... & <premise n>}
+\end{verbatim}
+\[
+\infer[^{(2)}]
+     {\neg(\phi \land \psi)}
+     {\infer[^{(1)}]
+        {\bot}
+        {(\neg\phi \lor \neg\psi) &
+        \infer
+            {\bot}
+            {\phi &
+            \infer[^{(1)}]
+            {\neg\phi}{}
+            }
+        & \bot & \bot & \bot & \bot & \bot & \bot & \bot
+        & \Gamma \vdash A & \Gamma \vdash A & \Gamma \vdash A & \Gamma \vdash A & \Gamma \vdash A & \Gamma \vdash A
+        }
+     }
+\]
+\section{Using \texttt{bussproofs.sty}}
+Proofs are limited to five premises!  Looking at the source, I'm
+optimistic that it would not be very hard to create versions up to any
+particular premise arity, but it looks making the arity a parameter
+would be a major rewrite.
+
+\begin{prooftree}
+\AxiomC{$\Gamma, A \vdash B$}
+\RightLabel{$\to$ I}
+\UnaryInfC{$\Gamma \vdash A \rightarrow B$}
+\end{prooftree}
+
+\begin{prooftree}
+\AxiomC{$\Gamma \vdash A \to B$}
+\AxiomC{$\Gamma \vdash A$}
+\RightLabel{$\to$ E}
+\BinaryInfC{$\Gamma \vdash B$}
+\end{prooftree}
+
+\end{document}
