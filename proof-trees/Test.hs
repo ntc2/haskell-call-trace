@@ -18,7 +18,10 @@
 module Test where
 
 import Control.Applicative ((<*) , (*>) , (<$>) , (<*>) , pure)
-import Control.Monad.Trans.Error
+-- import Control.Monad.Trans.Error
+import Control.Monad.Error
+-- import Control.Monad.Trans.Reader
+import Control.Monad.Reader
 import Control.Monad.Writer
 import Data.Proxy
 import Text.Parsec
@@ -39,7 +42,7 @@ data Tm = Lam TmVar Ty Tm
   deriving Show
 data Ty = TyVar TyVar
         | Ty :->: Ty
-  deriving Show
+  deriving (Eq , Show)
 type Ctx = [(TmVar,Ty)]
 
 ----------------------------------------------------------------
@@ -77,9 +80,17 @@ parseTm = parse (tm <* eof) "<no file>"
 ----------------------------------------------------------------
 -- Type checker.
 
-type M a = ErrorT String (Writer (LogStream ProofTree)) a
+type M a = ErrorT String (ReaderT Ctx (Writer (LogStream ProofTree))) a
 
-type CheckTy = Tm -> Ty -> M ()
+type InferTy = Tm -> M Ty
 
-check :: CheckTy
-check = undefined
+infer :: InferTy
+infer (Lam x t e) = local ((x,t):) . infer $ e
+infer (TmVar x) = maybe err pure . lookup x =<< ask where
+  err = throwError $ "Variable " ++ x ++ " not in context!"
+infer (e :@: e1) = do
+  t <- infer e
+  t1 <- infer e1
+  case t of
+    t1' :->: t2 | t1' == t1 -> pure t2
+    _ -> throwError $ "Can't apply " ++ show t ++ " to " ++ show t1 ++ "!"
