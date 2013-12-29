@@ -156,7 +156,7 @@ class Pretty t where
 
 instance Pretty Ty where
   pp (TyVar v) = v
-  pp t@(t1 :->: t2) = wrap L t t1 ++ " \\to " ++ wrap R t t2
+  pp t@(t1 :->: t2) = wrap L t t1 ++ " {\\to} " ++ wrap R t t2
   prec (_ :->: _) = precArr
   prec _ = highest
   assoc (_ :->: _) = R
@@ -164,7 +164,7 @@ instance Pretty Ty where
 
 instance Pretty Tm where
   pp (TmVar v) = v
-  pp (Lam x t e) = "\\lambda " ++ x ++ " \\mathalpha{:} " ++ pp t ++ " . " ++ pp e
+  pp (Lam x t e) = "\\lambda " ++ x ++ " {:} " ++ pp t ++ " . " ++ pp e
   pp e@(e1 :@: e2) = wrap L e e1 ++ " " ++ wrap R e e2
   prec (Lam {}) = precLam
   prec (_ :@: _) = precApp
@@ -233,10 +233,16 @@ main = do
   let ctx' = callParser ctx $ args !! 1
   let tex = pipeline mode ctx' $ args !! 2
   putStr . unlines $
-    [ "\\documentclass{article}"
+    [ "\\documentclass[10pt]{article}"
     , "\\usepackage{proof}"
     , "\\usepackage{amsmath}"
+    , "\\usepackage[landscape]{geometry}"
+    -- The most slender font I could find:
+    -- http://www.tug.dk/FontCatalogue/iwonalc/
+    , "\\usepackage[light,condensed,math]{iwona}"
+    , "\\usepackage[T1]{fontenc}"
     , "\\begin{document}"
+    , "\\tiny"
     , "\\[" ++ tex ++ "\\]"
     , "\\end{document}"
     ]
