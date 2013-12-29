@@ -3,6 +3,7 @@
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE DataKinds #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
 
 module Debug.Trace.LogTree.Process.ProofTree where
 
@@ -10,21 +11,21 @@ import Data.List (intercalate)
 
 import Debug.Trace.LogTree
 
-class ProofTree call where
-  callAndReturn :: LogTree ProofTree call "CallAndReturn" ->
+class ProofTree mode call where
+  callAndReturn :: mode -> LogTree (ProofTree mode) call "CallAndReturn" ->
     (String , String)
-  callAndError  :: LogTree ProofTree call "CallAndError" ->
+  callAndError  :: mode -> LogTree (ProofTree mode) call "CallAndError" ->
     (String , String)
 
-proofTree :: Ex2T (LogTree ProofTree) -> String
-proofTree (Ex2T t@(CallAndReturn {})) =
+proofTree :: mode -> Ex2T (LogTree (ProofTree mode)) -> String
+proofTree mode (Ex2T t@(CallAndReturn {})) =
   "\\infer[ " ++ rule ++ " ]{ " ++ conclusion ++ " }{ " ++ intercalate " & " premises ++ " }"
   where
-    (conclusion , rule) = callAndReturn t
-    premises = map proofTree (_children t)
-proofTree (Ex2T t@(CallAndError {})) =
+    (conclusion , rule) = callAndReturn mode t
+    premises = map (proofTree mode) (_children t)
+proofTree mode (Ex2T t@(CallAndError {})) =
   "\\infer[ " ++ rule ++ " ]{ " ++ conclusion ++ " }{ " ++ intercalate " & " premises ++ " }"
   where
-    (conclusion , rule) = callAndError t
-    premises = map proofTree (_children' t ++
-                              maybe [] (:[]) (_how t))
+    (conclusion , rule) = callAndError mode t
+    premises = map (proofTree mode)
+                   (_children' t ++ maybe [] (:[]) (_how t))
