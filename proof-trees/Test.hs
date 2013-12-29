@@ -104,7 +104,7 @@ type InferTy = Tm -> M Ty
 infer , infer' :: InferTy
 infer = simpleLogger (Proxy::Proxy "infer") ask (return ()) infer'
 
-infer' (Lam x t e) = (t :->:) <$> (local ((x,t):) . infer $ e)
+infer' (Lam x t e) = (t :->:) <$> (local (++ [(x,t)]) . infer $ e)
 infer' (TmVar x) = maybe err pure . lookup x =<< ask where
   err = throwError $ "Variable " ++ x ++ " not in context!"
 infer' (e :@: e1) = do
@@ -173,12 +173,12 @@ instance Pretty Tm where
   assoc _ = N
 
 instance Pretty Ctx where
-  pp [] = "."
+  pp [] = "\\cdot"
   pp ctx@(_:_) =
     intercalate " , " [ x ++ " \\mathalpha{:} " ++ pp t  | (x,t) <- ctx ]
 
 ppCtxOnlyTypes :: Ctx -> String
-ppCtxOnlyTypes [] = "."
+ppCtxOnlyTypes [] = "\\cdot"
 ppCtxOnlyTypes ctx@(_:_) = intercalate " , " [ pp t  | (_,t) <- ctx ]
 
 ----------------------------------------------------------------
@@ -195,7 +195,7 @@ instance ProofTree Mode (Proxy (SimpleCall "infer" Ctx InferTy ())) where
       (tm , ()) = _arg' t
       how = _how t
       ctx = _before' t
-      error = maybe "\\uparrow" (const "\\!") how
+      error = maybe "\\,!" (const "\\,\\uparrow") how
 
 conclusion :: Mode -> Ctx -> Tm -> Either String Ty -> (String , String)
 conclusion mode ctx tm e = (judgment mode , rule tm)
