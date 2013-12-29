@@ -1,19 +1,9 @@
 -- Log STLC type checking and process as natural deduction proof tree.
 
--- See
--- http://stackoverflow.com/questions/3079537/orphaned-instances-in-haskell
-{-# OPTIONS_GHC -fno-warn-orphans #-}
-
+{-# OPTIONS_GHC -fno-warn-name-shadowing #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE ConstraintKinds #-}
-{-# LANGUAGE UndecidableInstances #-}
-{-# LANGUAGE TypeOperators #-}
-{-# LANGUAGE TypeFamilies #-}
-{-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE DataKinds #-}
-{-# LANGUAGE FlexibleContexts #-}
-{-# LANGUAGE GADTs #-}
 
 module Test where
 
@@ -103,7 +93,6 @@ execM ctx = snd . runM ctx
 type InferTy = Tm -> M Ty
 infer , infer' :: InferTy
 infer = simpleLogger (Proxy::Proxy "infer") ask (return ()) infer'
-
 infer' (Lam x t e) = (t :->:) <$> (local (++ [(x,t)]) . infer $ e)
 infer' (TmVar x) = maybe err pure . lookup x =<< ask where
   err = throwError $ "Variable " ++ x ++ " not in context!"
@@ -140,12 +129,12 @@ data Assoc = L | N | R deriving Eq
 wrap :: Pretty a => Assoc -> a -> a -> String
 wrap side ctx x = if prec x `comp` prec ctx
                   then pp x
-                  else wrap . pp $ x
+                  else parens . pp $ x
   where
     comp = if side == assoc x || assoc x == N
            then (>=)
            else (>)
-    wrap s = "(" ++ s ++ ")"
+    parens s = "(" ++ s ++ ")"
 
 class Pretty t where
   pp :: t -> String
@@ -175,7 +164,7 @@ instance Pretty Tm where
 instance Pretty Ctx where
   pp [] = "\\cdot"
   pp ctx@(_:_) =
-    intercalate " , " [ x ++ " \\mathalpha{:} " ++ pp t  | (x,t) <- ctx ]
+    intercalate " , " [ x ++ " {:} " ++ pp t  | (x,t) <- ctx ]
 
 ppCtxOnlyTypes :: Ctx -> String
 ppCtxOnlyTypes [] = "\\cdot"
