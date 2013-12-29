@@ -23,8 +23,10 @@ import Control.Monad.Reader
 import Control.Monad.Writer
 import Data.List (intercalate)
 import Data.Proxy
+import System.IO (hPutStrLn , stderr)
 import System.Environment (getArgs)
-import Text.Parsec hiding (between)
+import System.Exit (exitWith, ExitCode(..))
+import Text.Parsec hiding (Stream , between)
 import qualified Text.Parsec
 
 import Debug.Trace.LogTree
@@ -84,10 +86,12 @@ callParser p = either (error . show) id
 ----------------------------------------------------------------
 -- Type checker.
 
-type M a = ErrorT String (ReaderT Ctx (Writer (LogStream ProofTree))) a
-runM :: M a -> (Either String a , LogStream ProofTree)
+type Mode = Bool
+type Stream = LogStream (ProofTree Mode)
+type M a = ErrorT String (ReaderT Ctx (Writer Stream)) a
+runM :: M a -> (Either String a , Stream)
 runM = runWriter . flip runReaderT [] . runErrorT
-execM :: M a -> LogStream ProofTree
+execM :: M a -> Stream
 execM = snd . runM
 
 ctx :: M Ctx
@@ -170,24 +174,28 @@ instance Pretty Ctx where
   pp ctx@(_:_) =
     intercalate " , " [ x ++ " \\mathalpha{:} " ++ pp t  | (x,t) <- ctx ]
 
+ppCtxOnlyTypes :: Ctx -> String
+ppCtxOnlyTypes [] = "."
+ppCtxOnlyTypes ctx@(_:_) = intercalate " , " [ pp t  | (_,t) <- ctx ]
+
 ----------------------------------------------------------------
 -- Proof tree processor.
 
-instance ProofTree (Proxy (SimpleCall "infer" Ctx InferTy ())) where
-  callAndReturn t = conclusion ctx tm (Right ty)
+instance ProofTree Mode (Proxy (SimpleCall "infer" Ctx InferTy ())) where
+  callAndReturn mode t = conclusion mode ctx tm (Right ty)
     where
       (tm , ()) = _arg t
       ty = _ret t
       ctx = _before t
-  callAndError t = conclusion ctx tm (Left error)
+  callAndError mode t = conclusion mode ctx tm (Left error)
     where
       (tm , ()) = _arg' t
       how = _how t
       ctx = _before' t
       error = maybe "\\uparrow" (const "\\!") how
 
-conclusion :: Ctx -> Tm -> Either String Ty -> (String , String)
-conclusion ctx tm e = (pp ctx ++ " \\vdash " ++ pp tm ++ " : " ++ tyOrError , rule tm)
+conclusion :: Mode -> Ctx -> Tm -> Either String Ty -> (String , String)
+conclusion mode ctx tm e = (judgment mode , rule tm)
   where
     rule (TmVar _) = "\\textsc{Axiom}"
     rule (Lam {}) = "\\to \\text{I}"
@@ -195,20 +203,31 @@ conclusion ctx tm e = (pp ctx ++ " \\vdash " ++ pp tm ++ " : " ++ tyOrError , ru
 
     tyOrError = either id pp e
 
+    judgment True = pp ctx ++ " \\vdash " ++ pp tm ++ " : " ++ tyOrError
+    judgment False = ppCtxOnlyTypes ctx ++ " \\vdash " ++ tyOrError
+
 ----------------------------------------------------------------
 -- Bring it all together.
 
-pipeline :: String -> String
-pipeline = proofTree
-         . either (error . show) (!! 0)
-         . stream2Forest
-         . execM
-         . infer
-         . callParser tm
+pipeline :: Mode -> String -> String
+pipeline mode =
+  proofTree mode
+  . either (error . show) (!! 0)
+  . stream2Forest
+  . execM
+  . infer
+  . callParser tm
 
 main :: IO ()
 main = do
-  tex <- pipeline . (!! 0) <$> getArgs
+  args <- getArgs
+  when (not $ length args == 2) $ do
+    err "usage: $0 MODE TERM"
+    err ""
+    err "The MODEs are 'True' for show proof terms and 'False' for only show types."
+    exitWith (ExitFailure 2)
+  let mode = read $ args !! 0
+  let tex = pipeline mode $ args !! 1
   putStr . unlines $
     [ "\\documentclass{article}"
     , "\\usepackage{proof}"
@@ -217,3 +236,5 @@ main = do
     , "\\[" ++ tex ++ "\\]"
     , "\\end{document}"
     ]
+  where
+    err = hPutStrLn stderr
