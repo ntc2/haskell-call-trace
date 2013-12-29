@@ -23,6 +23,7 @@ import Control.Monad.Reader
 import Control.Monad.Writer
 import Data.List (intercalate)
 import Data.Proxy
+import System.Environment (getArgs)
 import Text.Parsec hiding (between)
 import qualified Text.Parsec
 
@@ -86,6 +87,8 @@ callParser p = either (error . show) id
 type M a = ErrorT String (ReaderT Ctx (Writer (LogStream ProofTree))) a
 runM :: M a -> (Either String a , LogStream ProofTree)
 runM = runWriter . flip runReaderT [] . runErrorT
+execM :: M a -> LogStream ProofTree
+execM = snd . runM
 
 ctx :: M Ctx
 ctx = ask
@@ -154,7 +157,7 @@ instance Pretty Ty where
 
 instance Pretty Tm where
   pp (TmVar v) = v
-  pp (Lam x t e) = "\\lambda " ++ x ++ " : " ++ pp t ++ " . " ++ pp e
+  pp (Lam x t e) = "\\lambda " ++ x ++ " \\mathalpha{:} " ++ pp t ++ " . " ++ pp e
   pp e@(e1 :@: e2) = wrap L e e1 ++ " " ++ wrap R e e2
   prec (Lam {}) = precLam
   prec (_ :@: _) = precApp
@@ -165,7 +168,52 @@ instance Pretty Tm where
 instance Pretty Ctx where
   pp [] = "."
   pp ctx@(_:_) =
-    intercalate "," [ x ++ ":" ++ pp t  | (x,t) <- ctx ]
+    intercalate " , " [ x ++ " \\mathalpha{:} " ++ pp t  | (x,t) <- ctx ]
 
-parseAndInfer :: String -> Ty
-parseAndInfer = runInfer . either (error . show) id . parseTm
+----------------------------------------------------------------
+-- Proof tree processor.
+
+instance ProofTree (Proxy (SimpleCall "infer" Ctx InferTy ())) where
+  callAndReturn t = conclusion ctx tm (Right ty)
+    where
+      (tm , ()) = _arg t
+      ty = _ret t
+      ctx = _before t
+  callAndError t = conclusion ctx tm (Left error)
+    where
+      (tm , ()) = _arg' t
+      how = _how t
+      ctx = _before' t
+      error = maybe "\\uparrow" (const "\\!") how
+
+conclusion :: Ctx -> Tm -> Either String Ty -> (String , String)
+conclusion ctx tm e = (pp ctx ++ " \\vdash " ++ pp tm ++ " : " ++ tyOrError , rule tm)
+  where
+    rule (TmVar _) = "\\textsc{Axiom}"
+    rule (Lam {}) = "\\to \\text{I}"
+    rule (_ :@: _) = "\\to \\text{E}"
+
+    tyOrError = either id pp e
+
+----------------------------------------------------------------
+-- Bring it all together.
+
+pipeline :: String -> String
+pipeline = proofTree
+         . either (error . show) (!! 0)
+         . stream2Forest
+         . execM
+         . infer
+         . callParser tm
+
+main :: IO ()
+main = do
+  tex <- pipeline . (!! 0) <$> getArgs
+  putStr . unlines $
+    [ "\\documentclass{article}"
+    , "\\usepackage{proof}"
+    , "\\usepackage{amsmath}"
+    , "\\begin{document}"
+    , "\\[" ++ tex ++ "\\]"
+    , "\\end{document}"
+    ]
