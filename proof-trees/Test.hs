@@ -72,10 +72,16 @@ tmAtom = parens tm
      <|> TmVar <$> tmVar
 apps = chainl1 tmAtom appOp where
   appOp = pure (:@:)
-lam = Lam <$> (char '\\' *> tmVar)
-          <*> (char ':' *> ty)
-          <*> (char '.' *> tm)
+lam = uncurry Lam <$> (char '\\' *> typing)
+                  <*> (char '.' *> tm)
 tm = apps <|> lam
+
+typing :: P (TmVar , Ty)
+typing = (,) <$> tmVar
+             <*> (char ':' *> ty)
+
+ctx :: P Ctx
+ctx = typing `sepBy` (char ',')
 
 -- Here 'call*' is the opposite of the standard 'exec*': throw away
 -- any non-result state and return the result.
@@ -89,20 +95,17 @@ callParser p = either (error . show) id
 type Mode = Bool
 type Stream = LogStream (ProofTree Mode)
 type M a = ErrorT String (ReaderT Ctx (Writer Stream)) a
-runM :: M a -> (Either String a , Stream)
-runM = runWriter . flip runReaderT [] . runErrorT
-execM :: M a -> Stream
-execM = snd . runM
-
-ctx :: M Ctx
-ctx = ask
+runM :: Ctx -> M a -> (Either String a , Stream)
+runM ctx = runWriter . flip runReaderT ctx . runErrorT
+execM :: Ctx -> M a -> Stream
+execM ctx = snd . runM ctx
 
 type InferTy = Tm -> M Ty
 infer , infer' :: InferTy
-infer = simpleLogger (Proxy::Proxy "infer") ctx (return ()) infer'
+infer = simpleLogger (Proxy::Proxy "infer") ask (return ()) infer'
 
-infer' (Lam x t e) = local ((x,t):) . infer $ e
-infer' (TmVar x) = maybe err pure . lookup x =<< ctx where
+infer' (Lam x t e) = (t :->:) <$> (local ((x,t):) . infer $ e)
+infer' (TmVar x) = maybe err pure . lookup x =<< ask where
   err = throwError $ "Variable " ++ x ++ " not in context!"
 infer' (e :@: e1) = do
   t <- infer e
@@ -111,8 +114,8 @@ infer' (e :@: e1) = do
     t1' :->: t2 | t1' == t1 -> pure t2
     _ -> throwError $ "Can't apply " ++ show t ++ " to " ++ show t1 ++ "!"
 
-callInfer :: Tm -> Ty
-callInfer = either error id . fst . runM . infer
+callInfer :: Ctx -> Tm -> Ty
+callInfer ctx = either error id . fst . runM ctx . infer
 
 ----------------------------------------------------------------
 -- Latex pretty printer.
@@ -209,25 +212,26 @@ conclusion mode ctx tm e = (judgment mode , rule tm)
 ----------------------------------------------------------------
 -- Bring it all together.
 
-pipeline :: Mode -> String -> String
-pipeline mode =
+pipeline :: Mode -> Ctx -> String -> String
+pipeline mode ctx =
   proofTree mode
   . either (error . show) (!! 0)
   . stream2Forest
-  . execM
+  . execM ctx
   . infer
   . callParser tm
 
 main :: IO ()
 main = do
   args <- getArgs
-  when (not $ length args == 2) $ do
-    err "usage: $0 MODE TERM"
+  when (not $ length args == 3) $ do
+    err "usage: $0 MODE CTX TERM"
     err ""
     err "The MODEs are 'True' for show proof terms and 'False' for only show types."
     exitWith (ExitFailure 2)
   let mode = read $ args !! 0
-  let tex = pipeline mode $ args !! 1
+  let ctx' = callParser ctx $ args !! 1
+  let tex = pipeline mode ctx' $ args !! 2
   putStr . unlines $
     [ "\\documentclass{article}"
     , "\\usepackage{proof}"
