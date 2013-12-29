@@ -237,6 +237,7 @@ main = do
     , "\\usepackage{proof}"
     , "\\usepackage{amsmath}"
     , "\\usepackage[landscape]{geometry}"
+    , "\\usepackage[cm]{fullpage}"
     -- The most slender font I could find:
     -- http://www.tug.dk/FontCatalogue/iwonalc/
     , "\\usepackage[light,condensed,math]{iwona}"
