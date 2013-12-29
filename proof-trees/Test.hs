@@ -81,9 +81,10 @@ parseTm = parse (tm <* eof) "<no file>"
 -- Type checker.
 
 type M a = ErrorT String (ReaderT Ctx (Writer (LogStream ProofTree))) a
+runM :: M a -> (Either String a , LogStream ProofTree)
+runM = runWriter . flip runReaderT [] . runErrorT
 
 type InferTy = Tm -> M Ty
-
 infer :: InferTy
 infer (Lam x t e) = local ((x,t):) . infer $ e
 infer (TmVar x) = maybe err pure . lookup x =<< ask where
@@ -94,3 +95,12 @@ infer (e :@: e1) = do
   case t of
     t1' :->: t2 | t1' == t1 -> pure t2
     _ -> throwError $ "Can't apply " ++ show t ++ " to " ++ show t1 ++ "!"
+
+runInfer :: Tm -> Ty
+runInfer = either error id . fst . runM . infer
+
+----------------------------------------------------------------
+-- Utilities.
+
+parseAndInfer :: String -> Ty
+parseAndInfer = runInfer . either (error . show) id . parseTm
