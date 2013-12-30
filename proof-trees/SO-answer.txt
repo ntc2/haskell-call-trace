@@ -1,0 +1,372 @@
+I'm using your question as an excuse to improve and demo [a Haskell
+call-tracing library I'm working
+on](https://github.com/ntc2/haskell-call-trace).  In the context of
+tracing, an obvious way to create a proof tree is to trace a type
+checker and then format the trace as a natural-deduction proof.  To
+keep things simple my example is the [simply-typed lambda calculus
+(STLC)](https://en.wikipedia.org/wiki/Simply_typed_lambda_calculus),
+which corresponds to the implicational fragment of propositional
+[intuitionistic
+logic](https://en.wikipedia.org/wiki/Intuitionistic_logic).
+
+I'm not using `HaTeX` or any other Haskell Latex library, because the
+Latex here is actually incredibly simple, but I did use `proofs.sty`.
+
+Examples
+====
+
+Let's start with some output examples. The first three are motivated
+by [an axiom system for implicational propositional
+calculus](https://en.wikipedia.org/wiki/Implicational_propositional_calculus#Axiom_system);
+the first two also happen to correspond to [`S` and
+`K`](https://en.wikipedia.org/wiki/SKI_combinator_calculus):
+
+- The first axiom, `K`, with proof terms:
+
+  ![K combinator, with proof terms][3]
+
+- The second axiom, `S`, with proof terms, but with premises in the
+  context, not lambda bound:
+
+  ![S combinator, via context, with proof terms][2]
+
+- The fourth axiom, modus ponens, without proof terms:
+
+  ![Modus Ponens, without proof terms][1]
+
+The third axiom in that Wikipedia article (Pierce's law) is
+non-constructive and so we can't prove it here.
+
+For a different kind of example, here's a failed type check of the [Y
+combinator](https://en.wikipedia.org/wiki/Fixed-point_combinator#Y_combinator):
+
+![Y combinator, error, with proof terms][4]
+
+The arrows are meant to lead you to the error, which is marked with a
+bang (`!`).
+
+  [1]: http://i.stack.imgur.com/Y3daK.png
+  [2]: http://i.stack.imgur.com/82niY.png
+  [3]: http://i.stack.imgur.com/9KFSt.png
+  [4]: http://i.stack.imgur.com/JYtPW.png
+
+Code
+====
+
+Now I'll describe the code which generated those examples. The code is
+from [this
+file](https://github.com/ntc2/haskell-call-trace/blob/73936592960aa4f72b8cbec3e0f8d643c75d2347/proof-trees/Test.hs)
+unless otherwise noted.  I'm not including every line of code here;
+see that link if you want something you can actually build using GHC
+7.6.3.
+
+Type checking
+----
+
+The STLC grammar in ASCII:
+
+    -- Terms
+    e ::= x | \x:T.e | e e
+    -- Types
+    T ::= A | T -> T
+    -- Contexts
+    C ::= . | C,x:T
+
+And the corresponding Haskell:
+
+    type TmVar = String
+    type TyVar = String
+    data Tm = Lam TmVar Ty Tm
+            | TmVar TmVar
+            | Tm :@: Tm
+      deriving Show
+    data Ty = TyVar TyVar
+            | Ty :->: Ty
+      deriving (Eq , Show)
+    type Ctx = [(TmVar,Ty)
+
+The STLC type checker in ASCII:
+
+    (x:T) in C
+    ---------- Axiom
+    C |- x : T
+
+    C,x:T1 |- e : T2
+    --------------------- -> Introduction
+    C |- \x:T1.e : T1->T2
+
+    C |- e : T1 -> T2    C |- e1 : T1
+    --------------------------------- -> Elimination
+    C |- e e1 : T2
+
+And the corresponding Haskell:
+
+    type Mode = Bool
+    type Stream = LogStream (ProofTree Mode)
+    type M a = ErrorT String (ReaderT Ctx (Writer Stream)) a
+
+    type InferTy = Tm -> M Ty
+    infer , infer' :: InferTy
+    infer = simpleLogger (Proxy::Proxy "infer") ask (return ()) infer'
+
+    infer' (TmVar x) = maybe err pure . lookup x =<< ask where
+      err = throwError $ "Variable " ++ x ++ " not in context!"
+    infer' (Lam x t e) = (t :->:) <$> (local (++ [(x,t)]) . infer $ e)
+    infer' (e :@: e1) = do
+      t <- infer e
+      t1 <- infer e1
+      case t of
+        t1' :->: t2 | t1' == t1 -> pure t2
+        _ -> throwError $ "Can't apply " ++ show t ++ " to " ++ show t1 ++ "!"
+
+The [`LogStream`
+type](https://github.com/ntc2/haskell-call-trace/blob/73936592960aa4f72b8cbec3e0f8d643c75d2347/src/Debug/Trace/LogTree.hs)
+and [`ProofTree`
+class](https://github.com/ntc2/haskell-call-trace/blob/73936592960aa4f72b8cbec3e0f8d643c75d2347/src/Debug/Trace/LogTree/Process/ProofTree.hs)
+are from the library. The `LogStream` is the type of log events that
+the "magic"
+[`simpleLogger`](https://github.com/ntc2/haskell-call-trace/blob/73936592960aa4f72b8cbec3e0f8d643c75d2347/src/Debug/Trace/LogTree/Simple/Logger.hs)
+logs.  Note the line
+
+    infer = simpleLogger (Proxy::Proxy "infer") ask (return ()) infer'
+
+which defines `infer` to be a logged version of `infer'`, the actual
+type checker.  That's all you have to do to trace a monadic function!
+
+I won't get into how `simpleLogger` actually works here, but the
+result is that each call to `infer` gets logged, including the
+context, arguments, and return value, and these data get grouped
+together with all logged subcalls (here only to `infer`).  It would be
+easy to manually write such logging code for `infer`, but it's nice
+that with the library you don't have to.
+
+Proof-tree generation
+----
+
+To generate the Latex proof trees, we implement `ProofTree` to post
+process `infer`'s call trace.  The library provides a `proofTree`
+function that calls the `ProofTree` methods and assembles the proof
+trees; we just need to specify how the conclusions of the typing
+judgments will be formatted:
+
+    instance ProofTree Mode (Proxy (SimpleCall "infer" Ctx InferTy ())) where
+      callAndReturn mode t = conclusion mode ctx tm (Right ty)
+        where
+          (tm , ()) = _arg t
+          ty = _ret t
+          ctx = _before t
+      callAndError mode t = conclusion mode ctx tm (Left error)
+        where
+          (tm , ()) = _arg' t
+          how = _how t
+          ctx = _before' t
+          error = maybe "\\,!" (const "\\,\\uparrow") how
+
+    conclusion :: Mode -> Ctx -> Tm -> Either String Ty -> (String , String)
+    conclusion mode ctx tm e = (judgment mode , rule tm)
+      where
+        rule (TmVar _) = "\\textsc{Axiom}"
+        rule (Lam {}) = "\\to \\text{I}"
+        rule (_ :@: _) = "\\to \\text{E}"
+
+        tyOrError = either id pp e
+
+        judgment True = pp ctx ++ " \\vdash " ++ pp tm ++ " : " ++ tyOrError
+        judgment False = ppCtxOnlyTypes ctx ++ " \\vdash " ++ tyOrError
+
+The `pp` calls are to a user defined pretty printer; obviously, the
+library can't know how to pretty print your data types.
+
+Because calls can be erroneous -- the library detects error; you don't
+have to be in an error monad -- we have to say how to format
+successful and failing calls.  Refer to the Y-combinator example above
+for an example a failing type check, corresponding to the
+`callAndError` case here.
+
+If we weren't using the library, it would still be easy to generate
+the proof trees.  Indeed, the [library's `proofTree`
+function](https://github.com/ntc2/haskell-call-trace/blob/73936592960aa4f72b8cbec3e0f8d643c75d2347/src/Debug/Trace/LogTree/Process/ProofTree.hs)
+is quite simple: it builds a `proofs.sty` proof tree with the current
+call as conclusion, and the subcalls as premises:
+
+    proofTree :: mode -> Ex2T (LogTree (ProofTree mode)) -> String
+    proofTree mode (Ex2T t@(CallAndReturn {})) =
+      "\\infer[ " ++ rule ++ " ]{ " ++ conclusion ++ " }{ " ++ intercalate " & " premises ++ " }"
+      where
+        (conclusion , rule) = callAndReturn mode t
+        premises = map (proofTree mode) (_children t)
+    proofTree mode (Ex2T t@(CallAndError {})) =
+      "\\infer[ " ++ rule ++ " ]{ " ++ conclusion ++ " }{ " ++ intercalate " & " premises ++ " }"
+      where
+        (conclusion , rule) = callAndError mode t
+        premises = map (proofTree mode)
+                       (_children' t ++ maybe [] (:[]) (_how t))
+
+I use `proofs.sty` in the library because it allows arbitrarily many
+premises, although `bussproofs.sty` would work for this STLC example
+since no rule has more than five premises (the limit for
+`bussproofs`).  Both Latex packages are described
+[here](http://www.logicmatters.net/latex-for-logicians/nd/).
+
+Pretty printing
+----
+
+The pretty printer that defines the `pp` used above is rather long --
+it handles precedence and associativity, and is written in a way that
+should be extensible if more terms, e.g. products, are added to the
+calculus -- but mostly straightforward.  First, we set up a precedence
+table and a precedence-and-associativity-aware parenthesizer:
+
+    - Precedence: higher value means tighter binding.
+    type Prec = Double
+
+    between :: Prec -> Prec -> Prec
+    between x y = (x + y) / 2
+
+    lowest , highest , precLam , precApp , precArr :: Prec
+    highest = 1
+    lowest = 0
+    precLam = lowest
+    precApp = between precLam highest
+    precArr = lowest
+
+    -- Associativity: left, none, or right.
+    data Assoc = L | N | R deriving Eq
+
+    -- Wrap a pretty print when the context dictates.
+    wrap :: Pretty a => Assoc -> a -> a -> String
+    wrap side ctx x = if prec x `comp` prec ctx
+                      then pp x
+                      else parens . pp $ x
+      where
+        comp = if side == assoc x || assoc x == N
+               then (>=)
+               else (>)
+        parens s = "(" ++ s ++ ")"
+
+And then we define the individual pretty printers:
+
+    class Pretty t where
+      pp :: t -> String
+      prec :: t -> Prec
+      prec _ = highest
+      assoc :: t -> Assoc
+      assoc _ = N
+
+    instance Pretty Ty where
+      pp (TyVar v) = v
+      pp t@(t1 :->: t2) = wrap L t t1 ++ " {\\to} " ++ wrap R t t2
+      prec (_ :->: _) = precArr
+      prec _ = highest
+      assoc (_ :->: _) = R
+      assoc _ = N
+
+    instance Pretty Tm where
+      pp (TmVar v) = v
+      pp (Lam x t e) = "\\lambda " ++ x ++ " {:} " ++ pp t ++ " . " ++ pp e
+      pp e@(e1 :@: e2) = wrap L e e1 ++ " " ++ wrap R e e2
+      prec (Lam {}) = precLam
+      prec (_ :@: _) = precApp
+      prec _ = highest
+      assoc (_ :@: _) = L
+      assoc _ = N
+
+    instance Pretty Ctx where
+      pp [] = "\\cdot"
+      pp ctx@(_:_) =
+        intercalate " , " [ x ++ " {:} " ++ pp t | (x,t) <- ctx ]
+
+By adding a "mode" argument, it would be easy to use the same pretty
+printer to print plain ASCII, which would be useful with other
+call-trace post processors, such as the (unfinished) [`UnixTree`
+processor](https://github.com/ntc2/haskell-call-trace/blob/73936592960aa4f72b8cbec3e0f8d643c75d2347/src/Debug/Trace/LogTree/Process/UnixTree.hs).
+
+Parsing
+----
+
+A parser is not essential to the example, but of course I did enter my
+example input terms as Haskell `Tm`s.  My Parsec parser is maybe too simple --
+I'm not using a `languageDef` and it's whitespace sensitive -- but it
+gets the job done:
+
+    type P a = Parsec String () a
+
+    parens :: P a -> P a
+    parens = Text.Parsec.between (char '(') (char ')')
+
+    tmVar , tyVar :: P String
+    tmVar = (:[]) <$> lower
+    tyVar = (:[]) <$> upper
+
+    tyAtom , arrs , ty :: P Ty
+    tyAtom = parens ty
+         <|> TyVar <$> tyVar
+    arrs = chainr1 tyAtom arrOp where
+      arrOp = string "->" *> pure (:->:)
+    ty = arrs
+
+    tmAtom , apps , lam , tm :: P Tm
+    tmAtom = parens tm
+         <|> TmVar <$> tmVar
+    apps = chainl1 tmAtom appOp where
+      appOp = pure (:@:)
+    lam = uncurry Lam <$> (char '\\' *> typing)
+                      <*> (char '.' *> tm)
+    tm = apps <|> lam
+
+    typing :: P (TmVar , Ty)
+    typing = (,) <$> tmVar
+                 <*> (char ':' *> ty)
+
+    ctx :: P Ctx
+    ctx = typing `sepBy` (char ',')
+
+To clarify what the input terms look like, here are the examples from
+the Makefile:
+
+    #           OUTFILE  CONTEXT                TERM
+    ./tm2latex.sh S.ctx  'x:P->Q->R,y:P->Q,z:P' 'xz(yz)'
+    ./tm2latex.sh S.lam  ''                     '\x:P->Q->R.\y:P->Q.\z:P.xz(yz)'
+    ./tm2latex.sh S.err  ''                     '\x:P->Q->R.\y:P->Q.\z:P.xzyz'
+    ./tm2latex.sh K.ctx  'x:P,y:Q'              'x'
+    ./tm2latex.sh K.lam  ''                     '\x:P.\y:Q.x'
+    ./tm2latex.sh I.ctx  'x:P'                  'x'
+    ./tm2latex.sh I.lam  ''                     '\x:P.x'
+    ./tm2latex.sh MP.ctx 'x:P,y:P->Q'           'yx'
+    ./tm2latex.sh MP.lam ''                     '\x:P.\y:P->Q.yx'
+    ./tm2latex.sh ZERO   ''                     '\s:A->A.\z:A.z'
+    ./tm2latex.sh SUCC   ''                     '\n:(A->A)->(A->A).\s:A->A.\z:A.s(nsz)'
+    ./tm2latex.sh ADD    '' '\m:(A->A)->(A->A).\n:(A->A)->(A->A).\s:A->A.\z:A.ms(nsz)'
+    ./tm2latex.sh MULT   '' '\m:(A->A)->(A->A).\n:(A->A)->(A->A).\s:A->A.\z:A.m(ns)z'
+    ./tm2latex.sh Y.err  ''                        '\f:A->A.(\x:A.f(xx))(\x:A.f(xx))'
+    ./tm2latex.sh Y.ctx  'a:A->(A->A),y:(A->A)->A' '\f:A->A.(\x:A.f(axx))(y(\x:A.f(axx)))'
+
+Latex document generation
+----
+
+The `./tm2latex.sh` script just calls `pdflatex` on the output of the
+Haskell STLC type checker. The type chedker post processes the call
+trace and then wraps it in a minimal Latex document:
+
+    putStr . unlines $
+      [ "\\documentclass[10pt]{article}"
+      , "\\usepackage{proof}"
+      , "\\usepackage{amsmath}"
+      , "\\usepackage[landscape]{geometry}"
+      , "\\usepackage[cm]{fullpage}"
+      -- The most slender font I could find:
+      -- http://www.tug.dk/FontCatalogue/iwonalc/
+      , "\\usepackage[light,condensed,math]{iwona}"
+      , "\\usepackage[T1]{fontenc}"
+      , "\\begin{document}"
+      , "\\tiny"
+      , "\\[" ++ tex ++ "\\]"
+      , "\\end{document}"
+      ]
+
+As you can see, most of the Latex is devoted to making the proof trees
+as small as possible; I plan to also write an ASCII proof tree post
+processor, which may be more useful in practice (i.e. for less trivial
+examples).
+
+I hope you find this useful, but it was fun to write in any case :D
