@@ -1,18 +1,21 @@
 #!/bin/bash
 
-if (($# != 3)); then
-  echo "usage: $0 OUT CTX TERM"                                               > /dev/stderr
-  echo ""                                                                     > /dev/stderr
-  echo "Run ./tmp/proof-tree MODE CTX TERM > OUT.MODE.tex for both modes and" > /dev/stderr
-  echo "process to PDF."                                                      > /dev/stderr
+if (($# != 4)); then
+  echo "usage: $0 GEN OUT CTX TERM"                                      > /dev/stderr
+  echo ""                                                                > /dev/stderr
+  echo "Run GEN MODE CTX TERM > tmp/GEN.OUT.MODE.tex for both modes and" > /dev/stderr
+  echo "process to PDF. The GEN should be tmp/proof-tree or"             > /dev/stderr
+  echo "tmp/self-contained-proof-tree"                                   > /dev/stderr
   exit 2
 fi
 
-out="$1"
-ctx="$2"
-tm="$3"
+gen="$1"
+out="$2"
+ctx="$3"
+tm="$4"
+file=tmp/"$(basename "$gen")"."$out"
 
 for mode in True False; do
-  ./tmp/proof-tree "$mode" "$ctx" "$tm" > tmp/"$out"."$mode".tex && \
-  make tmp/"$out"."$mode".pdf
+  "$gen" "$mode" "$ctx" "$tm" > "$file"."$mode".tex && \
+  make "$file"."$mode".pdf
 done

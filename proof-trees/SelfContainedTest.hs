@@ -34,6 +34,10 @@ there = "\\,\\uparrow"
 
 -- Return the inferred type---or error string if type inference
 -- fails---and the latex proof-tree presentation of the inference.
+--
+-- This produces different output than 'infer' in the error case: here
+-- all premises are always computed, whereas 'infer' stops at the
+-- first failing premise.
 inferProof :: Tm -> M (Either String Ty , String)
 inferProof tm@(Lam x t e) = do
   (et' , p) <- extendCtx x t . inferProof $ e
