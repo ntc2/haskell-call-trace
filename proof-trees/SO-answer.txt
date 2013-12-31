@@ -3,19 +3,34 @@ call-tracing library I'm working
 on](https://github.com/ntc2/haskell-call-trace).  In the context of
 tracing, an obvious way to create a proof tree is to trace a type
 checker and then format the trace as a natural-deduction proof.  To
-keep things simple my example is the [simply-typed lambda calculus
+keep things simple my example logic is the [simply-typed lambda
+calculus
 (STLC)](https://en.wikipedia.org/wiki/Simply_typed_lambda_calculus),
 which corresponds to the implicational fragment of propositional
 [intuitionistic
 logic](https://en.wikipedia.org/wiki/Intuitionistic_logic).
 
-I'm not using `HaTeX` or any other Haskell Latex library, because the
-Latex here is actually incredibly simple, but I did use `proofs.sty`.
+I am using `proofs.sty`, but not via `HaTeX` or any other Haskell
+Latex library. The Latex for proof trees is very simple and using a
+Haskell Latex library would just complicate things.
+
+I've written the proof-tree generation code twice:
+
+1. in a self-contained way, by writing a type checker that also
+   returns a proof tree;
+
+2. using my tracing library, by call-tracing a type checker and then
+   post processing the trace into a proof tree.
+
+Since you didn't ask about call-tracing libraries, you may be less
+interested in the call-trace based version, but I think it's
+interesting to compare both versions.
 
 Examples
 ====
 
-Let's start with some output examples. The first three are motivated
+Let's start with some output examples first, to see what all this gets us.
+The first three examples are motivated
 by [an axiom system for implicational propositional
 calculus](https://en.wikipedia.org/wiki/Implicational_propositional_calculus#Axiom_system);
 the first two also happen to correspond to [`S` and
@@ -34,7 +49,7 @@ the first two also happen to correspond to [`S` and
 
   ![Modus Ponens, without proof terms][1]
 
-The third axiom in that Wikipedia article (Pierce's law) is
+The third axiom in that Wikipedia article (Peirce's law) is
 non-constructive and so we can't prove it here.
 
 For a different kind of example, here's a failed type check of the [Y
@@ -60,7 +75,12 @@ unless otherwise noted.  I'm not including every line of code here;
 see that link if you want something you can actually build using GHC
 7.6.3.
 
-Type checking
+Most of the code -- the grammar, parser, and pretty printer -- is the
+same for both versions; only the type checkers and proof-tree
+generators differ.  All of the common code is in the [file just
+referenced](https://github.com/ntc2/haskell-call-trace/blob/73936592960aa4f72b8cbec3e0f8d643c75d2347/proof-trees/Test.hs).
+
+STLC grammar
 ----
 
 The STLC grammar in ASCII:
@@ -83,9 +103,12 @@ And the corresponding Haskell:
     data Ty = TyVar TyVar
             | Ty :->: Ty
       deriving (Eq , Show)
-    type Ctx = [(TmVar,Ty)
+    type Ctx = [(TmVar,Ty)]
 
-The STLC type checker in ASCII:
+Type checking + proof tree generation
+----
+
+Both versions implement the same abstract STLC type checker. In ASCII:
 
     (x:T) in C
     ---------- Axiom
@@ -99,7 +122,95 @@ The STLC type checker in ASCII:
     --------------------------------- -> Elimination
     C |- e e1 : T2
 
-And the corresponding Haskell:
+Version 1: self-contained with inline proof-tree generation
+----
+
+The full code for this version is
+[here](https://github.com/ntc2/haskell-call-trace/blob/1ecc3d91602875c0b0eb7c4b01534a33fa8daacc/proof-trees/SelfContainedTest.hs).
+
+The proof-tree generation happens in the type checker, but the actual
+proof-tree generation code is factored out into `addProof` and
+`conclusion`.
+
+### Type checking
+
+    -- The mode is 'True' if proof terms should be included.
+    data R = R { _ctx :: Ctx , _mode :: Bool }
+    type M a = Reader R a
+
+    extendCtx :: TmVar -> Ty -> M a -> M a
+    extendCtx x t = local extend where
+      extend r = r { _ctx = _ctx r ++ [(x,t)] }
+
+    -- These take the place of the inferred type when there is a type
+    -- error.
+    here , there :: String
+    here = "\\,!"
+    there = "\\,\\uparrow"
+
+    -- Return the inferred type---or error string if type inference
+    -- fails---and the latex proof-tree presentation of the inference.
+    --
+    -- This produces different output than 'infer' in the error case: here
+    -- all premises are always computed, whereas 'infer' stops at the
+    -- first failing premise.
+    inferProof :: Tm -> M (Either String Ty , String)
+    inferProof tm@(Lam x t e) = do
+      (et' , p) <- extendCtx x t . inferProof $ e
+      let et'' = (t :->:) <$> et'
+      addProof et'' [p] tm
+    inferProof tm@(TmVar x) = do
+      mt <- lookup x <$> asks _ctx
+      let et = maybe (Left here) Right mt
+      addProof et [] tm
+    inferProof tm@(e :@: e1) = do
+      (et , p) <- inferProof e
+      (et1 , p1) <- inferProof e1
+      case (et , et1) of
+        (Right t , Right t1) ->
+          case t of
+            t1' :->: t2 | t1' == t1 -> addProof (Right t2)   [p , p1] tm
+            _ ->                       addProof (Left here)  [p , p1] tm
+        _ ->                           addProof (Left there) [p , p1] tm
+
+### Proof tree generation
+
+The `addProof` corresponds to `proofTree` in the other version:
+
+    -- Given the inferred type, the proof-trees for all premise inferences
+    -- (subcalls), and the input term, annotate the inferred type with a
+    -- result proof tree.
+    addProof :: Either String Ty -> [String] -> Tm -> M (Either String Ty , String)
+    addProof et premises tm = do
+      R { _mode , _ctx } <- ask
+      let (judgment , rule) = conclusion _mode _ctx tm et
+      let tex = "\\infer[ " ++ rule ++ " ]{ " ++
+                judgment ++ " }{ " ++
+                intercalate " & " premises ++ " }"
+      return (et , tex)
+
+The code for `conclusion` is common to both versions:
+
+    conclusion :: Mode -> Ctx -> Tm -> Either String Ty -> (String , String)
+    conclusion mode ctx tm e = (judgment mode , rule tm)
+      where
+        rule (TmVar _) = "\\textsc{Axiom}"
+        rule (Lam {}) = "\\to \\text{I}"
+        rule (_ :@: _) = "\\to \\text{E}"
+
+        tyOrError = either id pp e
+
+        judgment True = pp ctx ++ " \\vdash " ++ pp tm ++ " : " ++ tyOrError
+        judgment False = ppCtxOnlyTypes ctx ++ " \\vdash " ++ tyOrError
+
+
+Version 2: via call-tracing, with proof-tree generation as post processing
+----
+
+Here the type checker is not even aware of proof-tree generation, and
+adding call-tracing is just one line.
+
+### Type checking
 
     type Mode = Bool
     type Stream = LogStream (ProofTree Mode)
@@ -140,8 +251,7 @@ together with all logged subcalls (here only to `infer`).  It would be
 easy to manually write such logging code for `infer`, but it's nice
 that with the library you don't have to.
 
-Proof-tree generation
-----
+### Proof-tree generation
 
 To generate the Latex proof trees, we implement `ProofTree` to post
 process `infer`'s call trace.  The library provides a `proofTree`
@@ -162,29 +272,16 @@ judgments will be formatted:
           ctx = _before' t
           error = maybe "\\,!" (const "\\,\\uparrow") how
 
-    conclusion :: Mode -> Ctx -> Tm -> Either String Ty -> (String , String)
-    conclusion mode ctx tm e = (judgment mode , rule tm)
-      where
-        rule (TmVar _) = "\\textsc{Axiom}"
-        rule (Lam {}) = "\\to \\text{I}"
-        rule (_ :@: _) = "\\to \\text{E}"
-
-        tyOrError = either id pp e
-
-        judgment True = pp ctx ++ " \\vdash " ++ pp tm ++ " : " ++ tyOrError
-        judgment False = ppCtxOnlyTypes ctx ++ " \\vdash " ++ tyOrError
-
 The `pp` calls are to a user defined pretty printer; obviously, the
 library can't know how to pretty print your data types.
 
-Because calls can be erroneous -- the library detects error; you don't
-have to be in an error monad -- we have to say how to format
+Because calls can be erroneous -- the library detects errors
+-- we have to say how to format
 successful and failing calls.  Refer to the Y-combinator example above
 for an example a failing type check, corresponding to the
 `callAndError` case here.
 
-If we weren't using the library, it would still be easy to generate
-the proof trees.  Indeed, the [library's `proofTree`
+The [library's `proofTree`
 function](https://github.com/ntc2/haskell-call-trace/blob/73936592960aa4f72b8cbec3e0f8d643c75d2347/src/Debug/Trace/LogTree/Process/ProofTree.hs)
 is quite simple: it builds a `proofs.sty` proof tree with the current
 call as conclusion, and the subcalls as premises:
@@ -210,6 +307,8 @@ since no rule has more than five premises (the limit for
 
 Pretty printing
 ----
+
+Now we return to code that is common between both versions.
 
 The pretty printer that defines the `pp` used above is rather long --
 it handles precedence and associativity, and is written in a way that
@@ -284,8 +383,8 @@ processor](https://github.com/ntc2/haskell-call-trace/blob/73936592960aa4f72b8cb
 Parsing
 ----
 
-A parser is not essential to the example, but of course I did enter my
-example input terms as Haskell `Tm`s.  My Parsec parser is maybe too simple --
+A parser is not essential to the example, but of course I did not enter the
+example input terms directly as Haskell `Tm`s.  The parser is maybe too simple --
 I'm not using a `languageDef` and it's whitespace sensitive -- but it
 gets the job done:
 
@@ -345,10 +444,10 @@ Latex document generation
 ----
 
 The `./tm2latex.sh` script just calls `pdflatex` on the output of the
-Haskell STLC type checker. The type chedker post processes the call
-trace and then wraps it in a minimal Latex document:
+Haskell programs described above. The Haskell programs produce the proof
+tree and then wrap it in a minimal Latex document:
 
-    putStr . unlines $
+    unlines
       [ "\\documentclass[10pt]{article}"
       , "\\usepackage{proof}"
       , "\\usepackage{amsmath}"
@@ -366,7 +465,16 @@ trace and then wraps it in a minimal Latex document:
 
 As you can see, most of the Latex is devoted to making the proof trees
 as small as possible; I plan to also write an ASCII proof tree post
-processor, which may be more useful in practice (i.e. for less trivial
-examples).
+processor, which may be more useful in practice when the examples are
+larger.
 
-I hope you find this useful, but it was fun to write in any case :D
+Conclusion
+====
+
+As always, it takes a bit of code to write a parser, type checker, and
+pretty printer.  On top of that, adding proof-tree generation is
+pretty simple in both versions.  This is a fun toy example, but I
+expect to do something similar in the context of a "real"
+unification-based type checker for a dependently-typed language; there
+I expect call tracing and proof-tree generation (in ASCII) to provide
+significant help in debugging the type checker.
