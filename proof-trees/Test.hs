@@ -210,8 +210,26 @@ pipeline mode ctx =
   . infer
   . callParser tm
 
-main :: IO ()
-main = do
+makeDoc :: String -> String
+makeDoc tex = unlines
+  [ "\\documentclass[10pt]{article}"
+  , "\\usepackage{proof}"
+  , "\\usepackage{amsmath}"
+  , "\\usepackage[landscape]{geometry}"
+  , "\\usepackage[cm]{fullpage}"
+  -- The most slender font I could find:
+  -- http://www.tug.dk/FontCatalogue/iwonalc/
+  , "\\usepackage[light,condensed,math]{iwona}"
+  , "\\usepackage[T1]{fontenc}"
+  , "\\begin{document}"
+  , "\\tiny"
+  , "\\[" ++ tex ++ "\\]"
+  , "\\end{document}"
+  ]
+
+-- Reusable main.
+mainWith :: (Mode -> Ctx -> String -> String) -> IO ()
+mainWith pipeline = do
   args <- getArgs
   when (not $ length args == 3) $ do
     err "usage: $0 MODE CTX TERM"
@@ -221,20 +239,9 @@ main = do
   let mode = read $ args !! 0
   let ctx' = callParser ctx $ args !! 1
   let tex = pipeline mode ctx' $ args !! 2
-  putStr . unlines $
-    [ "\\documentclass[10pt]{article}"
-    , "\\usepackage{proof}"
-    , "\\usepackage{amsmath}"
-    , "\\usepackage[landscape]{geometry}"
-    , "\\usepackage[cm]{fullpage}"
-    -- The most slender font I could find:
-    -- http://www.tug.dk/FontCatalogue/iwonalc/
-    , "\\usepackage[light,condensed,math]{iwona}"
-    , "\\usepackage[T1]{fontenc}"
-    , "\\begin{document}"
-    , "\\tiny"
-    , "\\[" ++ tex ++ "\\]"
-    , "\\end{document}"
-    ]
+  putStr . makeDoc $ tex
   where
     err = hPutStrLn stderr
+
+main :: IO ()
+main = mainWith pipeline
