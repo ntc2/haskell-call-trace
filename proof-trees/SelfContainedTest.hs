@@ -10,15 +10,13 @@ module SelfContainedTest where
 import Control.Applicative ((<$>))
 import Control.Monad.Reader
 import Data.List (intercalate)
-import System.IO (hPutStrLn , stderr)
-import System.Environment (getArgs)
-import System.Exit (exitWith, ExitCode(..))
 
 import Test hiding (main , pipeline , M , Assoc(..) , runM)
 
 ----------------------------------------------------------------
 -- Type checker + proof builder.
 
+-- The mode is 'True' if proof terms should be included.
 data R = R { _ctx :: Ctx , _mode :: Bool }
 type M a = Reader R a
 runM :: R -> M a -> a
@@ -28,10 +26,14 @@ extendCtx :: TmVar -> Ty -> M a -> M a
 extendCtx x t = local extend where
   extend r = r { _ctx = _ctx r ++ [(x,t)] }
 
+-- These take the place of the inferred type when there is a type
+-- error.
 here , there :: String
 here = "\\,!"
 there = "\\,\\uparrow"
 
+-- Return the inferred type---or error string if type inference
+-- fails---and the latex proof-tree presentation of the inference.
 inferProof :: Tm -> M (Either String Ty , String)
 inferProof tm@(Lam x t e) = do
   (et' , p) <- extendCtx x t . inferProof $ e
@@ -51,6 +53,9 @@ inferProof tm@(e :@: e1) = do
         _ ->                       addProof (Left here)  [p , p1] tm
     _ ->                           addProof (Left there) [p , p1] tm
 
+-- Given the inferred type, the proof-trees for all premise inferences
+-- (subcalls), and the input term, annotate the inferred type with a
+-- result proof tree.
 addProof :: Either String Ty -> [String] -> Tm -> M (Either String Ty , String)
 addProof et premises tm = do
   R { _mode , _ctx } <- ask
@@ -71,30 +76,4 @@ pipeline mode ctx =
   . callParser tm
 
 main :: IO ()
-main = do
-  args <- getArgs
-  when (not $ length args == 3) $ do
-    err "usage: $0 MODE CTX TERM"
-    err ""
-    err "The MODEs are 'True' for show proof terms and 'False' for only show types."
-    exitWith (ExitFailure 2)
-  let mode = read $ args !! 0
-  let ctx' = callParser ctx $ args !! 1
-  let tex = pipeline mode ctx' $ args !! 2
-  putStr . unlines $
-    [ "\\documentclass[10pt]{article}"
-    , "\\usepackage{proof}"
-    , "\\usepackage{amsmath}"
-    , "\\usepackage[landscape]{geometry}"
-    , "\\usepackage[cm]{fullpage}"
-    -- The most slender font I could find:
-    -- http://www.tug.dk/FontCatalogue/iwonalc/
-    , "\\usepackage[light,condensed,math]{iwona}"
-    , "\\usepackage[T1]{fontenc}"
-    , "\\begin{document}"
-    , "\\tiny"
-    , "\\[" ++ tex ++ "\\]"
-    , "\\end{document}"
-    ]
-  where
-    err = hPutStrLn stderr
+main = mainWith pipeline
