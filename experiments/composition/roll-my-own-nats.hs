@@ -3,18 +3,19 @@
 {-# LANGUAGE KindSignatures #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE TemplateHaskell #-}
 
 module RollMyOwnNats where
 
 import Data.List (genericIndex)
+
+import RollMyOwnLiterals
 
 -- import Data.Proxy
 data Proxy (n::Nat) = Proxy
 
 ----------------------------------------------------------------
 -- Stuff that works.
-
-data Nat = Z | S Nat
 
 class Compose (n::Nat) b b' t t' where
   compose :: Proxy n -> (b -> b') -> t -> t'
@@ -39,8 +40,10 @@ myTwo :: Nat
 myTwo = 2
 -- But GHC thinks my type-level nat literal is a 'GHC.TypeLits.Nat',
 -- even when I say otherwise:
+{-
 compBinRel' :: (a -> a -> Bool) -> (a -> a -> Bool)
 compBinRel' = compose (Proxy::Proxy (2::Nat)) not
+-}
 {-
     Kind mis-match
     An enclosing kind signature specified kind `Nat',
@@ -50,3 +53,5 @@ compBinRel' = compose (Proxy::Proxy (2::Nat)) not
       `(Proxy :: Proxy (2 :: Nat))'
     In the expression: compose (Proxy :: Proxy (2 :: Nat)) not
 -}
+compBinRel'' :: (a -> a -> Bool) -> (a -> a -> Bool)
+compBinRel'' = compose (Proxy::Proxy $(nat 2)) not
