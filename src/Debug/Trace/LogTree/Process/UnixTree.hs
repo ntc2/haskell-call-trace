@@ -6,8 +6,16 @@
 
 module Debug.Trace.LogTree.Process.UnixTree where
 
+import Control.Exception.Base (assert)
+
 import Debug.Trace.LogTree
 
+----------------------------------------------------------------
+
+-- The instances return header and footer lines for the call.  E.g.,
+-- the header can include the initial state, function name, and
+-- arguments, and the footer can include the return value and final
+-- state.
 class UnixTree call where
   callAndReturn :: LogTree UnixTree call "CallAndReturn" ->
     ([String] , [String])
@@ -16,25 +24,70 @@ class UnixTree call where
 
 unixTree :: Ex2T (LogTree UnixTree) -> [String]
 unixTree (Ex2T t@(CallAndReturn {})) =
-  [(enter !! 0) ++ " = " ++ (exit !! 0)] ++ map ('\t':) calls
+  layer' enter calls exit
   where
     (enter , exit) = callAndReturn t
-    calls = concatMap unixTree (_children t)
+    calls = map unixTree (_children t)
+    layer' = layer ("┐" , "│") ("├─" , "│ " , "└─" , "  ") ("╘" , " ")
 unixTree (Ex2T t@(CallAndError {})) =
-  [(enter !! 0) ++ " = " ++ (err !! 0)] ++ map ('\t':) calls
+  layer' enter calls exit
   where
-    (enter , err) = callAndError t
-    calls = concatMap unixTree (_children' t ++
-                                maybe [] (:[]) (_how t))
+    (enter , exit) = callAndError t
+    calls = map unixTree (_children' t ++
+                          maybe [] (:[]) (_how t))
+    layer' = layer ("┐" , "│") ("├─" , "│ " , "└─" , "  ") ("╘" , " ")
 
--- Fancy line drawing characters copied from the 'tree' program. File
--- color.c in version 1.6.0, from
--- http://mama.indstate.edu/users/ice/tree/. I believe I can replace
--- the "\302\240" by spaces in the first command, and can probably
--- embed the fancy chars directly in the haskell program.  Use 'print'
--- in the shell to convert.
+----------------------------------------------------------------
+
+-- Prefix first line with 'first' and rest of lines with 'rest'.
+prefix :: String -> String -> [String] -> [String]
+prefix _ _ [] = []
+prefix first rest (l:ls) = (first ++ l) : map (rest ++) ls
+
+-- Layer a header 'hs', body 'bss', and footer 'fs'.
+--
+-- The 'bLastFirst' and 'bLastRest' are used only if the footer is
+-- empty; otherwise, 'bFirst' and 'bRest' are used for all body lines.
+--
+-- Assumes the header is non-empty.
+layer :: (String , String) -> (String , String , String , String) -> (String , String) ->
+         [String] -> [[String]] -> [String] -> [String]
+layer (hFirst , hRest) (bFirst , bRest , bLastFirst , bLastRest) (fFirst , fRest) hs bss fs =
+  hs' ++ concat bss' ++ fs'
+  where
+    hs' = assert (not . null $ hs) $ prefix hFirst hRest hs
+    fs' = prefix fFirst fRest fs
+    bss' = case bss of
+      [] -> []
+      _  ->
+        if null fs
+        -- Empty footer: prefix last group of body lines specially.
+        then map (prefix bFirst bRest) (init bss) ++
+             [prefix bLastFirst bLastRest (last bss)]
+        -- Non-empty footer: prefix all body groups equally.
+        else map (prefix bFirst bRest) bss
+
+----------------------------------------------------------------
+
+-- https://en.wikipedia.org/wiki/Box-drawing_character
+--
+-- The fancy line drawing characters in the 'tree' program are in file
+-- color.c in version 1.6.0; see
+-- http://mama.indstate.edu/users/ice/tree/.
 {-
-{ utf8,        "\342\224\202\302\240\302\240",
-    "\342\224\234\342\224\200\342\224\200", "\342\224\224\342\224\200\342\224\200", "\302\251" },
-{ viscii,      "|  ",              "|--",            "`--",            "\371"     },
+"┐"
+
+"│"
+
+"├"
+
+"╘"
+
+"└"
+
+"─"
+
+" "
 -}
+
+----------------------------------------------------------------
