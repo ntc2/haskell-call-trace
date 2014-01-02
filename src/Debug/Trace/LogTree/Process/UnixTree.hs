@@ -8,22 +8,6 @@ module Debug.Trace.LogTree.Process.UnixTree where
 
 import Debug.Trace.LogTree
 
--- First restrict to one log class at a time, then generalize to something like:
---
---   class (c :=>: UnixTree c tag , Signature call) => UnixTree c (tag::Symbol) call where
-{-
-
-XXX: this inability to use type sigs is *really* annoying. I wonder if this is easy to fix?
-
-UPDATE: there is a moderately easy fix: use GADT type signatures and
-restrict to a particular constructor. See
-:/experiments/using-gadts-to-avoid-signatures.hs.
-
-class Signature call => UnixTree call where
-  callAndReturn' :: callAndReturnTy c call ([String],[String])
-  callAndError'  :: callAndErrorTy  c call [String]
--}
-
 class UnixTree call where
   callAndReturn :: LogTree UnixTree call "CallAndReturn" ->
     ([String] , [String])
