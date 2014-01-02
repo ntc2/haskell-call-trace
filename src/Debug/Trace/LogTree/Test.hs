@@ -88,7 +88,21 @@ f'' 5 = do
   fail ""
 f'' n = do
   r <- fSimple' (n - 1)
-  return $ "X" ++ r
+  s <- gSimple "X" r
+  return s
+
+type GTy = String -> String -> MaybeT (Writer (LogStream UnixTree)) String
+gSimple , g'' :: GTy
+gSimple = simpleLogger (Proxy::Proxy "g") (return ()) (return ()) g''
+g'' s1 s2 = return $ s1 ++ s2
+
+type HTy = Int -> MaybeT (Writer (LogStream UnixTree)) ()
+hSimple , h'' :: HTy
+hSimple = simpleLogger (Proxy::Proxy "h") (return ()) (return ()) h''
+h'' n = do
+  _ <- fSimple' n
+  _ <- fSimple' n
+  return ()
 
 -- Nice: if you forget an instance the error message tells you exactly
 -- what the sig is of course :D
@@ -104,7 +118,40 @@ instance UnixTree (Proxy (SimpleCall "f" () FTy' ())) where
       (arg,()) = _arg' t
       how = _how t
 
-testUnixTree :: FTy' -> Int -> String
+instance UnixTree (Proxy (SimpleCall "g" () GTy ())) where
+  callAndReturn t =
+    ([show before , "g " ++ show s1 ++ " " ++ show s2] , [show ret , show after])
+    where
+      before = _before t
+      (s2,(s1,())) = _arg t
+      ret = _ret t
+      after = _after t
+  callAndError t =
+    (["g " ++ show s1 ++ " " ++ show s2] , [maybe "<error: here>" (const "<error: there>") how])
+    where
+      (s2,(s1,())) = _arg' t
+      how = _how t
+
+instance UnixTree (Proxy (SimpleCall "h" () HTy ())) where
+  callAndReturn t =
+    ([show before , "h " ++ show n ++ " = " ++ show ret , show after] , [])
+    where
+      before = _before t
+      (n,()) = _arg t
+      ret = _ret t
+      after = _after t
+  callAndError t =
+    ( [ show before
+      , "h " ++ show n ++ " = " ++
+        maybe "<error: here>" (const "<error: there>") how ]
+    , [] )
+    where
+      before = _before' t
+      (n,()) = _arg' t
+      how = _how t
+
+testUnixTree :: (a -> MaybeT (Writer (LogStream UnixTree)) b)
+             -> a -> String
 testUnixTree f = either show (unlines . unixTree . head)
                . stream2Forest
                . execWriter
@@ -134,5 +181,10 @@ main = do
   putStrLn $ testUnixTree fSimple' 4
   putStrLn ""
   putStrLn $ testUnixTree fSimple' 6
+  putStrLn ""
+  putStrLn $ testUnixTree hSimple 4
+  putStrLn ""
+  putStrLn $ testUnixTree hSimple 6
+
 
 ----------------------------------------------------------------

@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -fno-warn-name-shadowing #-}
+
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE GADTs #-}
@@ -28,14 +30,14 @@ unixTree (Ex2T t@(CallAndReturn {})) =
   where
     (enter , exit) = callAndReturn t
     calls = map unixTree (_children t)
-    layer' = layer ("┐" , "│") ("├─" , "│ " , "└─" , "  ") ("╘" , " ")
+    layer' = layer ("┬ " , "├ ") ("├──" , "│  " , "└──" , "   ") ("╞ " , "╘ ")
 unixTree (Ex2T t@(CallAndError {})) =
   layer' enter calls exit
   where
     (enter , exit) = callAndError t
     calls = map unixTree (_children' t ++
                           maybe [] (:[]) (_how t))
-    layer' = layer ("┐" , "│") ("├─" , "│ " , "└─" , "  ") ("╘" , " ")
+    layer' = layer ("┬ " , "├ ") ("├──" , "│  " , "└──" , "   ") ("╞ " , "╘ ")
 
 ----------------------------------------------------------------
 
@@ -43,6 +45,10 @@ unixTree (Ex2T t@(CallAndError {})) =
 prefix :: String -> String -> [String] -> [String]
 prefix _ _ [] = []
 prefix first rest (l:ls) = (first ++ l) : map (rest ++) ls
+
+-- Like 'prefix', but instead initial and last line are distinguished.
+prefix' :: String -> String -> [String] -> [String]
+prefix' init last = reverse . prefix last init . reverse
 
 -- Layer a header 'hs', body 'bss', and footer 'fs'.
 --
@@ -52,11 +58,11 @@ prefix first rest (l:ls) = (first ++ l) : map (rest ++) ls
 -- Assumes the header is non-empty.
 layer :: (String , String) -> (String , String , String , String) -> (String , String) ->
          [String] -> [[String]] -> [String] -> [String]
-layer (hFirst , hRest) (bFirst , bRest , bLastFirst , bLastRest) (fFirst , fRest) hs bss fs =
+layer (hFirst , hRest) (bFirst , bRest , bLastFirst , bLastRest) (fInit , fLast) hs bss fs =
   hs' ++ concat bss' ++ fs'
   where
     hs' = assert (not . null $ hs) $ prefix hFirst hRest hs
-    fs' = prefix fFirst fRest fs
+    fs' = prefix' fInit fLast fs
     bss' = case bss of
       [] -> []
       _  ->
@@ -77,11 +83,15 @@ layer (hFirst , hRest) (bFirst , bRest , bLastFirst , bLastRest) (fFirst , fRest
 {-
 "┐"
 
+"┬"
+
 "│"
 
 "├"
 
 "╘"
+
+"╞"
 
 "└"
 
