@@ -13,6 +13,8 @@
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE RankNTypes #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 
 module Debug.Trace.LogTree.Test where
 
@@ -105,6 +107,41 @@ h'' n = do
   _ <- fSimple' n
   return ()
 
+-- XXX: move this somewhere else.
+--
+-- Heterogeneous fold.
+--
+-- This is a step towards writing generic instances of post processors
+-- which use a pretty printing function in the class 'c' (e.g. 'Show')
+-- to format the '_arg's.
+
+class HFold c a t where
+  hfoldl :: Proxy c -> (forall t'. c t' => a -> t' -> a) -> a -> t -> a
+  hfoldr :: Proxy c -> (forall t'. c t' => t' -> a -> a) -> a -> t -> a
+
+instance HFold c a () where
+  hfoldl _ _ x0 _ = x0
+  hfoldr _ _ x0 _ = x0
+
+instance (c t' , HFold c a t) => HFold c a (t',t) where
+  hfoldl p f x0 (x , xs) = hfoldl p f (x0 `f` x) xs
+  hfoldr p f x0 (x , xs) = x `f` hfoldr p f x0 xs
+
+-- This version still needs 'c' instantiated, and now there's no easy
+-- way to do it.p
+{-
+class Hfold c a t where
+  hfoldr :: (forall t'. c t' => t' -> a -> a) -> a -> t -> a
+
+instance Hfold c a () where
+  hfoldr _ x0 _ = x0
+
+instance (c t' , Hfold c a t) => Hfold c a (t',t) where
+  hfoldr f x0 (x , xs) =
+    x `f` (hfoldr::(forall t'. c t' => t' -> a -> a) -> a -> t -> a)
+          f x0 xs
+-}
+
 -- Nice: if you forget an instance the error message tells you exactly
 -- what the sig is of course :D
 instance UnixTree (Proxy (SimpleCall "f" () FTy' ())) where
@@ -121,9 +158,9 @@ instance UnixTree (Proxy (SimpleCall "f" () FTy' ())) where
 
 instance UnixTree (Proxy (SimpleCall "g" () GTy ())) where
   callAndReturn (CallAndReturn {..}) =
-    ([show _before , "g " ++ show s1 ++ " " ++ show s2] , [show _ret , show _after])
-    where
-      (s2,(s1,())) = _arg
+    ( [ show _before
+      , hfoldl (Proxy::Proxy Show) (\s x -> s ++ " " ++ show x) "g" _arg]
+    , [ show _ret , show _after ] )
   callAndError (CallAndError {..}) =
     (["g " ++ show s1 ++ " " ++ show s2] , [maybe "<error: here>" (const "<error: there>") _how])
     where
