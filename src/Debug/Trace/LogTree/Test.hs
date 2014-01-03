@@ -12,6 +12,7 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE GADTs #-}
+{-# LANGUAGE RecordWildCards #-}
 
 module Debug.Trace.LogTree.Test where
 
@@ -119,36 +120,27 @@ instance UnixTree (Proxy (SimpleCall "f" () FTy' ())) where
       how = _how t
 
 instance UnixTree (Proxy (SimpleCall "g" () GTy ())) where
-  callAndReturn t =
-    ([show before , "g " ++ show s1 ++ " " ++ show s2] , [show ret , show after])
+  callAndReturn (CallAndReturn {..}) =
+    ([show _before , "g " ++ show s1 ++ " " ++ show s2] , [show _ret , show _after])
     where
-      before = _before t
-      (s2,(s1,())) = _arg t
-      ret = _ret t
-      after = _after t
-  callAndError t =
-    (["g " ++ show s1 ++ " " ++ show s2] , [maybe "<error: here>" (const "<error: there>") how])
+      (s2,(s1,())) = _arg
+  callAndError (CallAndError {..}) =
+    (["g " ++ show s1 ++ " " ++ show s2] , [maybe "<error: here>" (const "<error: there>") _how])
     where
-      (s2,(s1,())) = _arg' t
-      how = _how t
+      (s2,(s1,())) = _arg'
 
 instance UnixTree (Proxy (SimpleCall "h" () HTy ())) where
-  callAndReturn t =
-    ([show before , "h " ++ show n ++ " = " ++ show ret , show after] , [])
+  callAndReturn (CallAndReturn {..}) =
+    ([show _before , "h " ++ show n ++ " = " ++ show _ret , show _after] , [])
     where
-      before = _before t
-      (n,()) = _arg t
-      ret = _ret t
-      after = _after t
-  callAndError t =
-    ( [ show before
+      (n,()) = _arg
+  callAndError (CallAndError {..}) =
+    ( [ show _before'
       , "h " ++ show n ++ " = " ++
-        maybe "<error: here>" (const "<error: there>") how ]
+        maybe "<error: here>" (const "<error: there>") _how ]
     , [] )
     where
-      before = _before' t
-      (n,()) = _arg' t
-      how = _how t
+      (n,()) = _arg'
 
 testUnixTree :: (a -> MaybeT (Writer (LogStream UnixTree)) b)
              -> a -> String
