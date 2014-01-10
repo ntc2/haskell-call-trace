@@ -30,14 +30,15 @@ unixTree (Ex2T t@(CallAndReturn {})) =
   where
     (enter , exit) = callAndReturn t
     calls = map unixTree (_children t)
-    layer' = layer ("┬ " , "├ ") ("├──" , "│  " , "└──" , "   ") ("╞ " , "╘ ")
 unixTree (Ex2T t@(CallAndError {})) =
   layer' enter calls exit
   where
     (enter , exit) = callAndError t
     calls = map unixTree (_children' t ++
                           maybe [] (:[]) (_how t))
-    layer' = layer ("┬ " , "├ ") ("├──" , "│  " , "└──" , "   ") ("╞ " , "╘ ")
+
+layer' :: [String] -> [[String]] -> [String] -> [String]
+layer' = layer ("┬ " , "├ ") ("├─" , "│ " , "└─" , "  ") ("╞ " , "╘ ")
 
 ----------------------------------------------------------------
 
