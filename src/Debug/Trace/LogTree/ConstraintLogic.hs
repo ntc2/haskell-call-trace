@@ -15,7 +15,7 @@
 {-# LANGUAGE RankNTypes #-}
 
 module Debug.Trace.LogTree.ConstraintLogic
-  ((:&&:) , Implies' , coerceLogTree')
+  ((:&&:) , Implies' , coerceLogTree' , H(..))
 where
 
 import GHC.Prim (Constraint)
@@ -326,6 +326,7 @@ instance C' cs c => C'' cs c where
 ----------------------------------------------------------------
 -- Coercion of constraints.
 
+-- XXX: move this somewhere else, maybe with the 'HetCall' code.
 data H c where
   H :: c a => a -> H c
 
