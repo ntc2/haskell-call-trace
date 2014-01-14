@@ -115,17 +115,23 @@ h'' n = do
 -- which use a pretty printing function in the class 'c' (e.g. 'Show')
 -- to format the '_arg's.
 
-class HFold c a t where
+class HFold c t where
   hfoldl :: Proxy c -> (forall t'. c t' => a -> t' -> a) -> a -> t -> a
   hfoldr :: Proxy c -> (forall t'. c t' => t' -> a -> a) -> a -> t -> a
 
-instance HFold c a () where
+instance HFold c () where
   hfoldl _ _ x0 _ = x0
   hfoldr _ _ x0 _ = x0
 
-instance (c t' , HFold c a t) => HFold c a (t',t) where
+instance (c t' , HFold c t) => HFold c (t',t) where
   hfoldl p f x0 (x , xs) = hfoldl p f (x0 `f` x) xs
   hfoldr p f x0 (x , xs) = x `f` hfoldr p f x0 xs
+
+hmap :: HFold c t => Proxy c -> (forall t'. c t' => t' -> a) -> t -> [a]
+hmap p f = hfoldr p (\x as -> f x : as) []
+
+formatCall :: HFold Show t => String -> t -> String
+formatCall f xs = unwords $ f : hmap (Proxy::Proxy Show) show xs
 
 -- This version still needs 'c' instantiated, and now there's no easy
 -- way to do it.p
@@ -146,14 +152,12 @@ instance (c t' , Hfold c a t) => Hfold c a (t',t) where
 -- what the sig is of course :D
 instance UnixTree (Proxy (SimpleCall "f" () FTy' ())) where
   callAndReturn t =
-    (["f " ++ show arg] , [show ret])
+    ([formatCall "f" $ _arg t] , [show ret])
     where
-      (arg,()) = _arg t
       ret = _ret t
   callAndError t =
-    (["f " ++ show arg] , [maybe "<error: here>" (const "<error: there>") how])
+    ([formatCall "f" $ _arg' t] , [maybe "<error: here>" (const "<error: there>") how])
     where
-      (arg,()) = _arg' t
       how = _how t
 
 instance UnixTree (Proxy (SimpleCall "g" () GTy ())) where
@@ -162,9 +166,7 @@ instance UnixTree (Proxy (SimpleCall "g" () GTy ())) where
       , hfoldl (Proxy::Proxy Show) (\s x -> s ++ " " ++ show x) "g" _arg]
     , [ show _ret , show _after ] )
   callAndError (CallAndError {..}) =
-    (["g " ++ show s1 ++ " " ++ show s2] , [maybe "<error: here>" (const "<error: there>") _how])
-    where
-      (s2,(s1,())) = _arg'
+    ([formatCall (name _call') _arg'] , [maybe "<error: here>" (const "<error: there>") _how])
 
 instance UnixTree (Proxy (SimpleCall "h" () HTy ())) where
   callAndReturn (CallAndReturn {..}) =
