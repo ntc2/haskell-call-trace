@@ -17,6 +17,9 @@ import Debug.Trace.LogTree.Simple.Curry
 ----------------------------------------------------------------
 -- A generic call-signature type for a generic logger.
 
+-- A 'SimpleCall' is tagged with a function name so that we can
+-- distinguish functions with the same 'before', 'sig', and 'after'
+-- types.
 data SimpleCall (tag::Symbol) before sig after
 
 -- The 'GHC.TypeLits' docs are at
