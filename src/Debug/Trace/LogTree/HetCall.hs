@@ -70,3 +70,29 @@ heterogenize p1 p2 (Ex2T (CallAndError {..})) =
                      (fmap (heterogenize p1 p2) _how))
 
 ----------------------------------------------------------------
+
+-- XXX: move this somewhere else.
+--
+-- Heterogeneous fold.
+--
+-- This is a step towards writing generic instances of post processors
+-- which use a pretty printing function in the class 'c' (e.g. 'Show')
+-- to format the '_arg's.
+
+class HFold c t where
+  hfoldl :: Proxy c -> (forall t'. c t' => a -> t' -> a) -> a -> t -> a
+  hfoldr :: Proxy c -> (forall t'. c t' => t' -> a -> a) -> a -> t -> a
+
+instance HFold c () where
+  hfoldl _ _ x0 _ = x0
+  hfoldr _ _ x0 _ = x0
+
+instance (c t' , HFold c t) => HFold c (t',t) where
+  hfoldl p f x0 (x , xs) = hfoldl p f (x0 `f` x) xs
+  hfoldr p f x0 (x , xs) = x `f` hfoldr p f x0 xs
+
+hmap :: HFold c t => Proxy c -> (forall t'. c t' => t' -> a) -> t -> [a]
+hmap p f = hfoldr p (\x as -> f x : as) []
+
+formatCall :: HFold Show t => String -> t -> String
+formatCall f xs = unwords $ f : hmap (Proxy::Proxy Show) show xs

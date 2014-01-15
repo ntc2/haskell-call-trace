@@ -24,6 +24,7 @@ import Data.Proxy
 import Text.Parsec
 
 import Debug.Trace.LogTree
+import Debug.Trace.LogTree.HetCall
 import Debug.Trace.LogTree.Process.UnixTree
 import Debug.Trace.LogTree.Simple.Logger
 import Debug.Trace.LogTree.Simple.Call
@@ -106,47 +107,6 @@ h'' n = do
   _ <- fSimple' n
   _ <- fSimple' n
   return ()
-
--- XXX: move this somewhere else.
---
--- Heterogeneous fold.
---
--- This is a step towards writing generic instances of post processors
--- which use a pretty printing function in the class 'c' (e.g. 'Show')
--- to format the '_arg's.
-
-class HFold c t where
-  hfoldl :: Proxy c -> (forall t'. c t' => a -> t' -> a) -> a -> t -> a
-  hfoldr :: Proxy c -> (forall t'. c t' => t' -> a -> a) -> a -> t -> a
-
-instance HFold c () where
-  hfoldl _ _ x0 _ = x0
-  hfoldr _ _ x0 _ = x0
-
-instance (c t' , HFold c t) => HFold c (t',t) where
-  hfoldl p f x0 (x , xs) = hfoldl p f (x0 `f` x) xs
-  hfoldr p f x0 (x , xs) = x `f` hfoldr p f x0 xs
-
-hmap :: HFold c t => Proxy c -> (forall t'. c t' => t' -> a) -> t -> [a]
-hmap p f = hfoldr p (\x as -> f x : as) []
-
-formatCall :: HFold Show t => String -> t -> String
-formatCall f xs = unwords $ f : hmap (Proxy::Proxy Show) show xs
-
--- This version still needs 'c' instantiated, and now there's no easy
--- way to do it.p
-{-
-class Hfold c a t where
-  hfoldr :: (forall t'. c t' => t' -> a -> a) -> a -> t -> a
-
-instance Hfold c a () where
-  hfoldr _ x0 _ = x0
-
-instance (c t' , Hfold c a t) => Hfold c a (t',t) where
-  hfoldr f x0 (x , xs) =
-    x `f` (hfoldr::(forall t'. c t' => t' -> a -> a) -> a -> t -> a)
-          f x0 xs
--}
 
 -- Nice: if you forget an instance the error message tells you exactly
 -- what the sig is of course :D
