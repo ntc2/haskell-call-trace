@@ -15,6 +15,8 @@
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE ScopedTypeVariables #-}
+-- For 'processDefault's 'Proxy' argument.
+{-# LANGUAGE PolyKinds #-}
 
 module Debug.Trace.LogTree.Test where
 
@@ -84,7 +86,7 @@ type FTy' = Int -> M String
 fSimple' :: FTy'
 f'' :: FTy'
 fSimple' = simpleLogger (Proxy::Proxy "f") (return ()) (return ()) f''
-f'' 0 = return ""
+f'' 0 = return " Y"
 f'' 5 = do
   _ <- fSimple' 2
   fail ""
@@ -98,13 +100,14 @@ gSimple , g'' :: GTy
 gSimple = simpleLogger (Proxy::Proxy "g") (return ()) (return ()) g''
 g'' s1 s2 = return $ s1 ++ s2
 
-type HTy = Int -> M ()
+type HTy = Maybe Int -> M ()
 hSimple , h'' :: HTy
 hSimple = simpleLogger (Proxy::Proxy "h") (return ()) (return ()) h''
-h'' n = do
+h'' (Just n) = do
   _ <- fSimple' n
   _ <- fSimple' n
   return ()
+h'' Nothing = fail "Nothing"
 
 ----------------------------------------------------------------
 
@@ -142,9 +145,11 @@ instance UnixTree (Proxy (SimpleCall "h" () HTy ())) where
       (n,()) = _arg'
 
 ----------------------------------------------------------------
--- Generic 'UnixTree' processor for trees whose parts satisfy 'Show'.
+-- Generic 'UnixTree' processors for trees whose parts satisfy 'Show'.
 
-instance UnixTree (HetCall Show "default") where
+-- An instance for 'Show' that brackets the subcalls between the
+-- before state and args and the return value and after state.
+instance UnixTree (HetCall Show "default:bracket") where
   callAndReturn (CallAndReturn {..}) =
     ( [ unH show _before
       , formatCall (name _call) _arg ]
@@ -154,6 +159,34 @@ instance UnixTree (HetCall Show "default") where
     ( [ unH show _before'
       , formatCall (name _call') _arg' ]
     , [ maybe "<error: here>" (const "<error: there>") _how ] )
+
+-- An instance for 'Show' that puts everything (before, args, return,
+-- after) in the header.
+instance UnixTree (HetCall Show "default:header") where
+  callAndReturn (CallAndReturn {..}) =
+    ( [ unH show _before
+      , formatCall (name _call) _arg ++ " = " ++ unH show _ret
+      , unH show _after ]
+    , [] )
+  callAndError (CallAndError {..}) =
+    ( [ unH show _before'
+      , formatCall (name _call') _arg' ++ " = " ++
+          maybe "<error: here>" (const "<error: there>") _how ]
+    , [] )
+
+-- An instance for 'Show' that puts everything (before, args, return,
+-- after) in a single line in the header.
+instance UnixTree (HetCall Show "default:oneline") where
+  callAndReturn (CallAndReturn {..}) =
+    ( [ "<" ++ unH show _before ++ "> " ++
+        formatCall (name _call) _arg ++ " = " ++ unH show _ret ++
+        " <" ++ unH show _after ++ ">" ]
+    , [] )
+  callAndError (CallAndError {..}) =
+    ( [ "<" ++ unH show _before' ++ "> " ++
+        formatCall (name _call') _arg' ++ " = " ++
+          maybe "<error: here>" (const "<error: there>") _how ]
+    , [] )
 
 ----------------------------------------------------------------
 -- Display the results.
@@ -173,11 +206,11 @@ processCustom =
   coerceLogTree' (\x -> x) .
   head
 
-processDefault :: LogForest C -> String
-processDefault =
+processDefault :: UnixTree (HetCall Show tag) => Proxy tag -> LogForest C -> String
+processDefault p =
   unlines .
   unixTree .
-  heterogenize (Proxy::Proxy Show) (Proxy::Proxy "default") .
+  heterogenize (Proxy::Proxy Show) p .
   coerceLogTree' (\x -> x) .
   head
 
@@ -207,7 +240,9 @@ main = do
     putStrLn ""
 
   forM_ [ ("processCustom" , processCustom)
-        , ("processDefault" , processDefault)
+        , ("processDefault: bracket" , processDefault (Proxy::Proxy "default:bracket"))
+        , ("processDefault: header" , processDefault (Proxy::Proxy "default:header"))
+        , ("processDefault: oneline" , processDefault (Proxy::Proxy "default:oneline"))
         ] $ \(s , p) -> do
     putStrLn $ "Processor Test: " ++ s
     putStrLn "================================================================"
@@ -215,9 +250,11 @@ main = do
     putStrLn ""
     putStrLn $ testUnixTree p fSimple' 6
     putStrLn ""
-    putStrLn $ testUnixTree p hSimple 4
+    putStrLn $ testUnixTree p hSimple (Just 4)
     putStrLn ""
-    putStrLn $ testUnixTree p hSimple 6
+    putStrLn $ testUnixTree p hSimple (Just 6)
+    putStrLn ""
+    putStrLn $ testUnixTree p hSimple Nothing
     putStrLn ""
     putStrLn ""
 
