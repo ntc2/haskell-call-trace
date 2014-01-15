@@ -104,4 +104,22 @@ hmap :: HFold c t => Proxy c -> (forall t'. c t' => t' -> a) -> t -> [a]
 hmap p f = hfoldr p (\x as -> f x : as) []
 
 formatCall :: HFold Show t => String -> t -> String
-formatCall f xs = unwords $ f : hmap (Proxy::Proxy Show) show xs
+formatCall f xs =
+  unwords $ f : hmap (Proxy::Proxy Show) (optionalParens . show) xs
+  where
+    -- Wrap in parens if the heuristic says we should.
+    --
+    -- The heuristic is "contains a space and doesn't look like a list
+    -- (special case: String)".  I would just use
+    --
+    --   showsPrec 11 s ""
+    --
+    -- except that the default instance of 'showsPrec' ignores the
+    -- precedence argument, so that wouldn't work for user defined
+    -- (versus derived) 'Show' instances :P
+    optionalParens s =
+      if ' ' `elem` s &&
+         (head s /= '[' || last s /= ']') &&
+         (head s /= '"' || last s /= '"')
+      then "(" ++ s ++ ")"
+      else s
