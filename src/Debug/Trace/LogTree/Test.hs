@@ -24,6 +24,7 @@ import Data.Proxy
 import Text.Parsec
 
 import Debug.Trace.LogTree
+import Debug.Trace.LogTree.ConstraintLogic
 import Debug.Trace.LogTree.HetCall
 import Debug.Trace.LogTree.Process.UnixTree
 import Debug.Trace.LogTree.Simple.Logger
@@ -76,13 +77,10 @@ fSimple = simpleLogger (Proxy::Proxy "g") (return ()) (return ()) (f' fSimple)
 ----------------------------------------------------------------
 -- Auto logging with unix tree post processor.
 
--- instance (SingI tag , UncurryM sig)
---       => Signature (
+type C = UnixTree :&&: SigAll Show
+type M = MaybeT (Writer (LogStream C))
 
--- type MkSimpleCall (tag::Symbol) before after t = SimpleCall
-
-type FTy' = Int -> MaybeT (Writer (LogStream UnixTree)) String
-
+type FTy' = Int -> M String
 fSimple' :: FTy'
 f'' :: FTy'
 fSimple' = simpleLogger (Proxy::Proxy "f") (return ()) (return ()) f''
@@ -95,18 +93,20 @@ f'' n = do
   s <- gSimple "X" r
   return s
 
-type GTy = String -> String -> MaybeT (Writer (LogStream UnixTree)) String
+type GTy = String -> String -> M String
 gSimple , g'' :: GTy
 gSimple = simpleLogger (Proxy::Proxy "g") (return ()) (return ()) g''
 g'' s1 s2 = return $ s1 ++ s2
 
-type HTy = Int -> MaybeT (Writer (LogStream UnixTree)) ()
+type HTy = Int -> M ()
 hSimple , h'' :: HTy
 hSimple = simpleLogger (Proxy::Proxy "h") (return ()) (return ()) h''
 h'' n = do
   _ <- fSimple' n
   _ <- fSimple' n
   return ()
+
+----------------------------------------------------------------
 
 -- Nice: if you forget an instance the error message tells you exactly
 -- what the sig is of course :D
@@ -141,12 +141,45 @@ instance UnixTree (Proxy (SimpleCall "h" () HTy ())) where
     where
       (n,()) = _arg'
 
-testUnixTree :: (a -> MaybeT (Writer (LogStream UnixTree)) b)
-             -> a -> String
-testUnixTree f = either show (unlines . unixTree . head)
-               . stream2Forest
-               . execWriter
-               . runMaybeT . f
+----------------------------------------------------------------
+-- Generic 'UnixTree' processor for trees whose parts satisfy 'Show'.
+
+instance UnixTree (HetCall Show "default") where
+  callAndReturn (CallAndReturn {..}) =
+    ( [ unH show _before
+      , formatCall (name _call) _arg ]
+    , [ unH show _ret
+      , unH show _after ] )
+  callAndError (CallAndError {..}) =
+    ( [ unH show _before'
+      , formatCall (name _call') _arg' ]
+    , [ maybe "<error: here>" (const "<error: there>") _how ] )
+
+----------------------------------------------------------------
+-- Display the results.
+
+testUnixTree :: (LogForest C -> String) -> (a -> M b) -> a -> String
+testUnixTree process f =
+  either show process .
+  stream2Forest .
+  execWriter .
+  runMaybeT .
+  f
+
+processCustom :: LogForest C -> String
+processCustom =
+  unlines .
+  unixTree .
+  coerceLogTree' (\x -> x) .
+  head
+
+processDefault :: LogForest C -> String
+processDefault =
+  unlines .
+  unixTree .
+  heterogenize (Proxy::Proxy Show) (Proxy::Proxy "default") .
+  coerceLogTree' (\x -> x) .
+  head
 
 ----------------------------------------------------------------
 
@@ -160,7 +193,11 @@ testForest f = stream2Forest . testStream f
 
 main :: IO ()
 main = do
-  forM_ [fManual , fSimple] $ \f -> do
+  forM_ [ ("fManual" , fManual)
+        , ("fSimple" , fSimple)
+        ] $ \(s , f) -> do
+    putStrLn $ "Stream Test: " ++ s
+    putStrLn "================================================================"
     print $ testStream f 4
     print $ testForest f 4
     putStrLn ""
@@ -169,13 +206,19 @@ main = do
     putStrLn ""
     putStrLn ""
 
-  putStrLn $ testUnixTree fSimple' 4
-  putStrLn ""
-  putStrLn $ testUnixTree fSimple' 6
-  putStrLn ""
-  putStrLn $ testUnixTree hSimple 4
-  putStrLn ""
-  putStrLn $ testUnixTree hSimple 6
-
+  forM_ [ ("processCustom" , processCustom)
+        , ("processDefault" , processDefault)
+        ] $ \(s , p) -> do
+    putStrLn $ "Processor Test: " ++ s
+    putStrLn "================================================================"
+    putStrLn $ testUnixTree p fSimple' 4
+    putStrLn ""
+    putStrLn $ testUnixTree p fSimple' 6
+    putStrLn ""
+    putStrLn $ testUnixTree p hSimple 4
+    putStrLn ""
+    putStrLn $ testUnixTree p hSimple 6
+    putStrLn ""
+    putStrLn ""
 
 ----------------------------------------------------------------
