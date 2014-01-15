@@ -10,6 +10,9 @@
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE GADTs #-}
+-- Need 'PolyKinds' so that 'tag' in 'HetCall' can optionally have
+-- non-'*' kind.
+{-# LANGUAGE PolyKinds #-}
 
 module Debug.Trace.LogTree.HetCall where
 
@@ -54,7 +57,7 @@ instance (Signature call , c (Before call) , HFold c (Arg call) , c (Ret call) ,
 -- Can't use 'Proxy (c' , tag)' here in the type, I guess because
 -- lifted tuples require both args to be of the same kind?
 heterogenize :: forall c' c tag. c' (HetCall c tag) =>
-  Proxy c' -> Proxy tag -> Ex2T (LogTree (SigAll c)) -> Ex2T (LogTree c')
+  Proxy c -> Proxy tag -> Ex2T (LogTree (SigAll c)) -> Ex2T (LogTree c')
 heterogenize p1 p2 (Ex2T (CallAndReturn {..})) =
   Ex2T (CallAndReturn (HetCall (name _call)::HetCall c tag)
                       (H _before)
@@ -90,6 +93,12 @@ instance HFold c () where
 instance (c t' , HFold c t) => HFold c (t',t) where
   hfoldl p f x0 (x , xs) = hfoldl p f (x0 `f` x) xs
   hfoldr p f x0 (x , xs) = x `f` hfoldr p f x0 xs
+
+instance HFold c [H c] where
+  hfoldl _ f = foldl f' where
+    x0 `f'` H x = x0 `f` x
+  hfoldr _ f = foldr f' where
+    H x `f'` x0 = x `f` x0
 
 hmap :: HFold c t => Proxy c -> (forall t'. c t' => t' -> a) -> t -> [a]
 hmap p f = hfoldr p (\x as -> f x : as) []

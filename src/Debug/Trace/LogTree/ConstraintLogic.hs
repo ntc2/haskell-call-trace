@@ -15,7 +15,7 @@
 {-# LANGUAGE RankNTypes #-}
 
 module Debug.Trace.LogTree.ConstraintLogic
-  ((:&&:) , Implies' , coerceLogTree' , H(..))
+  ((:&&:) , Implies' , coerceLogTree' , H(..) , unH)
 where
 
 import GHC.Prim (Constraint)
@@ -329,6 +329,9 @@ instance C' cs c => C'' cs c where
 -- XXX: move this somewhere else, maybe with the 'HetCall' code.
 data H c where
   H :: c a => a -> H c
+
+unH :: (forall a. c a => a -> b) -> H c -> b
+unH f (H x) = f x
 
 data Where = Here | LeftLater Where | RightLater Where
 
