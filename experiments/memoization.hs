@@ -1,0 +1,2 @@
+-- As Tim pointed out, the tricks behind 'simpleLogger' could be used
+-- to implement memoization.  Try this!
