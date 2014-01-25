@@ -10,7 +10,7 @@ name:                logtree
 -- PVP summary:      +-+------- breaking API changes
 --                   | | +----- non-breaking API additions
 --                   | | | +--- code changes with no API change
-version:             0.1.0.0
+version:             0.1.0.20140124
 
 -- A short (one-line) description of the package.
 synopsis:            Generic call tracing for monadic functions.
@@ -37,7 +37,7 @@ maintainer:          nathan.collins@gmail.com
 -- A copyright notice.
 -- copyright:
 
-category:            Testing
+category:            Testing, Trace, Debug
 
 build-type:          Simple
 
@@ -51,16 +51,46 @@ cabal-version:       >=1.10
 
 library
   -- Modules exported by the library.
-  exposed-modules:     RollMyOwnLiterals, Debug.Trace.LogTree, Debug.Trace.LogTree.HetCall, Debug.Trace.LogTree.ConstraintLogic, Debug.Trace.LogTree.Test, Debug.Trace.LogTree.Simple.Call, Debug.Trace.LogTree.Simple.Logger, Debug.Trace.LogTree.Simple.Curry, Debug.Trace.LogTree.Process.ProofTree, Debug.Trace.LogTree.Process.UnixTree, SelfContainedTest, Test
+  exposed-modules: Debug.Trace.LogTree
+                 , Debug.Trace.LogTree.HetCall
+                 , Debug.Trace.LogTree.ConstraintLogic
+                 , Debug.Trace.LogTree.Simple.Call
+                 , Debug.Trace.LogTree.Simple.Logger
+                 , Debug.Trace.LogTree.Simple.Curry
+                 , Debug.Trace.LogTree.Process.ProofTree
+                 , Debug.Trace.LogTree.Process.UnixTree
 
   -- Modules included in this library but not exported.
   -- other-modules:
 
   -- LANGUAGE extensions used by modules in this package.
-  other-extensions:    TemplateHaskell, DataKinds, KindSignatures, TypeFamilies, ExistentialQuantification, ConstraintKinds, GADTs, PolyKinds, ScopedTypeVariables, FlexibleInstances, FlexibleContexts, MultiParamTypeClasses, UndecidableInstances, RankNTypes, RecordWildCards, TypeOperators, StandaloneDeriving, NamedFieldPuns
+  other-extensions: TemplateHaskell
+                  , DataKinds
+                  , KindSignatures
+                  , TypeFamilies
+                  , ExistentialQuantification
+                  , ConstraintKinds
+                  , GADTs
+                  , PolyKinds
+                  , ScopedTypeVariables
+                  , FlexibleInstances
+                  , FlexibleContexts
+                  , MultiParamTypeClasses
+                  , UndecidableInstances
+                  , RankNTypes
+                  , RecordWildCards
+                  , TypeOperators
+                  , StandaloneDeriving
+                  , NamedFieldPuns
 
   -- Other library packages from which modules are imported.
-  build-depends:       base >=4.6 && <4.7, template-haskell >=2.8 && <2.9, ghc-prim >=0.3 && <0.4, parsec >=3.1 && <3.2, tagged >=0.7 && <0.8, transformers >=0.3 && <0.4, mtl >=2.1 && <2.2
+  build-depends: base >=4.6 && <4.7
+               , template-haskell >=2.8 && <2.9
+               , ghc-prim >=0.3 && <0.4
+               , parsec >=3.1 && <3.2
+               , tagged >=0.7 && <0.8
+               , transformers >=0.3 && <0.4
+               , mtl >=2.1 && <2.2
 
   -- Directories containing source files.
   hs-source-dirs:      src
