@@ -3,6 +3,7 @@
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE TypeOperators #-}
 
 module Debug.Trace.LogTree.Simple.Curry where
 
@@ -108,10 +109,10 @@ collectCall = collectCallHelper (Proxy::Proxy t) id
 ----------------------------------------------------------------
 -- Collect arguments and result and then call continuation.
 
-class UncurryM t => CollectAndCallCont t where
+class UncurryM c => CollectAndCallCont c where
   collectAndCallCont ::
-    ((GetArg t , GetMonad t (GetRet t)) -> r) ->
-    t -> Curried (GetArg t) r
+    ((GetArg c , GetMonad c (GetRet c)) -> d) ->
+    c -> GetArg c `Curried` d
 
 instance CollectAndCallCont (IO r) where
   collectAndCallCont k tmr = k (() , tmr)
@@ -121,6 +122,6 @@ instance (Monad m , Monad (t m)) => CollectAndCallCont (t m r) where
 
 instance CollectAndCallCont b => CollectAndCallCont (a -> b) where
   collectAndCallCont k f x =
-    collectAndCallCont (\(xs , r) -> k ((x , xs) , r)) (f x)
+    collectAndCallCont (\(xs , tmr) -> k ((x , xs) , tmr)) (f x)
 
 ----------------------------------------------------------------
