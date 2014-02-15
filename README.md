@@ -1,14 +1,10 @@
-haskell-call-trace
-==================
+Fancy call tracing for Haskell
+==============================
 
-Fancy call tracing for Haskell.
+Documentation:
 
-An example is written up [here](http://stackoverflow.com/a/20829134/470844).
+- [Proof-tree Stack Overflow example](http://stackoverflow.com/a/20829134/470844)
 
-Dependencies
-------------
+- [Slides from PSU PL Club presentation](http://web.cecs.pdx.edu/~ntc2/call-trace-pl-club/presentation.revealjs.html)
 
-For 'Data.Proxy':
-
-    cabal install tagged
 
