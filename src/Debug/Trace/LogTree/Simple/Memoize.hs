@@ -118,6 +118,24 @@ import Debug.Trace.LogTree.Simple.Curry
 --  f = ioMemoizer f'
 --
 -- is not well typed.
+--
+-- Another alternative: if we're willing to impose SYB-style
+-- constraints on our types, we might be able to use one heterogeneous
+-- dictionary to rule them all.  Something like
+--
+--   Data.Map.Map String (Ex2T Data.Map.Map)
+--
+-- where we require the existentially quantified inner map type params
+-- to be in 'Data' or 'Typeable' (whatever allows us to 'cast').  Then
+-- we can look up a dictionary for the current function and cast it to
+-- the appropriate type.  The cast is allowed to fail, but it can only
+-- fail do to a bug (in other words, we go fully dynamic here ...).
+--
+-- Now that we only need one dictionary, we require constant
+-- boilerplate overhead to memoize 'n' functions (in addition to the
+-- 'n' lines saying we want to memoize them :P), and we can even write
+-- a default instance for state monad that stores a single dictionary,
+-- reducing the boilerplate to one line per function.
 
 -- XXX: this class and instance probably belong somewhere else.
 class Monad m => EventLogger c m where
