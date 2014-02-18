@@ -8,7 +8,7 @@
 {-# LANGUAGE ConstraintKinds #-}
 {-# LANGUAGE UndecidableInstances #-}
 
-module Debug.Trace.LogTree.Simple.Logger where
+module Debug.Trace.LogTree.Simple.Memoize where
 
 import GHC.TypeLits
 
@@ -20,11 +20,11 @@ import Debug.Trace.LogTree.Simple.Call
 import Debug.Trace.LogTree.Simple.Curry
 
 ----------------------------------------------------------------
--- An event logger with a simple interface.
+-- A memoizer with a simple interface.
 --
--- Specify the function you want to trace, along with a 'Symbol' to
--- uniquely tag it (not implemented here), and get back a tracer for
--- your function.  The pattern for lightweight logging is then
+-- Specify the function you want to memoize, along with a 'Symbol' to
+-- uniquely tag it (not implemented here), and get back a memoizer for
+-- your function.  The pattern for lightweight memoization is then
 --
 --   f :: t
 --   f = e
@@ -32,11 +32,92 @@ import Debug.Trace.LogTree.Simple.Curry
 -- becomes
 --
 --   f , f' :: t
---   f = simpleLogger "f" f'
+--   f = simpleMemoizer lookup insert f'
 --   f' = e
 --
 -- creating a knot, where recursive calls in 'e' are still to 'f' and
--- hence trigger recursive logging.
+-- hence trigger memoization.  Here 'lookup' and 'insert' are for
+-- looking up and caching memo values, respectively.  In a state monad
+-- they can update the state; in an IO monad they can update a
+-- reference.
+--
+-- An alternative approach would be
+--
+--   f , f' :: t
+--   f = simpleMemoizer "f" f'
+--   f' = e
+--
+-- where we have a class constraint saying that "f" can be used to
+-- look up a memo dictionary. Something like
+--
+--   class Signature call => Memoizer call m where
+--     lookup :: Proxy call -> Arg call -> m (Maybe (Ret call))
+--     insert :: Proxy call -> Arg call -> Ret call -> m ()
+--
+-- and then e.g.
+--
+--   data S = S { _fDict :: Data.Map (GetArg FTy) (GetRet FTy) , ... }
+--
+--   instance Memoizer (SimpleCall "f" () FTy ()) (State S) where
+--     lookup _ k   = Data.Map.lookup x <$> gets _fDict
+--     insert _ k v = modify i where
+--       i s = s { _fDict = Data.Map.insert k v $ _fDict s }
+--
+-- The obvious: with either interface we probably want to use lenses
+-- to make defining 'insert' and 'lookup' less painful :P
+--
+-- In 'IO' this could be pretty nice, if we used 'unsafePerformIO' to
+-- get at a global reference:
+--
+--   f = unsafePerformIO $ ioMemoizer f'
+--   f' = e
+--
+--   ioMemoizer f' = do
+--     d <- newIORef Data.Map.empty
+--     let lookup k   = Data.Map.lookup k <$> readIORef d
+--         insert k v = modifyIORef d (Data.Map.Insert k v)
+--     return $ simpleMemoizer lookup insert f' where
+--
+-- Things get even more interesting with 'Control.Monad.ST':
+--
+--   - we can define an 'stMemoizer' in the same way as 'ioMemoizer',
+--     and then use 'unsafePerformIO . unsafeSTToIO' to escape.
+--
+--   - we can maybe define an 'stMemoizer' that is pure, but only
+--     memoizes the current call. Have to think about this more...
+--
+-- Also, if go back to standard open recursion, we can get pure
+-- per-call versions. E.g.
+--
+--   f' :: FTy
+--   f :: FTy -> FTy
+--   f f' = e -- recursive calls to 'f'' in 'e'
+--
+-- and then e.g. (approximate types)
+--
+--   simpleMemoizer :: (Arg a -> m (Maybe (Ret a))) ->    -- Insert
+--                     (Arg a -> Ret a -> m ()) ->        -- Lookup
+--                     (a -> a) ->                        -- Open function to fix
+--                     a
+--   simpleMemoizer = ...
+--
+--   ioMemoizer :: (a -> a) -> IO a
+--   ioMemoizer f = do
+--     d <- newIORef Data.Map.empty
+--     return $ simpleMemoizer <lookup for d> <insert for d> f
+--
+-- The reason we need to return to standard open recursion and fix
+-- points here is that we need memoize away from the definition
+-- site. Indeed, for the current style with two mutually recursive
+-- defs, memoizing at the definition site with
+--
+--  ioMemoizer :: a -> IO a
+--  ioMemoizer = ...
+--
+--  f , f' :: FTy
+--  f = ioMemoizer f'
+--
+-- is not well typed.
 
 -- XXX: this class and instance probably belong somewhere else.
 class Monad m => EventLogger c m where
