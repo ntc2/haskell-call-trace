@@ -12,12 +12,23 @@ module Debug.Trace.LogTree.Simple.Memoize where
 
 import GHC.TypeLits
 
+import Control.Applicative
 import Control.Monad.Writer
 import Data.Proxy
+import Data.Typeable
+-- XXX: Do I need to specify the strictness here? Probably I do, since
+-- I'm going to insert empty dicts as needed, but would I still need
+-- to specify strictness if the empty dicts were provided by the user
+-- provided lookup function?
+import Data.Map.Strict as Map
+import Text.Printf
 
 import Debug.Trace.LogTree
+import Debug.Trace.LogTree.ConstraintLogic
 import Debug.Trace.LogTree.Simple.Call
 import Debug.Trace.LogTree.Simple.Curry
+
+import Debug.Trace
 
 ----------------------------------------------------------------
 -- A memoizer with a simple interface.
@@ -135,7 +146,10 @@ import Debug.Trace.LogTree.Simple.Curry
 -- a default instance for the state monad that stores a single dictionary,
 -- reducing the boilerplate to one line per function.
 
-
+-- Memoize a function using the given 'lookup' and 'insert' to cache
+-- arguments and return values. In practice the 'lookup' and 'insert'
+-- functions are specific to the memoized function.
+--
 -- Note: the 'GetArg t `Curried` GetMonad t (GetRet t)' is just a
 -- fancy way to write 't' (that GHC prefers).
 simpleMemoizer :: forall t. CollectAndCallCont t
@@ -153,3 +167,50 @@ simpleMemoizer lookup insert f = collectAndCallCont k f where
         ret <- mret
         insert arg ret
         return ret
+
+-- Memoize a function using the given 'lookup' and 'insert' functions
+-- to maintain a cache for this function.  In practice the 'lookup'
+-- and 'insert' functions are generic, i.e. reused for many memoized
+-- functions.  The 'tag' should be a globally unique (across all uses
+-- of 'castMemoizer') identifier for the function 'f'.
+--
+-- The cache is maintained as 'Data.Map.Map' inside an 'H'
+-- constructor.  We need to hide the map in a heterogeneous type
+-- because we expect to store multiple caches via the same 'lookup'
+-- and 'insert', and the different caches have different types.  The
+-- 'Typeable' constraints allow us to 'cast' the maps after removing
+-- them from the 'H' constructors.
+castMemoizer :: forall t.
+              ( CollectAndCallCont t
+              , Ord (GetArg t)
+              , Typeable (GetArg t)
+              , Typeable (GetRet t)
+              , Functor (GetMonad t) )
+             => (String -> GetMonad t (Maybe (H Typeable)))
+             -> (String -> H Typeable -> GetMonad t ())
+             -> String
+             -> t
+             -> GetArg t `Curried` GetMonad t (GetRet t)
+castMemoizer lookup insert tag f = collectAndCallCont k f where
+  k :: (GetArg t , GetMonad t (GetRet t)) -> GetMonad t (GetRet t)
+  k (arg , mret) = do
+    dict <- getDict
+    case Map.lookup arg dict of
+      Just ret -> return ret
+      Nothing -> do
+        ret <- mret
+        -- Careful: we need to look up the dict again since the call
+        -- may have mutated it.
+        insert tag . H . Map.insert arg ret =<< getDict
+        return ret
+
+  getDict :: GetMonad t (Map.Map (GetArg t) (GetRet t))
+  getDict =
+    maybe Map.empty (unH castDict) <$> lookup tag
+
+  castDict :: Typeable a => a -> Map.Map (GetArg t) (GetRet t)
+  castDict d = case cast d of
+    Just dict -> dict
+    Nothing -> error msg where
+      msg = printf ("Unable to cast 'hetDict' in 'castMemoizer' with tag %s\n" ++
+                    "This may indicate a tag collision!") tag
