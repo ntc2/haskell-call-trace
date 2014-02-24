@@ -22,9 +22,7 @@ import Debug.Trace.LogTree.Simple.Curry
 ----------------------------------------------------------------
 -- A memoizer with a simple interface.
 --
--- Specify the function you want to memoize, along with a 'Symbol' to
--- uniquely tag it (not implemented here), and get back a memoizer for
--- your function.  The pattern for lightweight memoization is then
+-- The pattern for lightweight memoization is that
 --
 --   f :: t
 --   f = e
@@ -107,7 +105,7 @@ import Debug.Trace.LogTree.Simple.Curry
 --     return $ simpleMemoizer <lookup for d> <insert for d> f
 --
 -- The reason we need to return to standard open recursion and fix
--- points here is that we need memoize away from the definition
+-- points here is that we need to memoize away from the definition
 -- site. Indeed, for the current style with two mutually recursive
 -- defs, memoizing at the definition site with
 --
@@ -134,39 +132,27 @@ import Debug.Trace.LogTree.Simple.Curry
 -- Now that we only need one dictionary, we require constant
 -- boilerplate overhead to memoize 'n' functions (in addition to the
 -- 'n' lines saying we want to memoize them :P), and we can even write
--- a default instance for state monad that stores a single dictionary,
+-- a default instance for the state monad that stores a single dictionary,
 -- reducing the boilerplate to one line per function.
 
--- XXX: this class and instance probably belong somewhere else.
-class Monad m => EventLogger c m where
-  logEvent :: LogEvent c -> m ()
-
--- Need 'UndecidableInstances' here!
-instance MonadWriter [LogEvent c] m => EventLogger c m where
-  logEvent e = tell [e]
 
 -- Note: the 'GetArg t `Curried` GetMonad t (GetRet t)' is just a
 -- fancy way to write 't' (that GHC prefers).
-simpleLogger :: forall tag before t after c
-              . ( SingI tag
-                , CollectAndCallCont t
-                , EventLogger c (GetMonad t)
-                , c (Proxy (SimpleCall tag before t after)) )
-             => Proxy (tag::Symbol)
-             -> GetMonad t before
-             -> GetMonad t after
-             -> t
-             -> GetArg t `Curried` GetMonad t (GetRet t)
-simpleLogger _ ms1 ms2 f = collectAndCallCont k f where
+simpleMemoizer :: forall t. CollectAndCallCont t
+               => (GetArg t -> GetMonad t (Maybe (GetRet t)))
+               -> (GetArg t -> GetRet t -> GetMonad t ())
+               -> t
+               -> GetArg t `Curried` GetMonad t (GetRet t)
+simpleMemoizer lookup insert f = collectAndCallCont k f where
   k :: (GetArg t , GetMonad t (GetRet t)) -> GetMonad t (GetRet t)
   k (arg , mret) = do
-    let call = Proxy::Proxy (SimpleCall tag before t after)
-    s1 <- ms1
-    logEvent (BeginCall call s1 arg::LogEvent c)
-    ret <- mret
-    s2 <- ms2
-    logEvent (EndCall call s1 arg ret s2::LogEvent c)
-    return ret
+    maybeCached <- lookup arg
+    case maybeCached of
+      Just ret -> return ret
+      Nothing -> do
+        ret <- mret
+        insert arg ret
+        return ret
 
 ----------------------------------------------------------------
 
