@@ -10,25 +10,19 @@
 
 module Debug.Trace.LogTree.Simple.Memoize where
 
-import GHC.TypeLits
+import Prelude hiding (lookup)
 
 import Control.Applicative
-import Control.Monad.Writer
-import Data.Proxy
 import Data.Typeable
 -- XXX: Do I need to specify the strictness here? Probably I do, since
 -- I'm going to insert empty dicts as needed, but would I still need
 -- to specify strictness if the empty dicts were provided by the user
 -- provided lookup function?
-import Data.Map.Strict as Map
+import qualified Data.Map.Strict as Map
 import Text.Printf
 
-import Debug.Trace.LogTree
 import Debug.Trace.LogTree.ConstraintLogic
-import Debug.Trace.LogTree.Simple.Call
 import Debug.Trace.LogTree.Simple.Curry
-
-import Debug.Trace
 
 ----------------------------------------------------------------
 -- A memoizer with a simple interface.
