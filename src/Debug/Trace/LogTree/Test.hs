@@ -23,7 +23,7 @@ module Debug.Trace.LogTree.Test where
 import Control.Monad.Trans.Maybe
 import Control.Monad.Writer
 import Data.Proxy
-import Text.Parsec
+import Text.Parsec hiding (State)
 
 import Debug.Trace.LogTree
 import Debug.Trace.LogTree.ConstraintLogic
@@ -31,6 +31,18 @@ import Debug.Trace.LogTree.HetCall
 import Debug.Trace.LogTree.Process.UnixTree
 import Debug.Trace.LogTree.Simple.Logger
 import Debug.Trace.LogTree.Simple.Call
+
+----------------------------------------------------------------
+-- Isolate imports for memoizer tests, in case I want to factor them
+-- into a second test file.
+
+import Control.Applicative
+import Control.Monad.State
+import qualified Data.Map.Strict as Map
+import Text.Printf
+
+import Debug.Trace.LogTree.Simple.Curry
+import Debug.Trace.LogTree.Simple.Memoize
 
 ----------------------------------------------------------------
 
@@ -215,6 +227,7 @@ processDefault p =
   head
 
 ----------------------------------------------------------------
+-- Parser tests.
 
 testStream :: FTy -> Int -> LogStream AllShow
 testStream f = execWriter . runMaybeT . f
@@ -223,9 +236,10 @@ testForest :: FTy -> Int -> Either ParseError (LogForest AllShow)
 testForest f = stream2Forest . testStream f
 
 ----------------------------------------------------------------
+-- Logger test to run in 'main'.
 
-main :: IO ()
-main = do
+logMain :: IO ()
+logMain = do
   forM_ [ ("fManual" , fManual)
         , ("fSimple" , fSimple)
         ] $ \(s , f) -> do
@@ -259,3 +273,39 @@ main = do
     putStrLn ""
 
 ----------------------------------------------------------------
+-- Memoizer tests.
+
+type MemoM = State S
+
+data S = S { _fibDict :: Map.Map (GetArg FibTy) (GetRet FibTy) }
+
+type FibTy = Integer -> MemoM Integer
+fib , fib' :: FibTy
+fib = simpleMemoizer lookup insert fib' where
+  lookup k = Map.lookup k <$> gets _fibDict
+  insert k v = modify i where
+    i s = s { _fibDict = Map.insert k v $ _fibDict s }
+fib' n =
+  if n <= 1
+  then pure n
+  else (+) <$> fib (n-1) <*> fib (n-2)
+
+----------------------------------------------------------------
+
+testFib :: Integer -> Integer
+testFib n = flip evalState (S { _fibDict = Map.empty }) (fib n)
+
+memoMain :: IO ()
+memoMain = do
+  putStrLn "Fib Test"
+  putStrLn "================================================================"
+
+  forM_ [0,10..300] $ \ n -> do
+    printf "fib %3i = %i\n" n (testFib n)
+
+----------------------------------------------------------------
+
+main :: IO ()
+main = do
+  logMain
+  memoMain
