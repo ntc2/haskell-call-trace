@@ -153,34 +153,3 @@ simpleMemoizer lookup insert f = collectAndCallCont k f where
         ret <- mret
         insert arg ret
         return ret
-
-----------------------------------------------------------------
-
--- BUG?: GHC doesn't like it when I lift a particular set of
--- constraints and give them a name:
-{-
-{-# LANGUAGE ConstraintKinds #-}
-
-type Suffix b t = (UncurryM b , UncurryM t , GetRet b ~ GetRet t , GetMonad b ~ GetMonad t)
-
-instance Suffix (Identity r) t => Collect (Identity r) t where
-  simpleLoggerHelper p acc idr = do
-    logB p (acc ())
-    r <- idr
-    logE p r
-    return r
--}
--- generates:
-{-
-Debug/Trace/LogTree/SimpleLogger.hs:55:10:
-    Variable s `r, t, r, t' occur more often than in the instance head
-      in the constraint: Suffix (Identity r) t
-    (Use -XUndecidableInstances to permit this)
-    In the instance declaration for `Collect (Identity r) t'
-Failed, modules loaded: Debug.Trace.LogTree, Debug.Trace.LogTree.SimpleCall.
--}
--- whereas the expanded versions below are fine.  Of course, the
--- versions below are only "smaller" because the definitions of the
--- type functions 'GetRet' and 'GetMonad' have been expanded.
-
-----------------------------------------------------------------
