@@ -39,6 +39,7 @@ import Debug.Trace.LogTree.Simple.Call
 import Control.Applicative
 import Control.Monad.State
 import qualified Data.Map.Strict as Map
+import Data.Typeable
 import Text.Printf
 
 import Debug.Trace.LogTree.Simple.Curry
@@ -277,7 +278,9 @@ logMain = do
 
 type MemoM = State S
 
-data S = S { _fibDict :: Map.Map (GetArg FibTy) (GetRet FibTy) }
+data S = S { _fibDict :: Map.Map (GetArg FibTy) (GetRet FibTy)
+           , _hDict :: Map.Map String (H Typeable)
+           }
 
 type FibTy = Integer -> MemoM Integer
 fib , fib' :: FibTy
@@ -290,10 +293,26 @@ fib' n =
   then pure n
   else (+) <$> fib (n-1) <*> fib (n-2)
 
+-- This looks like the same boilerplate as in 'fib' above, except here
+-- the insert and lookup functions are the *same* for all memoized
+-- functions, and so can be factored out and defined only once.
+specializedCastMemoizer = castMemoizer lookup insert where
+  lookup k = Map.lookup k <$> gets _hDict
+  insert k v = modify i where
+    i s = s { _hDict = Map.insert k v $ _hDict s }
+
+fib2 :: FibTy
+fib2 = specializedCastMemoizer "Test.fib2" fib' where
+  fib' n =
+    if n <= 1
+    then pure n
+    else (+) <$> fib2 (n-1) <*> fib2 (n-2)
+
 ----------------------------------------------------------------
 
-testFib :: Integer -> Integer
-testFib n = flip evalState (S { _fibDict = Map.empty }) (fib n)
+testMemo :: MemoM a -> a
+testMemo =
+  flip evalState (S { _fibDict = Map.empty , _hDict = Map.empty })
 
 memoMain :: IO ()
 memoMain = do
@@ -301,7 +320,8 @@ memoMain = do
   putStrLn "================================================================"
 
   forM_ [0,10..300] $ \ n -> do
-    printf "fib %3i = %i\n" n (testFib n)
+    printf "fib  %3i = %i\n" n (testMemo $ fib n)
+    printf "fib2 %3i = %i\n" n (testMemo $ fib2 n)
 
 ----------------------------------------------------------------
 
