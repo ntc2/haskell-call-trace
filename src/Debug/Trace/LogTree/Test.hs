@@ -1,6 +1,7 @@
 -- See
 -- http://stackoverflow.com/questions/3079537/orphaned-instances-in-haskell
 {-# OPTIONS_GHC -fno-warn-orphans #-}
+{-# OPTIONS_GHC -fno-warn-name-shadowing #-}
 
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
@@ -319,8 +320,8 @@ memoMain = do
   putStrLn "Fib Test"
   putStrLn "================================================================"
 
-  forM_ [0,10..300] $ \ n -> do
-    printf "fib  %3i = %i\n" n (testMemo $ fib n)
+  forM_ [0,10..300] $ \ n ->
+    printf "fib  %3i = %i\n" n (testMemo $ fib n) >>
     printf "fib2 %3i = %i\n" n (testMemo $ fib2 n)
 
 ----------------------------------------------------------------
