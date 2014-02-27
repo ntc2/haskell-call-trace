@@ -297,17 +297,31 @@ fib' n =
 -- This looks like the same boilerplate as in 'fib' above, except here
 -- the insert and lookup functions are the *same* for all memoized
 -- functions, and so can be factored out and defined only once.
+--
+-- GHC infers a too-special type here, so we can't use this function
+-- twice.
+{-
 specializedCastMemoizer = castMemoizer lookup insert where
   lookup k = Map.lookup k <$> gets _hDict
   insert k v = modify i where
     i s = s { _hDict = Map.insert k v $ _hDict s }
+-}
+lookupM k = Map.lookup k <$> gets _hDict
+insertM k v = modify i where
+  i s = s { _hDict = Map.insert k v $ _hDict s }
+
 
 fib2 :: FibTy
-fib2 = specializedCastMemoizer "Test.fib2" fib' where
+fib2 = castMemoizer lookupM insertM "Test.fib2" fib' where
   fib' n =
     if n <= 1
     then pure n
     else (+) <$> fib2 (n-1) <*> fib2 (n-2)
+
+pow :: Integer -> Integer -> MemoM Integer
+pow = castMemoizer lookupM insertM "Test.pow" pow' where
+  pow' _ 0 = pure 1
+  pow' n p = sum <$> sequence [ pow n (p-1) | _ <- [1..n] ]
 
 ----------------------------------------------------------------
 
@@ -321,8 +335,9 @@ memoMain = do
   putStrLn "================================================================"
 
   forM_ [0,10..300] $ \ n ->
-    printf "fib  %3i = %i\n" n (testMemo $ fib n) >>
-    printf "fib2 %3i = %i\n" n (testMemo $ fib2 n)
+    printf "fib   %3i = %i\n" n (testMemo $ fib n) >>
+    printf "fib2  %3i = %i\n" n (testMemo $ fib2 n) >>
+    printf "pow 2 %3i = %i\n" n (testMemo $ pow 2 n)
 
 ----------------------------------------------------------------
 
