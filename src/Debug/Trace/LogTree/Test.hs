@@ -47,6 +47,8 @@ import Debug.Trace.LogTree.Simple.Curry
 import Debug.Trace.LogTree.Simple.Memoize
 
 ----------------------------------------------------------------
+-- Logging tests.
+----------------------------------------------------------------
 
 deriving instance Show (LogTree AllShow call name)
 deriving instance Show (Ex2T (LogTree AllShow))
@@ -276,6 +278,7 @@ logMain = do
 
 ----------------------------------------------------------------
 -- Memoizer tests.
+----------------------------------------------------------------
 
 type MemoM = State S
 
@@ -318,10 +321,10 @@ fib2 = castMemoizer lookupM insertM "Test.fib2" fib' where
     then pure n
     else (+) <$> fib2 (n-1) <*> fib2 (n-2)
 
-pow :: Integer -> Integer -> MemoM Integer
+pow :: Int -> Integer -> MemoM Integer
 pow = castMemoizer lookupM insertM "Test.pow" pow' where
   pow' _ 0 = pure 1
-  pow' n p = sum <$> sequence [ pow n (p-1) | _ <- [1..n] ]
+  pow' n p = sum <$> replicateM n (pow n (p-1))
 
 ----------------------------------------------------------------
 
