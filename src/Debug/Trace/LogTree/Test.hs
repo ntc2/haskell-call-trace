@@ -327,6 +327,27 @@ pow = castMemoizer lookupM insertM "Test.pow" pow' where
   pow' n p = sum <$> replicateM n (pow n (p-1))
 
 ----------------------------------------------------------------
+-- Open recursion.
+
+openFib :: FibTy -> FibTy
+openFib fib n =
+  if n <= 1
+  then pure n
+  else (+) <$> fib (n-1) <*> fib (n-2)
+
+-- We can use a decorator designed for a mutual recursive definitions
+-- with an open recursive function. Instead of
+--
+--   f  = decorate f'
+--   f' = ... f ...
+--
+-- we have
+--
+--   f       = fix (decorate . openF)
+--   openF f = ... f ...
+fib3 = fix (castMemoizer lookupM insertM "Test.fib3" . openFib)
+
+----------------------------------------------------------------
 
 testMemo :: MemoM a -> a
 testMemo =
@@ -340,6 +361,7 @@ memoMain = do
   forM_ [0,10..300] $ \ n ->
     printf "fib   %3i = %i\n" n (testMemo $ fib n) >>
     printf "fib2  %3i = %i\n" n (testMemo $ fib2 n) >>
+    printf "fib3  %3i = %i\n" n (testMemo $ fib3 n) >>
     printf "pow 2 %3i = %i\n" n (testMemo $ pow 2 n)
 
 ----------------------------------------------------------------
