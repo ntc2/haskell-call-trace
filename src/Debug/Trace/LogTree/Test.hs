@@ -47,6 +47,8 @@ import Debug.Trace.LogTree.Simple.Curry
 import Debug.Trace.LogTree.Simple.Memoize
 
 ----------------------------------------------------------------
+-- Logging tests.
+----------------------------------------------------------------
 
 deriving instance Show (LogTree AllShow call name)
 deriving instance Show (Ex2T (LogTree AllShow))
@@ -276,6 +278,7 @@ logMain = do
 
 ----------------------------------------------------------------
 -- Memoizer tests.
+----------------------------------------------------------------
 
 type MemoM = State S
 
@@ -318,10 +321,31 @@ fib2 = castMemoizer lookupM insertM "Test.fib2" fib' where
     then pure n
     else (+) <$> fib2 (n-1) <*> fib2 (n-2)
 
-pow :: Integer -> Integer -> MemoM Integer
+pow :: Int -> Integer -> MemoM Integer
 pow = castMemoizer lookupM insertM "Test.pow" pow' where
   pow' _ 0 = pure 1
-  pow' n p = sum <$> sequence [ pow n (p-1) | _ <- [1..n] ]
+  pow' n p = sum <$> replicateM n (pow n (p-1))
+
+----------------------------------------------------------------
+-- Open recursion.
+
+openFib :: FibTy -> FibTy
+openFib fib n =
+  if n <= 1
+  then pure n
+  else (+) <$> fib (n-1) <*> fib (n-2)
+
+-- We can use a decorator designed for a mutual recursive definitions
+-- with an open recursive function. Instead of
+--
+--   f  = decorate f'
+--   f' = ... f ...
+--
+-- we have
+--
+--   f       = fix (decorate . openF)
+--   openF f = ... f ...
+fib3 = fix (castMemoizer lookupM insertM "Test.fib3" . openFib)
 
 ----------------------------------------------------------------
 
@@ -337,6 +361,7 @@ memoMain = do
   forM_ [0,10..300] $ \ n ->
     printf "fib   %3i = %i\n" n (testMemo $ fib n) >>
     printf "fib2  %3i = %i\n" n (testMemo $ fib2 n) >>
+    printf "fib3  %3i = %i\n" n (testMemo $ fib3 n) >>
     printf "pow 2 %3i = %i\n" n (testMemo $ pow 2 n)
 
 ----------------------------------------------------------------
