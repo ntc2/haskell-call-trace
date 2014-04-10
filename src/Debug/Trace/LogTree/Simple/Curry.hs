@@ -7,6 +7,8 @@
 
 module Debug.Trace.LogTree.Simple.Curry where
 
+import Prelude hiding (curry)
+
 import Data.Proxy
 
 ----------------------------------------------------------------
@@ -74,13 +76,21 @@ instance UncurryM (IO r) where
 -- Type level computation of curried types.
 
 class Curry a b where
-  type Curried a b
+  type Curried a b :: *
+  -- This version is right nested like 'UncurryM.GetArg', whereas
+  -- iterated 'Prelude.curry' is left nested.  We can probably make a
+  -- left-nested version using type-level snoc, but then we may need
+  -- type-level snoc lemmas, which will not be fun ...
+  curry :: (a -> b) -> a `Curried` b
 
 instance Curry () b where
   type Curried () b = b
+  curry f = f ()
 
 instance Curry as b => Curry (a , as) b where
   type Curried (a , as) b = a -> Curried as b
+  -- The essence of the continuation trick in 'collectAndCallCont'.
+  curry f x = curry (\ xs -> f (x , xs))
 
 ----------------------------------------------------------------
 -- Collection of curried (tupled) arguments while calling.
