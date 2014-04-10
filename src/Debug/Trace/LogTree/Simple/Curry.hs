@@ -16,9 +16,10 @@ import Data.Proxy
 -- a premise in the class signature!  I can't find any way to put it
 -- in the class body directly.
 class Monad (GetMonad t) => UncurryM t where
-  type GetArg t
-  type GetRet t
-  type GetMonad t
+  type GetArg t :: *
+  type GetRet t :: *
+  type GetMonad t :: * -> *
+  uncurryM :: t -> GetArg t -> GetMonad t (GetRet t)
 
 -- It seems I've got this working for all types of the form
 --
@@ -55,16 +56,19 @@ instance UncurryM b => UncurryM (a -> b) where
   type GetArg (a -> b) = (a , GetArg b)
   type GetRet (a -> b) = GetRet b
   type GetMonad (a -> b) = GetMonad b
+  uncurryM f (x , xs) = uncurryM (f x) xs
 
 instance (Monad m , Monad (t m)) => UncurryM (t m r) where
   type GetArg (t m r) = ()
   type GetRet (t m r) = r
   type GetMonad (t m r) = (t m)
+  uncurryM f () = f
 
 instance UncurryM (IO r) where
   type GetArg (IO r) = ()
   type GetRet (IO r) = r
   type GetMonad (IO r) = IO
+  uncurryM f () = f
 
 ----------------------------------------------------------------
 -- Type level computation of curried types.
