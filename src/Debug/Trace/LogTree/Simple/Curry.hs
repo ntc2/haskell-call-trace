@@ -4,6 +4,7 @@
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE ConstraintKinds #-}
 
 module Debug.Trace.LogTree.Simple.Curry where
 
@@ -91,6 +92,16 @@ instance Curry as b => Curry (a , as) b where
   type Curried (a , as) b = a -> Curried as b
   -- The essence of the continuation trick in 'collectAndCallCont'.
   curry f x = curry (\ xs -> f (x , xs))
+
+-- The 'CurryM' and 'CurryUncurryM' are constraint synonyms and need
+-- '-XConstraintKinds'.
+type CurryM t = Curry (GetArg t) (GetMonad t (GetRet t))
+-- type CurryUncurryM t = (CurryM t , UncurryM t)
+
+type UncurriedM t        = GetArg t ->        GetMonad t (GetRet t)
+-- A fancy identity function.
+type CurriedUncurriedM t = GetArg t `Curried` GetMonad t (GetRet t)
+
 
 ----------------------------------------------------------------
 -- Collection of curried (tupled) arguments while calling.
