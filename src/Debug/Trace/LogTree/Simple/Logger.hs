@@ -10,6 +10,8 @@
 
 module Debug.Trace.LogTree.Simple.Logger where
 
+import Prelude hiding (curry)
+
 import GHC.TypeLits
 
 import Control.Monad.Writer
@@ -47,24 +49,26 @@ instance MonadWriter [LogEvent c] m => EventLogger c m where
   logEvent e = tell [e]
 
 -- Note: the 'GetArg t `Curried` GetMonad t (GetRet t)' is just a
--- fancy way to write 't' (that GHC prefers).
+-- fancy way to write 't' (that GHC prefers). The synonym
+-- 'CurriedUncurriedM t' expands to that.
 simpleLogger :: forall tag before t after c
               . ( SingI tag
-                , CollectAndCallCont t
+                , CurryM t
+                , UncurryM t
                 , EventLogger c (GetMonad t)
                 , c (Proxy (SimpleCall tag before t after)) )
              => Proxy (tag::Symbol)
              -> GetMonad t before
              -> GetMonad t after
              -> t
-             -> GetArg t `Curried` GetMonad t (GetRet t)
-simpleLogger _ ms1 ms2 f = collectAndCallCont k f where
-  k :: (GetArg t , GetMonad t (GetRet t)) -> GetMonad t (GetRet t)
-  k (arg , mret) = do
+             -> CurriedUncurriedM t
+simpleLogger _ ms1 ms2 f = curry k where
+  k :: UncurriedM t
+  k arg = do
     let call = Proxy::Proxy (SimpleCall tag before t after)
     s1 <- ms1
     logEvent (BeginCall call s1 arg::LogEvent c)
-    ret <- mret
+    ret <- uncurryM f arg
     s2 <- ms2
     logEvent (EndCall call s1 arg ret s2::LogEvent c)
     return ret

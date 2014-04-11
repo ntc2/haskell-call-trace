@@ -10,7 +10,7 @@
 
 module Debug.Trace.LogTree.Simple.Memoize where
 
-import Prelude hiding (lookup)
+import Prelude hiding (lookup , curry)
 
 import Control.Applicative
 import Data.Typeable
@@ -146,19 +146,19 @@ import Debug.Trace.LogTree.Simple.Curry
 --
 -- Note: the 'GetArg t `Curried` GetMonad t (GetRet t)' is just a
 -- fancy way to write 't' (that GHC prefers).
-simpleMemoizer :: forall t. CollectAndCallCont t
+simpleMemoizer :: forall t. (CurryM t , UncurryM t)
                => (GetArg t -> GetMonad t (Maybe (GetRet t)))
                -> (GetArg t -> GetRet t -> GetMonad t ())
                -> t
-               -> GetArg t `Curried` GetMonad t (GetRet t)
-simpleMemoizer lookup insert f = collectAndCallCont k f where
-  k :: (GetArg t , GetMonad t (GetRet t)) -> GetMonad t (GetRet t)
-  k (arg , mret) = do
+               -> CurriedUncurriedM t
+simpleMemoizer lookup insert f = curry k where
+  k :: UncurriedM t
+  k arg = do
     maybeCached <- lookup arg
     case maybeCached of
       Just ret -> return ret
       Nothing -> do
-        ret <- mret
+        ret <- uncurryM f arg
         insert arg ret
         return ret
 
@@ -175,7 +175,8 @@ simpleMemoizer lookup insert f = collectAndCallCont k f where
 -- 'Typeable' constraints allow us to 'cast' the maps after removing
 -- them from the 'H' constructors.
 castMemoizer :: forall t.
-              ( CollectAndCallCont t
+              ( CurryM t
+              , UncurryM t
               , Ord (GetArg t)
               , Typeable (GetArg t)
               , Typeable (GetRet t)
@@ -184,15 +185,15 @@ castMemoizer :: forall t.
              -> (String -> H Typeable -> GetMonad t ())
              -> String
              -> t
-             -> GetArg t `Curried` GetMonad t (GetRet t)
-castMemoizer lookup insert tag f = collectAndCallCont k f where
-  k :: (GetArg t , GetMonad t (GetRet t)) -> GetMonad t (GetRet t)
-  k (arg , mret) = do
+             -> CurriedUncurriedM t
+castMemoizer lookup insert tag f = curry k where
+  k :: UncurriedM t
+  k arg = do
     dict <- getDict
     case Map.lookup arg dict of
       Just ret -> return ret
       Nothing -> do
-        ret <- mret
+        ret <- uncurryM f arg
         -- Careful: we need to look up the dict again since the call
         -- may have mutated it.
         insert tag . H . Map.insert arg ret =<< getDict
