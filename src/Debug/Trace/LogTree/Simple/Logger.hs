@@ -53,7 +53,6 @@ instance MonadWriter [LogEvent c] m => EventLogger c m where
 -- 'CurriedUncurriedM t' expands to that.
 simpleLogger :: forall tag before t after c
               . ( SingI tag
-                , CurryM t
                 , UncurryM t
                 , EventLogger c (GetMonad t)
                 , c (Proxy (SimpleCall tag before t after)) )

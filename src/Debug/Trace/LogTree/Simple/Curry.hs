@@ -18,11 +18,11 @@ import Data.Proxy
 -- Tricky: to put a class constraint on an associated type we make it
 -- a premise in the class signature!  I can't find any way to put it
 -- in the class body directly.
-class Monad (GetMonad t) => UncurryM t where
+class (CurryUncurryM t , Monad (GetMonad t)) => UncurryM t where
   type GetArg   t :: *
   type GetRet   t :: *
   type GetMonad t :: * -> *
-  uncurryM :: t -> GetArg t -> GetMonad t (GetRet t)
+  uncurryM :: t -> UncurriedM t
 
 -- It seems I've got this working for all types of the form
 --
@@ -93,15 +93,13 @@ instance Curry () b where
   type Curried () b = b
   curry f = f ()
 
--- The 'CurryM' and 'CurryUncurryM' are constraint synonyms and need
+-- The 'CurryUncurryM' is a constraint synonym and needs
 -- '-XConstraintKinds'.
-type CurryM t = Curry (GetArg t) (GetMonad t (GetRet t))
--- type CurryUncurryM t = (CurryM t , UncurryM t)
+type CurryUncurryM t = Curry (GetArg t) (GetMonad t (GetRet t))
 
 type UncurriedM t        = GetArg t ->        GetMonad t (GetRet t)
 -- A fancy identity function.
 type CurriedUncurriedM t = GetArg t `Curried` GetMonad t (GetRet t)
-
 
 ----------------------------------------------------------------
 -- Collection of curried (tupled) arguments while calling.

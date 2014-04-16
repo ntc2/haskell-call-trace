@@ -327,7 +327,7 @@ instance C' cs c => C'' cs c where
 -- Coercion of constraints.
 
 -- XXX: move this somewhere else, maybe with the 'HetCall' code.
-data H c where
+data H (c :: * -> Constraint) where
   H :: c a => a -> H c
 
 unH :: (forall a. c a => a -> b) -> H c -> b

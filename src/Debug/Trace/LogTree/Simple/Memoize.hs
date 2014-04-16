@@ -146,7 +146,7 @@ import Debug.Trace.LogTree.Simple.Curry
 --
 -- Note: the 'GetArg t `Curried` GetMonad t (GetRet t)' is just a
 -- fancy way to write 't' (that GHC prefers).
-simpleMemoizer :: forall t. (CurryM t , UncurryM t)
+simpleMemoizer :: forall t. UncurryM t
                => (GetArg t -> GetMonad t (Maybe (GetRet t)))
                -> (GetArg t -> GetRet t -> GetMonad t ())
                -> t
@@ -175,8 +175,7 @@ simpleMemoizer lookup insert f = curry k where
 -- 'Typeable' constraints allow us to 'cast' the maps after removing
 -- them from the 'H' constructors.
 castMemoizer :: forall t.
-              ( CurryM t
-              , UncurryM t
+              ( UncurryM t
               , Ord (GetArg t)
               , Typeable (GetArg t)
               , Typeable (GetRet t)
