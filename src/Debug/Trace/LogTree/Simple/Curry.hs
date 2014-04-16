@@ -19,8 +19,8 @@ import Data.Proxy
 -- a premise in the class signature!  I can't find any way to put it
 -- in the class body directly.
 class Monad (GetMonad t) => UncurryM t where
-  type GetArg t :: *
-  type GetRet t :: *
+  type GetArg   t :: *
+  type GetRet   t :: *
   type GetMonad t :: * -> *
   uncurryM :: t -> GetArg t -> GetMonad t (GetRet t)
 
@@ -56,20 +56,20 @@ class Monad (GetMonad t) => UncurryM t where
 -- instance, but that case seems unlikely. If it does happen, it's as
 -- simple as copying and adapting the 't m r' instances.
 instance UncurryM b => UncurryM (a -> b) where
-  type GetArg (a -> b) = (a , GetArg b)
-  type GetRet (a -> b) = GetRet b
+  type GetArg   (a -> b) = (a , GetArg b)
+  type GetRet   (a -> b) = GetRet b
   type GetMonad (a -> b) = GetMonad b
   uncurryM f (x , xs) = uncurryM (f x) xs
 
 instance (Monad m , Monad (t m)) => UncurryM (t m r) where
-  type GetArg (t m r) = ()
-  type GetRet (t m r) = r
-  type GetMonad (t m r) = (t m)
+  type GetArg   (t m r) = ()
+  type GetRet   (t m r) = r
+  type GetMonad (t m r) = t m
   uncurryM f () = f
 
 instance UncurryM (IO r) where
-  type GetArg (IO r) = ()
-  type GetRet (IO r) = r
+  type GetArg   (IO r) = ()
+  type GetRet   (IO r) = r
   type GetMonad (IO r) = IO
   uncurryM f () = f
 
@@ -84,14 +84,14 @@ class Curry a b where
   -- type-level snoc lemmas, which will not be fun ...
   curry :: (a -> b) -> a `Curried` b
 
-instance Curry () b where
-  type Curried () b = b
-  curry f = f ()
-
 instance Curry as b => Curry (a , as) b where
   type Curried (a , as) b = a -> Curried as b
   -- The essence of the continuation trick in 'collectAndCallCont'.
   curry f x = curry (\ xs -> f (x , xs))
+
+instance Curry () b where
+  type Curried () b = b
+  curry f = f ()
 
 -- The 'CurryM' and 'CurryUncurryM' are constraint synonyms and need
 -- '-XConstraintKinds'.
