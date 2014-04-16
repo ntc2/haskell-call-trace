@@ -34,6 +34,16 @@ cabal-sandbox-install-prof: cabal-sandbox-install
 ################################################################
 # Misc
 
+# Does not work for literate Haskell; see spire.git/Makefile if you
+# need that.
+.PHONY: tags
+tags: tmp
+	-rm tmp/TAGS
+	cd tmp \
+	&& find ../src \
+	   -name '*.hs' -print \
+	   | xargs hasktags --etags
+
 # Print the module names corresponding to the source files.
 .PHONY: modules
 modules:
