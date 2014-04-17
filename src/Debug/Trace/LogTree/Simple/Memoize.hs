@@ -188,23 +188,23 @@ castMemoizer :: forall t.
 castMemoizer lookup insert tag f = curry k where
   k :: UncurriedM t
   k arg = do
-    dict <- getDict
-    case Map.lookup arg dict of
+    cache <- getCache
+    case Map.lookup arg cache of
       Just ret -> return ret
       Nothing -> do
         ret <- uncurryM f arg
-        -- Careful: we need to look up the dict again since the call
+        -- Careful: we need to look up the cache again since the call
         -- may have mutated it.
-        insert tag . H . Map.insert arg ret =<< getDict
+        insert tag . H . Map.insert arg ret =<< getCache
         return ret
 
-  getDict :: GetMonad t (Map.Map (GetArg t) (GetRet t))
-  getDict =
-    maybe Map.empty (unH castDict) <$> lookup tag
+  getCache :: GetMonad t (Map.Map (GetArg t) (GetRet t))
+  getCache =
+    maybe Map.empty (unH castCache) <$> lookup tag
 
-  castDict :: Typeable a => a -> Map.Map (GetArg t) (GetRet t)
-  castDict d = case cast d of
-    Just dict -> dict
+  castCache :: Typeable a => a -> Map.Map (GetArg t) (GetRet t)
+  castCache d = case cast d of
+    Just cache -> cache
     Nothing -> error msg where
-      msg = printf ("Unable to cast 'hetDict' in 'castMemoizer' with tag %s\n" ++
+      msg = printf ("Unable to cast cache in 'castMemoizer' with tag %s\n" ++
                     "This may indicate a tag collision!") tag
