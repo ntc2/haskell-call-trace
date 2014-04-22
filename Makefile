@@ -1,4 +1,4 @@
-all: ghc-build
+all: ghc-build proof-trees
 
 ################################################################
 # GHC
@@ -6,7 +6,7 @@ all: ghc-build
 # Build everything, even if it's not all used in 'Test' yet.
 .PHONY: ghc-build
 ghc-build: tmp
-	ghc -Wall \
+	$(GHC) \
 	-main-is Debug.Trace.LogTree.Test \
 	-isrc \
 	-outputdir tmp \
@@ -55,3 +55,9 @@ clean:
 
 tmp:
 	mkdir -p tmp
+
+GHC = ghc -Wall
+
+# Build the proof-trees code.
+proof-trees:
+	$(MAKE) -C experiments/proof-trees

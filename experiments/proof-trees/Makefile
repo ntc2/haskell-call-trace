@@ -1,4 +1,6 @@
-all: tests
+all: tmp/proof-tree tmp/self-contained-proof-tree
+
+GHC = ghc -Wall
 
 # Library source directory
 SRC = $(shell git rev-parse --show-toplevel)/src
@@ -22,14 +24,16 @@ tests: $(PT)
 	./tm2latex.sh $(PT) Y.ctx  'a:A->(A->A),y:(A->A)->A' '\f:A->A.(\x:A.f(axx))(y(\x:A.f(axx)))'
 
 tmp/proof-tree: Test.hs tmp
-	ghc -outputdir tmp \
+	$(GHC) \
+	    -outputdir tmp \
 	    -i$(SRC) \
 	    -main-is Test \
 	    -o $@ \
 	    $<
 
 tmp/self-contained-proof-tree: SelfContainedTest.hs tmp
-	ghc -outputdir tmp \
+	$(GHC) \
+	    -outputdir tmp/self-contained \
 	    -i$(SRC) \
 	    -main-is SelfContainedTest \
 	    -o $@ \
