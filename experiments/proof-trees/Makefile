@@ -1,5 +1,8 @@
 all: tests
 
+# Library source directory
+SRC = $(shell git rev-parse --show-toplevel)/src
+
 # usage: make PT=tmp/<proof tree executable> tests
 tests: $(PT)
 	./tm2latex.sh $(PT) S.ctx  'x:P->Q->R,y:P->Q,z:P' 'xz(yz)'
@@ -20,14 +23,14 @@ tests: $(PT)
 
 tmp/proof-tree: Test.hs tmp
 	ghc -outputdir tmp \
-	    -i../src \
+	    -i$(SRC) \
 	    -main-is Test \
 	    -o $@ \
 	    $<
 
 tmp/self-contained-proof-tree: SelfContainedTest.hs tmp
 	ghc -outputdir tmp \
-	    -i../src \
+	    -i$(SRC) \
 	    -main-is SelfContainedTest \
 	    -o $@ \
 	    $<
