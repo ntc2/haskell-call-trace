@@ -60,14 +60,14 @@ heterogenize :: forall c' c tag. c' (HetCall c tag) =>
   Proxy c -> Proxy tag -> Ex2T (LogTree (SigAll c)) -> Ex2T (LogTree c')
 heterogenize p1 p2 (Ex2T (CallAndReturn {..})) =
   Ex2T (CallAndReturn (HetCall (name _call)::HetCall c tag)
-                      (H _before)
+                      (fmap H _before)
                       (hmap (Proxy::Proxy c) H _arg)
                       (map (heterogenize p1 p2) _children)
                       (H _ret)
-                      (H _after))
+                      (fmap H _after))
 heterogenize p1 p2 (Ex2T (CallAndError {..})) =
   Ex2T (CallAndError (HetCall (name _call')::HetCall c tag)
-                     (H _before')
+                     (fmap H _before')
                      (hmap (Proxy::Proxy c) H _arg')
                      (map (heterogenize p1 p2) _children')
                      (fmap (heterogenize p1 p2) _how))

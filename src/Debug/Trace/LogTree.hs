@@ -44,9 +44,9 @@ type SigWith (c :: * -> Constraint) call =
 
 data LogEvent (c :: * -> Constraint)
   = forall call. SigWith c call =>
-    BeginCall call (Before call) (Arg call)
+    BeginCall call (Maybe (Before call)) (Arg call)
   | forall call. SigWith c call =>
-    EndCall   call (Before call) (Arg call) (Ret call) (After call)
+    EndCall   call (Maybe (Before call)) (Arg call) (Ret call) (Maybe (After call))
 type LogStream c = [LogEvent c]
 
 -- Would like to put the constraint on the whole data type, since we
@@ -68,15 +68,15 @@ data (Signature call , c call) => LogTree (c :: * -> Constraint) call (name :: S
 data LogTree (c :: * -> Constraint) call (name :: Symbol) where
   CallAndReturn :: SigWith c call =>
     { _call     :: call
-    , _before   :: Before call
+    , _before   :: Maybe (Before call)
     , _arg      :: Arg call
     , _children :: LogForest c
     , _ret      :: Ret call
-    , _after    :: After call
+    , _after    :: Maybe (After call)
     } -> LogTree c call "CallAndReturn"
   CallAndError :: SigWith c call =>
     { _call'     :: call
-    , _before'   :: Before call
+    , _before'   :: Maybe (Before call)
     , _arg'      :: Arg call
     , _children' :: LogForest c
     , _how       :: Maybe (Ex2T (LogTree c))

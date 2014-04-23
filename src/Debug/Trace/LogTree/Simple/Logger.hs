@@ -10,12 +10,13 @@
 
 module Debug.Trace.LogTree.Simple.Logger where
 
-import Prelude hiding (curry)
+import Prelude hiding (curry , sequence)
 
 import GHC.TypeLits
 
-import Control.Monad.Writer
+import Control.Monad.Writer hiding (sequence)
 import Data.Proxy
+import Data.Traversable (sequence)
 
 import Debug.Trace.LogTree
 import Debug.Trace.LogTree.Simple.Call
@@ -57,18 +58,18 @@ simpleLogger :: forall tag before t after c
                 , EventLogger c (GetMonad t)
                 , c (Proxy (SimpleCall tag before t after)) )
              => Proxy (tag::Symbol)
-             -> GetMonad t before
-             -> GetMonad t after
+             -> Maybe (GetMonad t before)
+             -> Maybe (GetMonad t after)
              -> t
              -> CurriedUncurriedM t
 simpleLogger _ ms1 ms2 f = curry k where
   k :: UncurriedM t
   k arg = do
     let call = Proxy::Proxy (SimpleCall tag before t after)
-    s1 <- ms1
+    s1 <- sequence ms1
     logEvent (BeginCall call s1 arg::LogEvent c)
     ret <- uncurryM f arg
-    s2 <- ms2
+    s2 <- sequence ms2
     logEvent (EndCall call s1 arg ret s2::LogEvent c)
     return ret
 

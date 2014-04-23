@@ -23,6 +23,7 @@ module Debug.Trace.LogTree.Test where
 
 import Control.Monad.Trans.Maybe
 import Control.Monad.Writer
+import Data.Foldable (toList)
 import Data.Proxy
 import Text.Parsec hiding (State)
 
@@ -69,9 +70,9 @@ type FTy = Int -> MaybeT (Writer (LogStream AllShow)) String
 fManual :: FTy
 f' :: FTy -> FTy
 fManual n = do
-  tell [BeginCall "f" "" (show n)]
+  tell [BeginCall "f" Nothing (show n)]
   r <- f' fManual n
-  tell [EndCall "f" "" (show n) r ""]
+  tell [EndCall "f" Nothing (show n) r Nothing]
   return r
 f' _ 0 = return ""
 f' f 5 = do
@@ -167,39 +168,41 @@ instance UnixTree (Proxy (SimpleCall "h" () HTy ())) where
 -- before state and args and the return value and after state.
 instance UnixTree (HetCall Show "default:bracket") where
   callAndReturn (CallAndReturn {..}) =
-    ( [ unH show _before
-      , formatCall (name _call) _arg ]
-    , [ unH show _ret
-      , unH show _after ] )
+    ( map (unH show) (toList _before) ++
+      [ formatCall (name _call) _arg ]
+    , [ unH show _ret ] ++
+      map (unH show) (toList _after) )
   callAndError (CallAndError {..}) =
-    ( [ unH show _before'
-      , formatCall (name _call') _arg' ]
+    ( map (unH show) (toList _before') ++
+      [ formatCall (name _call') _arg' ]
     , [ maybe "<error: here>" (const "<error: there>") _how ] )
 
 -- An instance for 'Show' that puts everything (before, args, return,
 -- after) in the header.
 instance UnixTree (HetCall Show "default:header") where
   callAndReturn (CallAndReturn {..}) =
-    ( [ unH show _before
-      , formatCall (name _call) _arg ++ " = " ++ unH show _ret
-      , unH show _after ]
+    ( map (unH show) (toList _before) ++
+      [ formatCall (name _call) _arg ++ " = " ++ unH show _ret ] ++
+      map (unH show) (toList _after)
     , [] )
   callAndError (CallAndError {..}) =
-    ( [ unH show _before'
-      , formatCall (name _call') _arg' ++ " = " ++
+    ( map (unH show) (toList _before') ++
+      [ formatCall (name _call') _arg' ++ " = " ++
           maybe "<error: here>" (const "<error: there>") _how ]
     , [] )
+
+bracket s = "<" ++ s ++ ">"
 
 -- An instance for 'Show' that puts everything (before, args, return,
 -- after) in a single line in the header.
 instance UnixTree (HetCall Show "default:oneline") where
   callAndReturn (CallAndReturn {..}) =
-    ( [ "<" ++ unH show _before ++ "> " ++
+    ( [ maybe "" (bracket . unH show) _before ++
         formatCall (name _call) _arg ++ " = " ++ unH show _ret ++
-        " <" ++ unH show _after ++ ">" ]
+        maybe "" (bracket . unH show) _after ]
     , [] )
   callAndError (CallAndError {..}) =
-    ( [ "<" ++ unH show _before' ++ "> " ++
+    ( [ maybe "" (bracket . unH show) _before' ++
         formatCall (name _call') _arg' ++ " = " ++
           maybe "<error: here>" (const "<error: there>") _how ]
     , [] )
