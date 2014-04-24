@@ -129,7 +129,7 @@ h'' Nothing = fail "Nothing"
 
 -- Nice: if you forget an instance the error message tells you exactly
 -- what the sig is of course :D
-instance UnixTree (Proxy (SimpleCall "f" () FTy' ())) where
+instance UnixTree (SimpleCall "f" () FTy' ()) where
   callAndReturn t =
     ([formatCall "f" $ _arg t] , [show ret])
     where
@@ -139,7 +139,7 @@ instance UnixTree (Proxy (SimpleCall "f" () FTy' ())) where
     where
       how = _how t
 
-instance UnixTree (Proxy (SimpleCall "g" () GTy ())) where
+instance UnixTree (SimpleCall "g" () GTy ()) where
   callAndReturn (CallAndReturn {..}) =
     ( [ show _before
       , hfoldl (Proxy::Proxy Show) (\s x -> s ++ " " ++ show x) "g" _arg]
@@ -147,7 +147,7 @@ instance UnixTree (Proxy (SimpleCall "g" () GTy ())) where
   callAndError (CallAndError {..}) =
     ([formatCall (name _call') _arg'] , [maybe "<error: here>" (const "<error: there>") _how])
 
-instance UnixTree (Proxy (SimpleCall "h" () HTy ())) where
+instance UnixTree (SimpleCall "h" () HTy ()) where
   callAndReturn (CallAndReturn {..}) =
     ([show _before , "h " ++ show n ++ " = " ++ show _ret , show _after] , [])
     where

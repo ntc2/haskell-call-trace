@@ -173,7 +173,7 @@ ppCtxOnlyTypes ctx@(_:_) = intercalate " , " [ pp t  | (_,t) <- ctx ]
 ----------------------------------------------------------------
 -- Proof tree processor.
 
-instance ProofTree Mode (Proxy (SimpleCall "infer" Ctx InferTy ())) where
+instance ProofTree Mode (SimpleCall "infer" Ctx InferTy ()) where
   callAndReturn mode t = conclusion mode ctx tm (Right ty)
     where
       (tm , ()) = _arg t

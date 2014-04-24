@@ -55,7 +55,7 @@ simpleLogger :: forall tag before t after c
               . ( SingI tag
                 , UncurryM t
                 , EventLogger c (GetMonad t)
-                , c (Proxy (SimpleCall tag before t after)) )
+                , c (SimpleCall tag before t after) )
              => Proxy (tag::Symbol)
              -> GetMonad t before
              -> GetMonad t after
@@ -64,7 +64,7 @@ simpleLogger :: forall tag before t after c
 simpleLogger _ ms1 ms2 f = curry k where
   k :: UncurriedM t
   k arg = do
-    let call = Proxy::Proxy (SimpleCall tag before t after)
+    let call = SimpleCall::SimpleCall tag before t after
     s1 <- ms1
     logEvent (BeginCall call s1 arg::LogEvent c)
     ret <- uncurryM f arg
