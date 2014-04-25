@@ -5,12 +5,12 @@
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE FlexibleContexts #-}
 
-module Debug.Trace.LogTree.Simple.Call where
+module Data.Function.Decorator.Simple.Call where
 
 import GHC.TypeLits
 
-import Debug.Trace.LogTree
-import Debug.Trace.LogTree.Simple.Curry
+import Data.Function.Decorator
+import Data.Function.Decorator.Simple.Curry
 
 ----------------------------------------------------------------
 -- A generic call-signature type for a generic logger.

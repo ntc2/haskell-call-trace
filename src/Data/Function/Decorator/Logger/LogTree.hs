@@ -6,7 +6,7 @@
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE PolyKinds #-}
 
-module Debug.Trace.LogTree
+module Data.Function.Decorator
   ( Ex2T(..)
   , Signature(..)
   , LogEvent(..)

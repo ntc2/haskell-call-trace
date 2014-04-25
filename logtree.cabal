@@ -51,14 +51,14 @@ cabal-version:       >=1.10
 
 library
   -- Modules exported by the library.
-  exposed-modules: Debug.Trace.LogTree
-                 , Debug.Trace.LogTree.HetCall
-                 , Debug.Trace.LogTree.ConstraintLogic
-                 , Debug.Trace.LogTree.Simple.Call
-                 , Debug.Trace.LogTree.Simple.Logger
-                 , Debug.Trace.LogTree.Simple.Curry
-                 , Debug.Trace.LogTree.Process.ProofTree
-                 , Debug.Trace.LogTree.Process.UnixTree
+  exposed-modules: Data.Function.Decorator
+                 , Data.Function.Decorator.HetCall
+                 , Data.Function.Decorator.ConstraintLogic
+                 , Data.Function.Decorator.Simple.Call
+                 , Data.Function.Decorator.Simple.Logger
+                 , Data.Function.Decorator.Simple.Curry
+                 , Data.Function.Decorator.Process.ProofTree
+                 , Data.Function.Decorator.Process.UnixTree
 
   -- Modules included in this library but not exported.
   -- other-modules:

@@ -6,7 +6,7 @@
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE ConstraintKinds #-}
 
-module Debug.Trace.LogTree.Simple.Curry where
+module Data.Function.Decorator.Simple.Curry where
 
 import Prelude hiding (curry)
 

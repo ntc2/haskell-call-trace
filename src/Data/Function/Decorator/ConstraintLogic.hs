@@ -14,7 +14,7 @@
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE RankNTypes #-}
 
-module Debug.Trace.LogTree.ConstraintLogic
+module Data.Function.Decorator.ConstraintLogic
   ((:&&:) , Implies' , coerceLogTree' , H(..) , unH)
 where
 
@@ -22,7 +22,7 @@ import GHC.Prim (Constraint)
 
 import Data.Proxy
 
-import Debug.Trace.LogTree
+import Data.Function.Decorator
 
 ----------------------------------------------------------------
 -- Conjunction of constraints.

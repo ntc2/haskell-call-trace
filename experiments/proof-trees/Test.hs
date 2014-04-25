@@ -21,10 +21,10 @@ import System.Exit (exitWith, ExitCode(..))
 import Text.Parsec hiding (Stream , between)
 import qualified Text.Parsec
 
-import Debug.Trace.LogTree
-import Debug.Trace.LogTree.Process.ProofTree
-import Debug.Trace.LogTree.Simple.Logger
-import Debug.Trace.LogTree.Simple.Call
+import Data.Function.Decorator
+import Data.Function.Decorator.Process.ProofTree
+import Data.Function.Decorator.Simple.Logger
+import Data.Function.Decorator.Simple.Call
 
 ----------------------------------------------------------------
 -- Grammar.

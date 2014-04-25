@@ -53,7 +53,7 @@ index ee6bc7b..2f2cf51 100644
 -
 +{-# LANGUAGE GADTs #-}
  
- module Debug.Trace.LogTree where
+ module Data.Function.Decorator where
  
 @@ -31,6 +31,26 @@ data LogEvent (c :: * -> Constraint)
      EndCall   call (Before call) (Arg call) (Ret call) (After call)

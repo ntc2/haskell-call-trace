@@ -8,7 +8,7 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE TypeFamilies #-}
 
-module Debug.Trace.LogTree.ConstraintLogic where
+module Data.Function.Decorator.ConstraintLogic where
 
 import GHC.Prim (Constraint)
 

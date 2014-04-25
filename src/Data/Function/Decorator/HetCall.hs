@@ -14,14 +14,14 @@
 -- non-'*' kind.
 {-# LANGUAGE PolyKinds #-}
 
-module Debug.Trace.LogTree.HetCall where
+module Data.Function.Decorator.HetCall where
 
 import GHC.Exts (Constraint)
 
 import Data.Proxy
 
-import Debug.Trace.LogTree
-import Debug.Trace.LogTree.ConstraintLogic
+import Data.Function.Decorator
+import Data.Function.Decorator.ConstraintLogic
 
 ----------------------------------------------------------------
 -- A call-signature type for signatures with all parts in the same

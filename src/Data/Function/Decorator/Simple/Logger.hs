@@ -8,7 +8,7 @@
 {-# LANGUAGE ConstraintKinds #-}
 {-# LANGUAGE UndecidableInstances #-}
 
-module Debug.Trace.LogTree.Simple.Logger where
+module Data.Function.Decorator.Simple.Logger where
 
 import Prelude hiding (curry)
 
@@ -17,9 +17,9 @@ import GHC.TypeLits
 import Control.Monad.Writer
 import Data.Proxy
 
-import Debug.Trace.LogTree
-import Debug.Trace.LogTree.Simple.Call
-import Debug.Trace.LogTree.Simple.Curry
+import Data.Function.Decorator
+import Data.Function.Decorator.Simple.Call
+import Data.Function.Decorator.Simple.Curry
 
 ----------------------------------------------------------------
 -- An event logger with a simple interface.
@@ -95,7 +95,7 @@ Debug/Trace/LogTree/SimpleLogger.hs:55:10:
       in the constraint: Suffix (Identity r) t
     (Use -XUndecidableInstances to permit this)
     In the instance declaration for `Collect (Identity r) t'
-Failed, modules loaded: Debug.Trace.LogTree, Debug.Trace.LogTree.SimpleCall.
+Failed, modules loaded: Data.Function.Decorator, Data.Function.Decorator.SimpleCall.
 -}
 -- whereas the expanded versions below are fine.  Of course, the
 -- versions below are only "smaller" because the definitions of the

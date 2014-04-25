@@ -8,7 +8,7 @@
 {-# LANGUAGE ConstraintKinds #-}
 {-# LANGUAGE UndecidableInstances #-}
 
-module Debug.Trace.LogTree.Simple.Memoize where
+module Data.Function.Decorator.Simple.Memoize where
 
 import Prelude hiding (lookup , curry)
 
@@ -21,8 +21,8 @@ import Data.Typeable
 import qualified Data.Map.Strict as Map
 import Text.Printf
 
-import Debug.Trace.LogTree.ConstraintLogic
-import Debug.Trace.LogTree.Simple.Curry
+import Data.Function.Decorator.ConstraintLogic
+import Data.Function.Decorator.Simple.Curry
 
 ----------------------------------------------------------------
 -- A memoizer with a simple interface.

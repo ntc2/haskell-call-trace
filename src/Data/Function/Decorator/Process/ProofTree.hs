@@ -5,11 +5,11 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 
-module Debug.Trace.LogTree.Process.ProofTree where
+module Data.Function.Decorator.Process.ProofTree where
 
 import Data.List (intercalate)
 
-import Debug.Trace.LogTree
+import Data.Function.Decorator
 
 class ProofTree mode call where
   callAndReturn :: mode -> LogTree (ProofTree mode) call "CallAndReturn" ->
