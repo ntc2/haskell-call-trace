@@ -14,13 +14,13 @@
 -- non-'*' kind.
 {-# LANGUAGE PolyKinds #-}
 
-module Data.Function.Decorator.HetCall where
+module Data.Function.Decorator.Logger.HetCall where
 
 import GHC.Exts (Constraint)
 
 import Data.Proxy
 
-import Data.Function.Decorator
+import Data.Function.Decorator.Logger.LogTree
 import Data.Function.Decorator.ConstraintLogic
 
 ----------------------------------------------------------------

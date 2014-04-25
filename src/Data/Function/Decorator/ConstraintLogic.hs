@@ -22,7 +22,7 @@ import GHC.Prim (Constraint)
 
 import Data.Proxy
 
-import Data.Function.Decorator
+import Data.Function.Decorator.Logger.LogTree
 
 ----------------------------------------------------------------
 -- Conjunction of constraints.

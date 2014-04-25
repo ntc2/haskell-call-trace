@@ -19,7 +19,7 @@
 -- For 'processDefault's 'Proxy' argument.
 {-# LANGUAGE PolyKinds #-}
 
-module Data.Function.Decorator.Test where
+module Data.Function.Decorator.Logger.LogTree.Test where
 
 import Prelude hiding (log)
 
@@ -28,12 +28,12 @@ import Control.Monad.Writer
 import Data.Proxy
 import Text.Parsec hiding (State)
 
-import Data.Function.Decorator
+import Data.Function.Decorator.Logger.LogTree
 import Data.Function.Decorator.ConstraintLogic
-import Data.Function.Decorator.HetCall
-import Data.Function.Decorator.Process.UnixTree
-import Data.Function.Decorator.Simple.Logger
-import Data.Function.Decorator.Simple.Call
+import Data.Function.Decorator.Logger.HetCall
+import Data.Function.Decorator.Logger.Processor.UnixTree
+import Data.Function.Decorator.Logger.Logger
+import Data.Function.Decorator.Logger.SimpleCall
 
 ----------------------------------------------------------------
 -- Isolate imports for memoizer tests, in case I want to factor them
@@ -45,8 +45,8 @@ import qualified Data.Map.Strict as Map
 import Data.Typeable
 import Text.Printf
 
-import Data.Function.Decorator.Simple.Curry
-import Data.Function.Decorator.Simple.Memoize
+import Data.Function.Decorator.Curry
+import Data.Function.Decorator.Memoizer
 
 ----------------------------------------------------------------
 -- Logging tests.

@@ -8,7 +8,7 @@
 {-# LANGUAGE ConstraintKinds #-}
 {-# LANGUAGE UndecidableInstances #-}
 
-module Data.Function.Decorator.Simple.Memoize where
+module Data.Function.Decorator.Memoizer where
 
 import Prelude hiding (lookup , curry)
 
@@ -22,7 +22,7 @@ import qualified Data.Map.Strict as Map
 import Text.Printf
 
 import Data.Function.Decorator.ConstraintLogic
-import Data.Function.Decorator.Simple.Curry
+import Data.Function.Decorator.Curry
 
 ----------------------------------------------------------------
 -- A memoizer with a simple interface.

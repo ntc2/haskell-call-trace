@@ -6,11 +6,11 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE DataKinds #-}
 
-module Data.Function.Decorator.Process.UnixTree where
+module Data.Function.Decorator.Logger.Processor.UnixTree where
 
 import Control.Exception.Base (assert)
 
-import Data.Function.Decorator
+import Data.Function.Decorator.Logger.LogTree
 
 ----------------------------------------------------------------
 

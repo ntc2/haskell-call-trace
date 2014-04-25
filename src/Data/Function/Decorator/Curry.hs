@@ -6,7 +6,7 @@
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE ConstraintKinds #-}
 
-module Data.Function.Decorator.Simple.Curry where
+module Data.Function.Decorator.Curry where
 
 import Prelude hiding (curry)
 

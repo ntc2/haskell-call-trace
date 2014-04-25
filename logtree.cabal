@@ -51,14 +51,15 @@ cabal-version:       >=1.10
 
 library
   -- Modules exported by the library.
-  exposed-modules: Data.Function.Decorator
-                 , Data.Function.Decorator.HetCall
-                 , Data.Function.Decorator.ConstraintLogic
-                 , Data.Function.Decorator.Simple.Call
-                 , Data.Function.Decorator.Simple.Logger
-                 , Data.Function.Decorator.Simple.Curry
-                 , Data.Function.Decorator.Process.ProofTree
-                 , Data.Function.Decorator.Process.UnixTree
+  exposed-modules: Data.Function.Decorator.ConstraintLogic
+                 , Data.Function.Decorator.Curry
+                 , Data.Function.Decorator.Logger.LogTree
+                 , Data.Function.Decorator.Logger.HetCall
+                 , Data.Function.Decorator.Logger.SimpleCall
+                 , Data.Function.Decorator.Logger.Logger
+                 , Data.Function.Decorator.Logger.Processor.ProofTree
+                 , Data.Function.Decorator.Logger.Processor.UnixTree
+                 , Data.Function.Decorator.Memoizer
 
   -- Modules included in this library but not exported.
   -- other-modules:
@@ -91,6 +92,7 @@ library
                , tagged >=0.7 && <0.8
                , transformers >=0.3 && <0.4
                , mtl >=2.1 && <2.2
+               , containers
 
   -- Directories containing source files.
   hs-source-dirs:      src
