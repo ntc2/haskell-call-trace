@@ -51,17 +51,17 @@ instance MonadWriter [LogEvent c] m => EventLogger c m where
 -- Note: the 'GetArg t `Curried` GetMonad t (GetRet t)' is just a
 -- fancy way to write 't' (that GHC prefers). The synonym
 -- 'CurriedUncurriedM t' expands to that.
-simpleLogger :: forall tag before t after c
-              . ( SingI tag
-                , UncurryM t
-                , EventLogger c (GetMonad t)
-                , c (SimpleCall tag before t after) )
-             => Proxy (tag::Symbol)
-             -> GetMonad t before
-             -> GetMonad t after
-             -> t
-             -> CurriedUncurriedM t
-simpleLogger _ ms1 ms2 f = curry k where
+log :: forall tag before t after c
+     . ( SingI tag
+       , UncurryM t
+       , EventLogger c (GetMonad t)
+       , c (SimpleCall tag before t after) )
+    => Proxy (tag::Symbol)
+    -> GetMonad t before
+    -> GetMonad t after
+    -> t
+    -> CurriedUncurriedM t
+log _ ms1 ms2 f = curry k where
   k :: UncurriedM t
   k arg = do
     let call = SimpleCall::SimpleCall tag before t after

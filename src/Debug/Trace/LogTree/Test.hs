@@ -21,6 +21,8 @@
 
 module Debug.Trace.LogTree.Test where
 
+import Prelude hiding (log)
+
 import Control.Monad.Trans.Maybe
 import Control.Monad.Writer
 import Data.Proxy
@@ -90,7 +92,7 @@ instance (Signature t , Show t , Show (Before t) , Show (Arg t) , Show (Ret t) ,
   => AllShow t
 
 fSimple :: FTy
-fSimple = simpleLogger (Proxy::Proxy "g") (return ()) (return ()) (f' fSimple)
+fSimple = log (Proxy::Proxy "g") (return ()) (return ()) (f' fSimple)
 
 ----------------------------------------------------------------
 -- Auto logging with unix tree post processor.
@@ -101,7 +103,7 @@ type M = MaybeT (Writer (LogStream C))
 type FTy' = Int -> M String
 fSimple' :: FTy'
 f'' :: FTy'
-fSimple' = simpleLogger (Proxy::Proxy "f") (return ()) (return ()) f''
+fSimple' = log (Proxy::Proxy "f") (return ()) (return ()) f''
 f'' 0 = return " Y"
 f'' 5 = do
   _ <- fSimple' 2
@@ -113,12 +115,12 @@ f'' n = do
 
 type GTy = String -> String -> M String
 gSimple , g'' :: GTy
-gSimple = simpleLogger (Proxy::Proxy "g") (return ()) (return ()) g''
+gSimple = log (Proxy::Proxy "g") (return ()) (return ()) g''
 g'' s1 s2 = return $ s1 ++ s2
 
 type HTy = Maybe Int -> M ()
 hSimple , h'' :: HTy
-hSimple = simpleLogger (Proxy::Proxy "h") (return ()) (return ()) h''
+hSimple = log (Proxy::Proxy "h") (return ()) (return ()) h''
 h'' (Just n) = do
   _ <- fSimple' n
   _ <- fSimple' n
@@ -288,7 +290,7 @@ data S = S { _fibDict :: Map.Map (GetArg FibTy) (GetRet FibTy)
 
 type FibTy = Integer -> MemoM Integer
 fib , fib' :: FibTy
-fib = simpleMemoizer lookup insert fib' where
+fib = simpleMemoize lookup insert fib' where
   lookup k = Map.lookup k <$> gets _fibDict
   insert k v = modify i where
     i s = s { _fibDict = Map.insert k v $ _fibDict s }
@@ -304,7 +306,7 @@ fib' n =
 -- GHC infers a too-special type here, so we can't use this function
 -- twice.
 {-
-specializedCastMemoizer = castMemoizer lookup insert where
+specializedCastMemoizer = castMemoize lookup insert where
   lookup k = Map.lookup k <$> gets _hDict
   insert k v = modify i where
     i s = s { _hDict = Map.insert k v $ _hDict s }
@@ -315,14 +317,14 @@ insertM k v = modify i where
 
 
 fib2 :: FibTy
-fib2 = castMemoizer lookupM insertM "Test.fib2" fib' where
+fib2 = castMemoize lookupM insertM "Test.fib2" fib' where
   fib' n =
     if n <= 1
     then pure n
     else (+) <$> fib2 (n-1) <*> fib2 (n-2)
 
 pow :: Int -> Integer -> MemoM Integer
-pow = castMemoizer lookupM insertM "Test.pow" pow' where
+pow = castMemoize lookupM insertM "Test.pow" pow' where
   pow' _ 0 = pure 1
   pow' n p = sum <$> replicateM n (pow n (p-1))
 
@@ -345,7 +347,7 @@ openFib fib n =
 --
 --   f       = fix (decorate . openF)
 --   openF f = ... f ...
-fib3 = fix (castMemoizer lookupM insertM "Test.fib3" . openFib)
+fib3 = fix (castMemoize lookupM insertM "Test.fib3" . openFib)
 
 ----------------------------------------------------------------
 

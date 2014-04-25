@@ -146,12 +146,12 @@ import Debug.Trace.LogTree.Simple.Curry
 --
 -- Note: the 'GetArg t `Curried` GetMonad t (GetRet t)' is just a
 -- fancy way to write 't' (that GHC prefers).
-simpleMemoizer :: forall t. UncurryM t
-               => (GetArg t -> GetMonad t (Maybe (GetRet t)))
-               -> (GetArg t -> GetRet t -> GetMonad t ())
-               -> t
-               -> CurriedUncurriedM t
-simpleMemoizer lookup insert f = curry k where
+simpleMemoize :: forall t. UncurryM t
+              => (GetArg t -> GetMonad t (Maybe (GetRet t)))
+              -> (GetArg t -> GetRet t -> GetMonad t ())
+              -> t
+              -> CurriedUncurriedM t
+simpleMemoize lookup insert f = curry k where
   k :: UncurriedM t
   k arg = do
     maybeCached <- lookup arg
@@ -174,18 +174,18 @@ simpleMemoizer lookup insert f = curry k where
 -- and 'insert', and the different caches have different types.  The
 -- 'Typeable' constraints allow us to 'cast' the maps after removing
 -- them from the 'H' constructors.
-castMemoizer :: forall t.
-              ( UncurryM t
-              , Ord (GetArg t)
-              , Typeable (GetArg t)
-              , Typeable (GetRet t)
-              , Functor (GetMonad t) )
-             => (String -> GetMonad t (Maybe (H Typeable)))
-             -> (String -> H Typeable -> GetMonad t ())
-             -> String
-             -> t
-             -> CurriedUncurriedM t
-castMemoizer lookup insert tag f = curry k where
+castMemoize :: forall t.
+             ( UncurryM t
+             , Ord (GetArg t)
+             , Typeable (GetArg t)
+             , Typeable (GetRet t)
+             , Functor (GetMonad t) )
+            => (String -> GetMonad t (Maybe (H Typeable)))
+            -> (String -> H Typeable -> GetMonad t ())
+            -> String
+            -> t
+            -> CurriedUncurriedM t
+castMemoize lookup insert tag f = curry k where
   k :: UncurriedM t
   k arg = do
     cache <- getCache

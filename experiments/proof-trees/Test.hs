@@ -7,6 +7,8 @@
 
 module Test where
 
+import Prelude hiding (log)
+
 import Control.Applicative ((<*) , (*>) , (<$>) , (<*>) , pure)
 import Control.Monad.Error
 import Control.Monad.Reader
@@ -92,7 +94,7 @@ execM ctx = snd . runM ctx
 
 type InferTy = Tm -> M Ty
 infer , infer' :: InferTy
-infer = simpleLogger (Proxy::Proxy "infer") ask (return ()) infer'
+infer = log (Proxy::Proxy "infer") ask (return ()) infer'
 infer' (Lam x t e) = (t :->:) <$> (local (++ [(x,t)]) . infer $ e)
 infer' (TmVar x) = maybe err pure . lookup x =<< ask where
   err = throwError $ "Variable " ++ x ++ " not in context!"
