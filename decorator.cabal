@@ -2,7 +2,7 @@
 -- documentation, see http://haskell.org/cabal/users-guide/
 
 -- The name of the package.
-name:                logtree
+name:                decorator
 
 -- The package version.  See the Haskell package versioning policy (PVP)
 -- for standards guiding when and how versions should be incremented.
@@ -10,7 +10,7 @@ name:                logtree
 -- PVP summary:      +-+------- breaking API changes
 --                   | | +----- non-breaking API additions
 --                   | | | +--- code changes with no API change
-version:             0.1.0.20140124
+version:             0.1.0.20140424
 
 -- A short (one-line) description of the package.
 synopsis:            Generic call tracing for monadic functions.
@@ -37,7 +37,7 @@ maintainer:          nathan.collins@gmail.com
 -- A copyright notice.
 -- copyright:
 
-category:            Testing, Trace, Debug
+category:            Testing, Trace, Debug, Data
 
 build-type:          Simple
 
