@@ -7,7 +7,7 @@ all: ghc-build proof-trees
 .PHONY: ghc-build
 ghc-build: tmp
 	$(GHC) \
-	-main-is Debug.Trace.LogTree.Test \
+	-main-is Data.Function.Decorator.Test \
 	-isrc \
 	-outputdir tmp \
 	-o tmp/Test \
