@@ -15,11 +15,13 @@ import Prelude hiding (curry)
 import GHC.TypeLits
 
 import Control.Monad.Writer
+import Data.IORef
 import Data.Proxy
 
+import Data.Function.Decorator.Curry
 import Data.Function.Decorator.Logger.LogTree
 import Data.Function.Decorator.Logger.SimpleCall
-import Data.Function.Decorator.Curry
+import Data.Function.Decorator.Logger.HetCall
 
 ----------------------------------------------------------------
 -- An event logger with a simple interface.
@@ -70,6 +72,30 @@ log _ ms1 ms2 f = curry k where
     ret <- uncurryM f arg
     s2 <- ms2
     logEvent (EndCall call s1 arg ret s2::LogEvent c)
+    return ret
+
+----------------------------------------------------------------
+-- A simple printing logger.
+
+trace :: forall t.
+  ( UncurryM t
+  , HFold Show (GetArg t)
+  , Show (GetRet t)
+  , MonadIO (GetMonad t) )
+  => GetMonad t (IORef Int) -> String -> t -> CurriedUncurriedM t
+trace getIndentRef name f = curry k where
+  k :: UncurriedM t
+  k args = do
+    indentRef <- getIndentRef
+    level <- liftIO $ readIORef indentRef
+    let prefix = concat . replicate level $ "| "
+    liftIO . putStrLn $ prefix ++ formatCall name args
+
+    liftIO $ modifyIORef' indentRef (+1)
+    ret <- uncurryM f args
+    liftIO $ modifyIORef' indentRef (subtract 1)
+
+    liftIO . putStrLn $ prefix ++ show ret
     return ret
 
 ----------------------------------------------------------------

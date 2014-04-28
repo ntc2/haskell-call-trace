@@ -19,12 +19,13 @@
 -- For 'processDefault's 'Proxy' argument.
 {-# LANGUAGE PolyKinds #-}
 
-module Data.Function.Decorator.Logger.LogTree.Test where
+module Data.Function.Decorator.Test where
 
 import Prelude hiding (log)
 
 import Control.Monad.Trans.Maybe
 import Control.Monad.Writer
+import Data.IORef
 import Data.Proxy
 import Text.Parsec hiding (State)
 
@@ -282,10 +283,11 @@ logMain = do
 -- Memoizer tests.
 ----------------------------------------------------------------
 
-type MemoM = State S
+type MemoM = StateT S IO
 
 data S = S { _fibDict :: Map.Map (GetArg FibTy) (GetRet FibTy)
            , _hDict :: Map.Map String (H Typeable)
+           , _indentRef :: IORef Int
            }
 
 type FibTy = Integer -> MemoM Integer
@@ -350,21 +352,53 @@ openFib fib n =
 fib3 = fix (castMemoize lookupM insertM "Test.fib3" . openFib)
 
 ----------------------------------------------------------------
+-- Printf logging / tracing.
 
-testMemo :: MemoM a -> a
-testMemo =
-  flip evalState (S { _fibDict = Map.empty , _hDict = Map.empty })
+getIndentRef :: MemoM (IORef Int)
+getIndentRef = gets _indentRef
+
+tracedFib :: FibTy
+tracedFib =
+  fix $ trace getIndentRef "tFib"
+      . openFib
+
+tracedMemoizedFib :: FibTy
+tracedMemoizedFib =
+  fix $ trace getIndentRef "tmFib"
+      . castMemoize lookupM insertM "Test.tmFib"
+      . openFib
+
+----------------------------------------------------------------
+
+testMemo :: MemoM a -> IO a
+testMemo ma = do
+  indentRef <- newIORef 0
+  evalStateT ma (S { _fibDict = Map.empty
+                   , _hDict = Map.empty
+                   , _indentRef = indentRef })
 
 memoMain :: IO ()
 memoMain = do
   putStrLn "Fib Test"
   putStrLn "================================================================"
 
-  forM_ [0,10..300] $ \ n ->
-    printf "fib   %3i = %i\n" n (testMemo $ fib n) >>
-    printf "fib2  %3i = %i\n" n (testMemo $ fib2 n) >>
-    printf "fib3  %3i = %i\n" n (testMemo $ fib3 n) >>
-    printf "pow 2 %3i = %i\n" n (testMemo $ pow 2 n)
+  forM_ [0,10..300] $ \ n -> do
+    printf "fib   %3i = %i\n" n =<< (testMemo $ fib n)
+    printf "fib2  %3i = %i\n" n =<< (testMemo $ fib2 n)
+    printf "fib3  %3i = %i\n" n =<< (testMemo $ fib3 n)
+    printf "pow 2 %3i = %i\n" n =<< (testMemo $ pow 2 n)
+
+  putStrLn ""
+  putStrLn "Traced"
+  putStrLn "----------------------------------------------------------------"
+  testMemo (tracedFib 4)
+
+  putStrLn ""
+  putStrLn "Traced and Memoized"
+  putStrLn "----------------------------------------------------------------"
+  testMemo (tracedMemoizedFib 4 >> liftIO (putStrLn "") >> tracedMemoizedFib 4)
+
+  return ()
 
 ----------------------------------------------------------------
 
