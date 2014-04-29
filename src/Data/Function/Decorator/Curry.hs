@@ -5,12 +5,15 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE ConstraintKinds #-}
+{-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE DataKinds #-}
 
 module Data.Function.Decorator.Curry where
 
-import Prelude hiding (curry)
+import Prelude hiding (curry , uncurry)
 
 import Data.Proxy
+import Language.Haskell.TH
 
 ----------------------------------------------------------------
 -- Type-level uncurry for type signatures that end in a monad.
@@ -104,5 +107,68 @@ type CurryUncurryM t = Curry (GetArgM t) (GetMonad t (GetRetM t))
 type UncurriedM t        = GetArgM t ->        GetMonad t (GetRetM t)
 -- A fancy identity function.
 type CurriedUncurriedM t = GetArgM t `Curried` GetMonad t (GetRetM t)
+
+----------------------------------------------------------------
+-- Uncurrying which does not assume a monadic return.
+--
+-- In GHC 7.8 we can compute the minimal return type using ordered
+-- overlapping instances in a closed type function, but it's not
+-- actually clear that this is what a user wants in general: e.g., the
+-- type
+--
+--   a -> b -> c
+--
+-- could get uncurried as '(a , (b , ())) -> c', with "minimal return
+-- type" 'c', or as '(a , ()) -> (b -> c)', with return type 'b -> c'.
+-- So, non-monadic uncurrying is ambiguous in general!
+
+type Uncurried        (n :: Nat) (t :: *) = GetArg n t -> GetRet n t
+type CurryUncurry     (n :: Nat) (t :: *) = Curry (GetArg n t) (GetRet n t)
+type CurriedUncurried (n :: Nat) (t :: *) = GetArg n t `Curried` GetRet n t
+
+-- The 'CurryUncurry n t' constraint is not used in the definition, but
+-- you want it in practice when you use 'Uncurry n t', and it serves as
+-- a sanity check.
+class CurryUncurry n t => Uncurry (n :: Nat) (t :: *) where
+  type GetArg n t :: *
+  type GetRet n t :: *
+  uncurry :: Proxy n -> t -> Uncurried n t
+
+instance Uncurry n b => Uncurry (Succ n) (a -> b) where
+  type GetArg (Succ n) (a -> b) = (a , GetArg n b)
+  type GetRet (Succ n) (a -> b) = GetRet n b
+  uncurry _ f (x , xs) = uncurry (Proxy::Proxy n) (f x) xs
+
+instance Uncurry Zero b where
+  type GetArg Zero b = ()
+  type GetRet Zero b = b
+  uncurry _ f () = f
+
+-- See
+-- http://stackoverflow.com/questions/20809998/type-level-nats-with-literals-and-an-injective-successor-n-ary-compose
+-- for why we don't use 'GHC.TypeLits.Nat'.
+data Nat = Zero | Succ Nat
+
+-- Type-level nat literals (almost).
+--
+-- Write '$(nat n)' for a literal 'n'.
+nat :: Integer -> Q Type
+nat 0 = [t| Zero |]
+nat n = [t| Succ $(nat (n-1)) |]
+
+----------------------------------------------------------------
+-- An 'n'-ary compose.
+
+-- The type looks fancy, but e.g. if
+--
+--   return :: b -> m b
+--   f      :: a1 -> a2 -> b
+--
+-- then
+--
+--   compose (Proxy::Proxy $(nat 2)) return f :: a1 -> a2 -> m b
+compose :: (Uncurry n t , Curry (GetArg n t) a) =>
+  Proxy n -> (GetRet n t -> a) -> t -> GetArg n t `Curried` a
+compose p g f = curry (g . uncurry p f)
 
 ----------------------------------------------------------------
