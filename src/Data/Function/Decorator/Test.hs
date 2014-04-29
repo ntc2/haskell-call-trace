@@ -51,6 +51,7 @@ import Text.Printf
 
 import Data.Function.Decorator.Curry
 import Data.Function.Decorator.Memoizer
+import Data.Function.Decorator.Memoizer.Unsafe
 
 ----------------------------------------------------------------
 -- Logging tests.
@@ -425,15 +426,39 @@ openPureFib fib n =
   else fib (n-1) + fib (n-2)
 
 tracedPureFib :: PureFibTy
-tracedPureFib = fix (unsafeTrace (Proxy::Proxy $(nat 1)) "tpFib" . openPureFib)
+tracedPureFib =
+  fix (unsafeTrace (Proxy::Proxy $(nat 1)) "tpFib" . openPureFib)
+
+memoizedPureFib :: PureFibTy
+memoizedPureFib =
+  fix (unsafeMemoize (Proxy::Proxy $(nat 1)) . openPureFib)
+
+tracedMemoizedPureFib :: PureFibTy
+tracedMemoizedPureFib =
+  fix $ unsafeTrace   (Proxy::Proxy $(nat 1)) "tmpFib" .
+        unsafeMemoize (Proxy::Proxy $(nat 1)) .
+        openPureFib
 
 unsafeMain :: IO ()
 unsafeMain = do
   putStrLn ""
   putStrLn "Unsafe Traced"
   putStrLn "----------------------------------------------------------------"
-  _ <- printf "(tracedPureFib = %i)\n" (tracedPureFib 4)
+  _ <- printf "(tracedPureFib 4 = %i)\n" (tracedPureFib 4)
   return ()
+
+  putStrLn ""
+  putStrLn "Unsafe Memoized"
+  putStrLn "----------------------------------------------------------------"
+  _ <- printf "(memoizedPureFib 300 = %i)\n" (memoizedPureFib 300)
+  return ()
+
+  putStrLn ""
+  putStrLn "Unsafe Traced Memoized"
+  putStrLn "----------------------------------------------------------------"
+  _ <- printf "(tracedMemoizedPureFib 30 = %i)\n" (tracedMemoizedPureFib 30)
+  return ()
+
 
 ----------------------------------------------------------------
 
