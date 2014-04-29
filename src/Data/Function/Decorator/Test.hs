@@ -3,6 +3,7 @@
 {-# OPTIONS_GHC -fno-warn-orphans #-}
 {-# OPTIONS_GHC -fno-warn-name-shadowing #-}
 
+-- GHC extensions: collect them all!
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE ConstraintKinds #-}
@@ -18,6 +19,7 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 -- For 'processDefault's 'Proxy' argument.
 {-# LANGUAGE PolyKinds #-}
+{-# LANGUAGE TemplateHaskell #-}
 
 module Data.Function.Decorator.Test where
 
@@ -29,12 +31,13 @@ import Data.IORef
 import Data.Proxy
 import Text.Parsec hiding (State)
 
-import Data.Function.Decorator.Logger.LogTree
 import Data.Function.Decorator.ConstraintLogic
 import Data.Function.Decorator.Logger.HetCall
-import Data.Function.Decorator.Logger.Processor.UnixTree
 import Data.Function.Decorator.Logger.Logger
+import Data.Function.Decorator.Logger.LogTree
+import Data.Function.Decorator.Logger.Processor.UnixTree
 import Data.Function.Decorator.Logger.SimpleCall
+import Data.Function.Decorator.Logger.Unsafe
 
 ----------------------------------------------------------------
 -- Isolate imports for memoizer tests, in case I want to factor them
@@ -410,6 +413,26 @@ memoMain = do
 
   return ()
 
+----------------------------------------------------------------
+-- Test unsafe functions.
+
+type PureFibTy = Integer -> Integer
+
+openPureFib :: PureFibTy -> PureFibTy
+openPureFib fib n =
+  if n <= 1
+  then n
+  else fib (n-1) + fib (n-2)
+
+tracedPureFib :: PureFibTy
+tracedPureFib = fix (unsafeTrace (Proxy::Proxy $(nat 1)) "tpFib" . openPureFib)
+
+unsafeMain :: IO ()
+unsafeMain = do
+  putStrLn ""
+  putStrLn "Unsafe Traced"
+  putStrLn "----------------------------------------------------------------"
+  _ <- printf "(tracedPureFib = %i)\n" (tracedPureFib 4)
   return ()
 
 ----------------------------------------------------------------
@@ -418,3 +441,4 @@ main :: IO ()
 main = do
   logMain
   memoMain
+  unsafeMain
