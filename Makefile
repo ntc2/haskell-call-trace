@@ -3,6 +3,8 @@ all: ghc-build proof-trees
 ################################################################
 # GHC
 
+GHC = ghc -Wall
+
 # Build everything, even if it's not all used in 'Test' yet.
 .PHONY: ghc-build
 ghc-build: tmp
@@ -12,6 +14,10 @@ ghc-build: tmp
 	-outputdir tmp \
 	-o tmp/Test \
 	$(shell find src -name '*.hs')
+
+.PHONY: ghc-build-opt
+ghc-build-opt: GHC := $(GHC) -O2
+ghc-build-opt: ghc-build
 
 ################################################################
 # Cabal sandbox
@@ -55,8 +61,6 @@ clean:
 
 tmp:
 	mkdir -p tmp
-
-GHC = ghc -Wall
 
 # Build the proof-trees code.
 proof-trees:
