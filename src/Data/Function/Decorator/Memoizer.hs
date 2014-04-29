@@ -59,7 +59,7 @@ import Data.Function.Decorator.Curry
 --
 -- and then e.g.
 --
---   data S = S { _fDict :: Data.Map (GetArg FTy) (GetRet FTy) , ... }
+--   data S = S { _fDict :: Data.Map (GetArgM FTy) (GetRetM FTy) , ... }
 --
 --   instance Memoizer (SimpleCall "f" () FTy ()) (State S) where
 --     lookup _ k   = Data.Map.lookup x <$> gets _fDict
@@ -144,11 +144,11 @@ import Data.Function.Decorator.Curry
 -- arguments and return values. In practice the 'lookup' and 'insert'
 -- functions are specific to the memoized function.
 --
--- Note: the 'GetArg t `Curried` GetMonad t (GetRet t)' is just a
+-- Note: the 'GetArgM t `Curried` GetMonad t (GetRetM t)' is just a
 -- fancy way to write 't' (that GHC prefers).
 simpleMemoize :: forall t. UncurryM t
-              => (GetArg t -> GetMonad t (Maybe (GetRet t)))
-              -> (GetArg t -> GetRet t -> GetMonad t ())
+              => (GetArgM t -> GetMonad t (Maybe (GetRetM t)))
+              -> (GetArgM t -> GetRetM t -> GetMonad t ())
               -> t
               -> CurriedUncurriedM t
 simpleMemoize lookup insert f = curry k where
@@ -176,9 +176,9 @@ simpleMemoize lookup insert f = curry k where
 -- them from the 'H' constructors.
 castMemoize :: forall t.
              ( UncurryM t
-             , Ord (GetArg t)
-             , Typeable (GetArg t)
-             , Typeable (GetRet t)
+             , Ord (GetArgM t)
+             , Typeable (GetArgM t)
+             , Typeable (GetRetM t)
              , Functor (GetMonad t) )
             => (String -> GetMonad t (Maybe (H Typeable)))
             -> (String -> H Typeable -> GetMonad t ())
@@ -198,11 +198,11 @@ castMemoize lookup insert tag f = curry k where
         insert tag . H . Map.insert arg ret =<< getCache
         return ret
 
-  getCache :: GetMonad t (Map.Map (GetArg t) (GetRet t))
+  getCache :: GetMonad t (Map.Map (GetArgM t) (GetRetM t))
   getCache =
     maybe Map.empty (unH castCache) <$> lookup tag
 
-  castCache :: Typeable a => a -> Map.Map (GetArg t) (GetRet t)
+  castCache :: Typeable a => a -> Map.Map (GetArgM t) (GetRetM t)
   castCache d = case cast d of
     Just cache -> cache
     Nothing -> error msg where

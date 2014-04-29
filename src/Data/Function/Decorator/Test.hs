@@ -285,7 +285,7 @@ logMain = do
 
 type MemoM = StateT S IO
 
-data S = S { _fibDict :: Map.Map (GetArg FibTy) (GetRet FibTy)
+data S = S { _fibDict :: Map.Map (GetArgM FibTy) (GetRetM FibTy)
            , _hDict :: Map.Map String (H Typeable)
            , _indentRef :: IORef Int
            }

@@ -18,9 +18,13 @@ import Data.Proxy
 -- Tricky: to put a class constraint on an associated type we make it
 -- a premise in the class signature!  I can't find any way to put it
 -- in the class body directly.
+--
+-- The 'CurryUncurryM t' constraint is not used in the definition, but
+-- you want it in practice when you use 'UncurryM t', and it serves as
+-- a sanity check.
 class (CurryUncurryM t , Monad (GetMonad t)) => UncurryM t where
-  type GetArg   t :: *
-  type GetRet   t :: *
+  type GetArgM  t :: *
+  type GetRetM  t :: *
   type GetMonad t :: * -> *
   uncurryM :: t -> UncurriedM t
 
@@ -56,20 +60,20 @@ class (CurryUncurryM t , Monad (GetMonad t)) => UncurryM t where
 -- instance, but that case seems unlikely. If it does happen, it's as
 -- simple as copying and adapting the 't m r' instances.
 instance UncurryM b => UncurryM (a -> b) where
-  type GetArg   (a -> b) = (a , GetArg b)
-  type GetRet   (a -> b) = GetRet b
+  type GetArgM  (a -> b) = (a , GetArgM b)
+  type GetRetM  (a -> b) = GetRetM b
   type GetMonad (a -> b) = GetMonad b
   uncurryM f (x , xs) = uncurryM (f x) xs
 
 instance (Monad m , Monad (t m)) => UncurryM (t m r) where
-  type GetArg   (t m r) = ()
-  type GetRet   (t m r) = r
+  type GetArgM  (t m r) = ()
+  type GetRetM  (t m r) = r
   type GetMonad (t m r) = t m
   uncurryM f () = f
 
 instance UncurryM (IO r) where
-  type GetArg   (IO r) = ()
-  type GetRet   (IO r) = r
+  type GetArgM  (IO r) = ()
+  type GetRetM  (IO r) = r
   type GetMonad (IO r) = IO
   uncurryM f () = f
 
@@ -78,7 +82,7 @@ instance UncurryM (IO r) where
 
 class Curry a b where
   type Curried a b :: *
-  -- This version is right nested like 'UncurryM.GetArg', whereas
+  -- This version is right nested like 'UncurryM.GetArgM', whereas
   -- iterated 'Prelude.curry' is left nested.  We can probably make a
   -- left-nested version using type-level snoc, but then we may need
   -- type-level snoc lemmas, which will not be fun ...
@@ -95,10 +99,10 @@ instance Curry () b where
 
 -- The 'CurryUncurryM' is a constraint synonym and needs
 -- '-XConstraintKinds'.
-type CurryUncurryM t = Curry (GetArg t) (GetMonad t (GetRet t))
+type CurryUncurryM t = Curry (GetArgM t) (GetMonad t (GetRetM t))
 
-type UncurriedM t        = GetArg t ->        GetMonad t (GetRet t)
+type UncurriedM t        = GetArgM t ->        GetMonad t (GetRetM t)
 -- A fancy identity function.
-type CurriedUncurriedM t = GetArg t `Curried` GetMonad t (GetRet t)
+type CurriedUncurriedM t = GetArgM t `Curried` GetMonad t (GetRetM t)
 
 ----------------------------------------------------------------

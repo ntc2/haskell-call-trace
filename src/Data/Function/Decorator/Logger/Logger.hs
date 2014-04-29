@@ -50,7 +50,7 @@ class Monad m => EventLogger c m where
 instance MonadWriter [LogEvent c] m => EventLogger c m where
   logEvent e = tell [e]
 
--- Note: the 'GetArg t `Curried` GetMonad t (GetRet t)' is just a
+-- Note: the 'GetArgM t `Curried` GetMonad t (GetRetM t)' is just a
 -- fancy way to write 't' (that GHC prefers). The synonym
 -- 'CurriedUncurriedM t' expands to that.
 log :: forall tag before t after c
@@ -79,8 +79,9 @@ log _ ms1 ms2 f = curry k where
 
 trace :: forall t.
   ( UncurryM t
-  , HFold Show (GetArg t)
-  , Show (GetRet t)
+  , HFold Show (GetArgM t)
+  , Show (GetRetM t)
+  , Functor (GetMonad t)
   , MonadIO (GetMonad t) )
   => GetMonad t (IORef Int) -> String -> t -> CurriedUncurriedM t
 trace getIndentRef name f = curry k where
@@ -105,7 +106,7 @@ trace getIndentRef name f = curry k where
 {-
 {-# LANGUAGE ConstraintKinds #-}
 
-type Suffix b t = (UncurryM b , UncurryM t , GetRet b ~ GetRet t , GetMonad b ~ GetMonad t)
+type Suffix b t = (UncurryM b , UncurryM t , GetRetM b ~ GetRetM t , GetMonad b ~ GetMonad t)
 
 instance Suffix (Identity r) t => Collect (Identity r) t where
   simpleLoggerHelper p acc idr = do
@@ -125,6 +126,6 @@ Failed, modules loaded: Data.Function.Decorator.Logger.LogTree, Data.Function.De
 -}
 -- whereas the expanded versions below are fine.  Of course, the
 -- versions below are only "smaller" because the definitions of the
--- type functions 'GetRet' and 'GetMonad' have been expanded.
+-- type functions 'GetRetM' and 'GetMonad' have been expanded.
 
 ----------------------------------------------------------------
