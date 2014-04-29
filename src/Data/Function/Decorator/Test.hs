@@ -313,7 +313,15 @@ specializedCastMemoizer = castMemoize lookup insert where
   insert k v = modify i where
     i s = s { _hDict = Map.insert k v $ _hDict s }
 -}
+lookupM ::
+  forall (f :: * -> *).
+  (Functor f, MonadState S f) =>
+  String -> f (Maybe (H Typeable))
 lookupM k = Map.lookup k <$> gets _hDict
+insertM ::
+  forall (m :: * -> *).
+  MonadState S m =>
+  String -> H Typeable -> m ()
 insertM k v = modify i where
   i s = s { _hDict = Map.insert k v $ _hDict s }
 
@@ -349,6 +357,7 @@ openFib fib n =
 --
 --   f       = fix (decorate . openF)
 --   openF f = ... f ...
+fib3 :: FibTy
 fib3 = fix (castMemoize lookupM insertM "Test.fib3" . openFib)
 
 ----------------------------------------------------------------
@@ -383,20 +392,23 @@ memoMain = do
   putStrLn "================================================================"
 
   forM_ [0,10..300] $ \ n -> do
-    printf "fib   %3i = %i\n" n =<< (testMemo $ fib n)
-    printf "fib2  %3i = %i\n" n =<< (testMemo $ fib2 n)
-    printf "fib3  %3i = %i\n" n =<< (testMemo $ fib3 n)
-    printf "pow 2 %3i = %i\n" n =<< (testMemo $ pow 2 n)
+    _ <- printf "fib   %3i = %i\n" n =<< (testMemo $ fib n)
+    _ <- printf "fib2  %3i = %i\n" n =<< (testMemo $ fib2 n)
+    _ <- printf "fib3  %3i = %i\n" n =<< (testMemo $ fib3 n)
+    _ <- printf "pow 2 %3i = %i\n" n =<< (testMemo $ pow 2 n)
+    return ()
 
   putStrLn ""
   putStrLn "Traced"
   putStrLn "----------------------------------------------------------------"
-  testMemo (tracedFib 4)
+  _ <- testMemo (tracedFib 4)
 
   putStrLn ""
   putStrLn "Traced and Memoized"
   putStrLn "----------------------------------------------------------------"
-  testMemo (tracedMemoizedFib 4 >> liftIO (putStrLn "") >> tracedMemoizedFib 4)
+  _ <- testMemo (tracedMemoizedFib 4 >> liftIO (putStrLn "") >> tracedMemoizedFib 4)
+
+  return ()
 
   return ()
 
