@@ -21,11 +21,7 @@ import Language.Haskell.TH
 -- Tricky: to put a class constraint on an associated type we make it
 -- a premise in the class signature!  I can't find any way to put it
 -- in the class body directly.
---
--- The 'CurryUncurryM t' constraint is not used in the definition, but
--- you want it in practice when you use 'UncurryM t', and it serves as
--- a sanity check.
-class (CurryUncurryM t , Monad (GetMonad t)) => UncurryM t where
+class Monad (GetMonad t) => UncurryM t where
   type GetArgM  t :: *
   type GetRetM  t :: *
   type GetMonad t :: * -> *
@@ -100,13 +96,17 @@ instance Curry () b where
   type Curried () b = b
   curry f = f ()
 
--- The 'CurryUncurryM' is a constraint synonym and needs
--- '-XConstraintKinds'.
-type CurryUncurryM t = Curry (GetArgM t) (GetMonad t (GetRetM t))
-
-type UncurriedM t        = GetArgM t ->        GetMonad t (GetRetM t)
+type UncurriedM        t = GetArgM t ->        GetMonad t (GetRetM t)
 -- A fancy identity function.
 type CurriedUncurriedM t = GetArgM t `Curried` GetMonad t (GetRetM t)
+
+-- The 'CurryUncurryM' is a constraint synonym and needs
+-- '-XConstraintKinds'.
+type CurryUncurryM t =
+  ( UncurryM t
+  , Curry (GetArgM t) (GetMonad t (GetRetM t))
+  , CurriedUncurriedM t ~ t
+  )
 
 ----------------------------------------------------------------
 -- Uncurrying which does not assume a monadic return.
@@ -123,13 +123,17 @@ type CurriedUncurriedM t = GetArgM t `Curried` GetMonad t (GetRetM t)
 -- So, non-monadic uncurrying is ambiguous in general!
 
 type Uncurried        (n :: Nat) (t :: *) = GetArg n t -> GetRet n t
-type CurryUncurry     (n :: Nat) (t :: *) = Curry (GetArg n t) (GetRet n t)
 type CurriedUncurried (n :: Nat) (t :: *) = GetArg n t `Curried` GetRet n t
+type CurryUncurry     (n :: Nat) (t :: *) =
+  ( Uncurry n t
+  , Curry (GetArg n t) (GetRet n t)
+  , CurriedUncurried n t ~ t
+  )
 
 -- The 'CurryUncurry n t' constraint is not used in the definition, but
 -- you want it in practice when you use 'Uncurry n t', and it serves as
 -- a sanity check.
-class CurryUncurry n t => Uncurry (n :: Nat) (t :: *) where
+class Uncurry (n :: Nat) (t :: *) where
   type GetArg n t :: *
   type GetRet n t :: *
   uncurry :: Proxy n -> t -> Uncurried n t

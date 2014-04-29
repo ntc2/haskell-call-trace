@@ -55,14 +55,14 @@ instance MonadWriter [LogEvent c] m => EventLogger c m where
 -- 'CurriedUncurriedM t' expands to that.
 log :: forall tag before t after c
      . ( SingI tag
-       , UncurryM t
+       , CurryUncurryM t
        , EventLogger c (GetMonad t)
        , c (SimpleCall tag before t after) )
     => Proxy (tag::Symbol)
     -> GetMonad t before
     -> GetMonad t after
     -> t
-    -> CurriedUncurriedM t
+    -> t
 log _ ms1 ms2 f = curry k where
   k :: UncurriedM t
   k arg = do
@@ -78,12 +78,12 @@ log _ ms1 ms2 f = curry k where
 -- A simple printing logger.
 
 trace :: forall t.
-  ( UncurryM t
+  ( CurryUncurryM t
   , HFold Show (GetArgM t)
   , Show (GetRetM t)
   , Functor (GetMonad t)
   , MonadIO (GetMonad t) )
-  => GetMonad t (IORef Int) -> String -> t -> CurriedUncurriedM t
+  => GetMonad t (IORef Int) -> String -> t -> t
 trace getIndentRef name f = curry k where
   k :: UncurriedM t
   k args = do

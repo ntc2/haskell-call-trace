@@ -143,14 +143,11 @@ import Data.Function.Decorator.Curry
 -- Memoize a function using the given 'lookup' and 'insert' to cache
 -- arguments and return values. In practice the 'lookup' and 'insert'
 -- functions are specific to the memoized function.
---
--- Note: the 'GetArgM t `Curried` GetMonad t (GetRetM t)' is just a
--- fancy way to write 't' (that GHC prefers).
-simpleMemoize :: forall t. UncurryM t
+simpleMemoize :: forall t. CurryUncurryM t
               => (GetArgM t -> GetMonad t (Maybe (GetRetM t)))
               -> (GetArgM t -> GetRetM t -> GetMonad t ())
               -> t
-              -> CurriedUncurriedM t
+              -> t
 simpleMemoize lookup insert f = curry k where
   k :: UncurriedM t
   k arg = do
@@ -175,7 +172,7 @@ simpleMemoize lookup insert f = curry k where
 -- 'Typeable' constraints allow us to 'cast' the maps after removing
 -- them from the 'H' constructors.
 castMemoize :: forall t.
-             ( UncurryM t
+             ( CurryUncurryM t
              , Ord (GetArgM t)
              , Typeable (GetArgM t)
              , Typeable (GetRetM t)
@@ -184,7 +181,7 @@ castMemoize :: forall t.
             -> (String -> H Typeable -> GetMonad t ())
             -> String
             -> t
-            -> CurriedUncurriedM t
+            -> t
 castMemoize lookup insert tag f = curry k where
   k :: UncurriedM t
   k arg = do

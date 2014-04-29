@@ -5,6 +5,7 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE GADTs #-}
+{-# LANGUAGE ConstraintKinds #-}
 
 module Data.Function.Decorator.Logger.Unsafe where
 
@@ -29,8 +30,7 @@ globalIndentLevel = unsafePerformIO $ newIORef 0
 
 {-# NOINLINE unsafeTrace #-}
 unsafeTrace :: forall n t.
-  ( Uncurry n t
-  , CurriedUncurried n t ~ t
+  ( CurryUncurry n t
 -- XXX: introduce a synonym for this long type:
 --
 --  , GetArg n t `Curried` IO (GetRet n t) ~ foo
@@ -40,10 +40,11 @@ unsafeTrace :: forall n t.
   , GetArg n (GetArg n t `Curried` IO (GetRet n t)) ~ GetArg n t
   , GetRet n (GetArg n t `Curried` IO (GetRet n t)) ~ IO (GetRet n t)
 
-  , GetArgM    (GetArg n t `Curried` IO (GetRet n t)) ~ GetArg n t
-  , GetRetM    (GetArg n t `Curried` IO (GetRet n t)) ~ GetRet n t
+  , GetArgM   (GetArg n t `Curried` IO (GetRet n t)) ~ GetArg n t
+  , GetRetM   (GetArg n t `Curried` IO (GetRet n t)) ~ GetRet n t
   , GetMonad  (GetArg n t `Curried` IO (GetRet n t)) ~ IO
 
+  , Curry (GetArg n t) (IO (GetRet n t))
   , Uncurry n (GetArg n t `Curried` IO (GetRet n t))
   , UncurryM  (GetArg n t `Curried` IO (GetRet n t))
 
