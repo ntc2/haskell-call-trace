@@ -4,19 +4,22 @@ all: ghc-build proof-trees
 # GHC
 
 GHC = ghc -Wall
+OUT = tmp
 
 # Build everything, even if it's not all used in 'Test' yet.
 .PHONY: ghc-build
-ghc-build: tmp
+ghc-build:
+	mkdir -p $(OUT) && \
 	$(GHC) \
 	-main-is Data.Function.Decorator.Test \
 	-isrc \
-	-outputdir tmp \
-	-o tmp/Test \
+	-outputdir $(OUT) \
+	-o $(OUT)/Test \
 	$(shell find src -name '*.hs')
 
 .PHONY: ghc-build-opt
 ghc-build-opt: GHC := $(GHC) -O2
+ghc-build-opt: OUT := $(OUT)/opt
 ghc-build-opt: ghc-build
 
 ################################################################
