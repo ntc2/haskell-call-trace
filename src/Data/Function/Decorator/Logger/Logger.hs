@@ -94,11 +94,7 @@ trace getIndentRef name f = curry k where
 
     liftIO $ modifyIORef' indentRef (+1)
     ret <- uncurryM f args
-    -- !!!: when we do 'unsafePerformIO' based logging in
-    -- 'unsafeTrace', we need to force 'ret' to be sure that the
-    -- recursive logging is evaluated while the level increment is in
-    -- effect.  Took me a while to figure that out ...
-    ret `seq` liftIO $ modifyIORef' indentRef (subtract 1)
+    liftIO $ modifyIORef' indentRef (subtract 1)
 
     liftIO . putStrLn $ prefix ++ show ret
     return ret

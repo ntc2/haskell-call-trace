@@ -156,11 +156,7 @@ simpleMemoize lookup insert f = curry k where
       Just ret -> return ret
       Nothing -> do
         ret <- uncurryM f arg
-        -- !!!: when we do 'unsafePerformIO' based memoization in
-        -- 'unsafeMemoize', we need to force 'ret' to be sure the
-        -- recursive inserts happen.  Same problem with 'unsafeLog' in
-        -- relation to 'log'.
-        ret `seq` insert arg ret
+        insert arg ret
         return ret
 
 -- Memoize a function using the given 'lookup' and 'insert' functions
