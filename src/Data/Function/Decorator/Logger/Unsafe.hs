@@ -6,6 +6,7 @@
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE ConstraintKinds #-}
+{-# LANGUAGE BangPatterns #-}
 
 module Data.Function.Decorator.Logger.Unsafe where
 
@@ -59,5 +60,8 @@ unsafeTrace p name f =
     -- Polymorphism confuses 'compose'.
     return'          :: GetRet n t -> IO (GetRet n t)
     unsafePerformIO' :: IO (GetRet n t) -> GetRet n t
-    return'          = return
+    -- Subtle: make our 'return' strict to ensure that effects in
+    -- recursive calls wrapped in 'unsafePerformIO' are correctly
+    -- sequenced.
+    return' !x       = return x
     unsafePerformIO' = unsafePerformIO
