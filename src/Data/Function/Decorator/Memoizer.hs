@@ -54,12 +54,12 @@ import Data.Function.Decorator.Curry
 -- look up a memo dictionary. Something like
 --
 --   class Signature call => Memoizer call m where
---     lookup :: Proxy call -> Arg call -> m (Maybe (Ret call))
---     insert :: Proxy call -> Arg call -> Ret call -> m ()
+--     lookup :: Proxy call -> Args call -> m (Maybe (Ret call))
+--     insert :: Proxy call -> Args call -> Ret call -> m ()
 --
 -- and then e.g.
 --
---   data S = S { _fDict :: Data.Map (GetArgM FTy) (GetRetM FTy) , ... }
+--   data S = S { _fDict :: Data.Map (GetArgsM FTy) (GetRetM FTy) , ... }
 --
 --   instance Memoizer (SimpleCall "f" () FTy ()) (State S) where
 --     lookup _ k   = Data.Map.lookup x <$> gets _fDict
@@ -98,8 +98,8 @@ import Data.Function.Decorator.Curry
 --
 -- and then e.g. (approximate types)
 --
---   simpleMemoizer :: (Arg a -> m (Maybe (Ret a))) ->    -- Insert
---                     (Arg a -> Ret a -> m ()) ->        -- Lookup
+--   simpleMemoizer :: (Args a -> m (Maybe (Ret a))) ->    -- Insert
+--                     (Args a -> Ret a -> m ()) ->        -- Lookup
 --                     (a -> a) ->                        -- Open function to fix
 --                     a
 --   simpleMemoizer = ...
@@ -144,8 +144,8 @@ import Data.Function.Decorator.Curry
 -- arguments and return values. In practice the 'lookup' and 'insert'
 -- functions are specific to the memoized function.
 simpleMemoize :: forall t. CurryUncurryM t
-              => (GetArgM t -> GetMonad t (Maybe (GetRetM t)))
-              -> (GetArgM t -> GetRetM t -> GetMonad t ())
+              => (GetArgsM t -> GetMonad t (Maybe (GetRetM t)))
+              -> (GetArgsM t -> GetRetM t -> GetMonad t ())
               -> t
               -> t
 simpleMemoize lookup insert f = curry k where
@@ -173,8 +173,8 @@ simpleMemoize lookup insert f = curry k where
 -- them from the 'H' constructors.
 castMemoize :: forall t.
              ( CurryUncurryM t
-             , Ord (GetArgM t)
-             , Typeable (GetArgM t)
+             , Ord (GetArgsM t)
+             , Typeable (GetArgsM t)
              , Typeable (GetRetM t)
              , Functor (GetMonad t) )
             => (String -> GetMonad t (Maybe (H Typeable)))
@@ -195,11 +195,11 @@ castMemoize lookup insert tag f = curry k where
         insert tag . H . Map.insert arg ret =<< getCache
         return ret
 
-  getCache :: GetMonad t (Map.Map (GetArgM t) (GetRetM t))
+  getCache :: GetMonad t (Map.Map (GetArgsM t) (GetRetM t))
   getCache =
     maybe Map.empty (unH castCache) <$> lookup tag
 
-  castCache :: Typeable a => a -> Map.Map (GetArgM t) (GetRetM t)
+  castCache :: Typeable a => a -> Map.Map (GetArgsM t) (GetRetM t)
   castCache d = case cast d of
     Just cache -> cache
     Nothing -> error msg where

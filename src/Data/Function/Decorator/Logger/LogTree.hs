@@ -35,7 +35,7 @@ data Ex2T f where
 class Signature call where
   name :: call -> String
   type Before call
-  type Arg call
+  type Args call
   type Ret call
   type After call
 
@@ -44,9 +44,9 @@ type SigWith (c :: * -> Constraint) call =
 
 data LogEvent (c :: * -> Constraint)
   = forall call. SigWith c call =>
-    BeginCall call (Before call) (Arg call)
+    BeginCall call (Before call) (Args call)
   | forall call. SigWith c call =>
-    EndCall   call (Before call) (Arg call) (Ret call) (After call)
+    EndCall   call (Before call) (Args call) (Ret call) (After call)
 type LogStream c = [LogEvent c]
 
 -- Would like to put the constraint on the whole data type, since we
@@ -69,7 +69,7 @@ data LogTree (c :: * -> Constraint) call (name :: Symbol) where
   CallAndReturn :: SigWith c call =>
     { _call     :: call
     , _before   :: Before call
-    , _arg      :: Arg call
+    , _arg      :: Args call
     , _children :: LogForest c
     , _ret      :: Ret call
     , _after    :: After call
@@ -77,7 +77,7 @@ data LogTree (c :: * -> Constraint) call (name :: Symbol) where
   CallAndError :: SigWith c call =>
     { _call'     :: call
     , _before'   :: Before call
-    , _arg'      :: Arg call
+    , _arg'      :: Args call
     , _children' :: LogForest c
     , _how       :: Maybe (Ex2T (LogTree c))
     } -> LogTree c call "CallAndError"
@@ -134,11 +134,11 @@ callAndError = do
 ----------------------------------------------------------------
 -- Token parsers.
 
--- I would like to return '(call , Arg call)' here, but it seems that
+-- I would like to return '(call , Args call)' here, but it seems that
 -- doesn't work because 'call' would be existentially quantified.  The
 -- following fully-quantified signature illustrates the problem:
 --
---   beginCall :: forall c call. SigWith c call => P c (call , Arg call)
+--   beginCall :: forall c call. SigWith c call => P c (call , Args call)
 --
 -- We can't return *any* type 'call' which satisfied 'SigWith c', but
 -- rather, only the particular type 'call' which is hidden in the

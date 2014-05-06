@@ -125,7 +125,7 @@ coerceLogTree' impl (Ex2T (CallAndReturn (call::call) before arg children ret af
   impl' callAndReturn call before arg children' ret after
   where
     callAndReturn :: c2 call =>
-      call -> Before call -> Arg call -> LogForest c2 -> Ret call -> After call
+      call -> Before call -> Args call -> LogForest c2 -> Ret call -> After call
            -> Ex2T (LogTree c2)
     callAndReturn = ((.).(.).(.).(.).(.).(.)) Ex2T CallAndReturn
 
@@ -138,7 +138,7 @@ coerceLogTree' impl (Ex2T (CallAndError (call::call) before arg children who)) =
   impl' callAndError call before arg children' who'
   where
     callAndError :: c2 call =>
-      call -> Before call -> Arg call -> LogForest c2 -> Maybe (Ex2T (LogTree c2))
+      call -> Before call -> Args call -> LogForest c2 -> Maybe (Ex2T (LogTree c2))
            -> Ex2T (LogTree c2)
     callAndError = ((.).(.).(.).(.).(.)) Ex2T CallAndError
 

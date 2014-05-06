@@ -50,7 +50,7 @@ class Monad m => EventLogger c m where
 instance MonadWriter [LogEvent c] m => EventLogger c m where
   logEvent e = tell [e]
 
--- Note: the 'GetArgM t `Curried` GetMonad t (GetRetM t)' is just a
+-- Note: the 'GetArgsM t `Curried` GetMonad t (GetRetM t)' is just a
 -- fancy way to write 't' (that GHC prefers). The synonym
 -- 'CurriedUncurriedM t' expands to that.
 log :: forall tag before t after c
@@ -79,7 +79,7 @@ log _ ms1 ms2 f = curry k where
 
 trace :: forall t.
   ( CurryUncurryM t
-  , HFold Show (GetArgM t)
+  , HFold Show (GetArgsM t)
   , Show (GetRetM t)
   , Functor (GetMonad t)
   , MonadIO (GetMonad t) )

@@ -34,22 +34,22 @@ unsafeTrace :: forall n t.
   ( CurryUncurry n t
 -- XXX: introduce a synonym for this long type:
 --
---  , GetArg n t `Curried` IO (GetRet n t) ~ foo
+--  , GetArgs n t `Curried` IO (GetRet n t) ~ foo
 --
 -- or even better: introduce one big synonym for all of these
 -- constraints!
-  , GetArg n (GetArg n t `Curried` IO (GetRet n t)) ~ GetArg n t
-  , GetRet n (GetArg n t `Curried` IO (GetRet n t)) ~ IO (GetRet n t)
+  , GetArgs n (GetArgs n t `Curried` IO (GetRet n t)) ~ GetArgs n t
+  , GetRet  n (GetArgs n t `Curried` IO (GetRet n t)) ~ IO (GetRet n t)
 
-  , GetArgM   (GetArg n t `Curried` IO (GetRet n t)) ~ GetArg n t
-  , GetRetM   (GetArg n t `Curried` IO (GetRet n t)) ~ GetRet n t
-  , GetMonad  (GetArg n t `Curried` IO (GetRet n t)) ~ IO
+  , GetArgsM  (GetArgs n t `Curried` IO (GetRet n t)) ~ GetArgs n t
+  , GetRetM   (GetArgs n t `Curried` IO (GetRet n t)) ~ GetRet n t
+  , GetMonad  (GetArgs n t `Curried` IO (GetRet n t)) ~ IO
 
-  , Curry (GetArg n t) (IO (GetRet n t))
-  , Uncurry n (GetArg n t `Curried` IO (GetRet n t))
-  , UncurryM  (GetArg n t `Curried` IO (GetRet n t))
+  , Curry (GetArgs n t) (IO (GetRet n t))
+  , Uncurry n (GetArgs n t `Curried` IO (GetRet n t))
+  , UncurryM  (GetArgs n t `Curried` IO (GetRet n t))
 
-  , HFold Show (GetArg n t)
+  , HFold Show (GetArgs n t)
   , Show (GetRet n t)
   ) => Proxy n -> String -> t -> t
 unsafeTrace p name f =

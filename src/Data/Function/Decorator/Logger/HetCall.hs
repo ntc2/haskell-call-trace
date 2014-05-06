@@ -37,7 +37,7 @@ instance Signature (HetCall c tag) where
   name (HetCall s) = s
   type Before (HetCall c tag) = H c
   -- The argument tuple is unfolded into a list of hets.
-  type Arg    (HetCall c tag) = [H c]
+  type Args   (HetCall c tag) = [H c]
   type Ret    (HetCall c tag) = H c
   type After  (HetCall c tag) = H c
 
@@ -46,9 +46,9 @@ instance Signature (HetCall c tag) where
 -- A signature with all parts satisfying the same constraint.  This
 -- would just be a constraint synonym, except synonyms can't be
 -- partially applied :P
-class    (Signature call , c (Before call) , HFold c (Arg call) , c (Ret call) , c (After call))
+class    (Signature call , c (Before call) , HFold c (Args call) , c (Ret call) , c (After call))
          => SigAll c call
-instance (Signature call , c (Before call) , HFold c (Arg call) , c (Ret call) , c (After call))
+instance (Signature call , c (Before call) , HFold c (Args call) , c (Ret call) , c (After call))
          => SigAll c call
 
 -- Make all calls into 'HetCall c tag' calls, while changing processor

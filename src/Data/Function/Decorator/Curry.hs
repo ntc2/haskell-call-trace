@@ -22,7 +22,7 @@ import Language.Haskell.TH
 -- a premise in the class signature!  I can't find any way to put it
 -- in the class body directly.
 class Monad (GetMonad t) => UncurryM t where
-  type GetArgM  t :: *
+  type GetArgsM t :: *
   type GetRetM  t :: *
   type GetMonad t :: * -> *
   uncurryM :: t -> UncurriedM t
@@ -59,19 +59,19 @@ class Monad (GetMonad t) => UncurryM t where
 -- instance, but that case seems unlikely. If it does happen, it's as
 -- simple as copying and adapting the 't m r' instances.
 instance UncurryM b => UncurryM (a -> b) where
-  type GetArgM  (a -> b) = (a , GetArgM b)
+  type GetArgsM (a -> b) = (a , GetArgsM b)
   type GetRetM  (a -> b) = GetRetM b
   type GetMonad (a -> b) = GetMonad b
   uncurryM f (x , xs) = uncurryM (f x) xs
 
 instance (Monad m , Monad (t m)) => UncurryM (t m r) where
-  type GetArgM  (t m r) = ()
+  type GetArgsM (t m r) = ()
   type GetRetM  (t m r) = r
   type GetMonad (t m r) = t m
   uncurryM f () = f
 
 instance UncurryM (IO r) where
-  type GetArgM  (IO r) = ()
+  type GetArgsM (IO r) = ()
   type GetRetM  (IO r) = r
   type GetMonad (IO r) = IO
   uncurryM f () = f
@@ -81,7 +81,7 @@ instance UncurryM (IO r) where
 
 class Curry a b where
   type Curried a b :: *
-  -- This version is right nested like 'UncurryM.GetArgM', whereas
+  -- This version is right nested like 'UncurryM.GetArgsM', whereas
   -- iterated 'Prelude.curry' is left nested.  We can probably make a
   -- left-nested version using type-level snoc, but then we may need
   -- type-level snoc lemmas, which will not be fun ...
@@ -96,15 +96,15 @@ instance Curry () b where
   type Curried () b = b
   curry f = f ()
 
-type UncurriedM        t = GetArgM t ->        GetMonad t (GetRetM t)
+type UncurriedM        t = GetArgsM t ->        GetMonad t (GetRetM t)
 -- A fancy identity function.
-type CurriedUncurriedM t = GetArgM t `Curried` GetMonad t (GetRetM t)
+type CurriedUncurriedM t = GetArgsM t `Curried` GetMonad t (GetRetM t)
 
 -- The 'CurryUncurryM' is a constraint synonym and needs
 -- '-XConstraintKinds'.
 type CurryUncurryM t =
   ( UncurryM t
-  , Curry (GetArgM t) (GetMonad t (GetRetM t))
+  , Curry (GetArgsM t) (GetMonad t (GetRetM t))
   , CurriedUncurriedM t ~ t
   )
 
@@ -122,11 +122,11 @@ type CurryUncurryM t =
 -- type" 'c', or as '(a , ()) -> (b -> c)', with return type 'b -> c'.
 -- So, non-monadic uncurrying is ambiguous in general!
 
-type Uncurried        (n :: Nat) (t :: *) = GetArg n t -> GetRet n t
-type CurriedUncurried (n :: Nat) (t :: *) = GetArg n t `Curried` GetRet n t
+type Uncurried        (n :: Nat) (t :: *) = GetArgs n t -> GetRet n t
+type CurriedUncurried (n :: Nat) (t :: *) = GetArgs n t `Curried` GetRet n t
 type CurryUncurry     (n :: Nat) (t :: *) =
   ( Uncurry n t
-  , Curry (GetArg n t) (GetRet n t)
+  , Curry (GetArgs n t) (GetRet n t)
   , CurriedUncurried n t ~ t
   )
 
@@ -134,18 +134,18 @@ type CurryUncurry     (n :: Nat) (t :: *) =
 -- you want it in practice when you use 'Uncurry n t', and it serves as
 -- a sanity check.
 class Uncurry (n :: Nat) (t :: *) where
-  type GetArg n t :: *
-  type GetRet n t :: *
+  type GetArgs n t :: *
+  type GetRet  n t :: *
   uncurry :: Proxy n -> t -> Uncurried n t
 
 instance Uncurry n b => Uncurry (Succ n) (a -> b) where
-  type GetArg (Succ n) (a -> b) = (a , GetArg n b)
-  type GetRet (Succ n) (a -> b) = GetRet n b
+  type GetArgs (Succ n) (a -> b) = (a , GetArgs n b)
+  type GetRet  (Succ n) (a -> b) = GetRet n b
   uncurry _ f (x , xs) = uncurry (Proxy::Proxy n) (f x) xs
 
 instance Uncurry Zero b where
-  type GetArg Zero b = ()
-  type GetRet Zero b = b
+  type GetArgs Zero b = ()
+  type GetRet  Zero b = b
   uncurry _ f () = f
 
 -- See
@@ -171,8 +171,8 @@ nat n = [t| Succ $(nat (n-1)) |]
 -- then
 --
 --   compose (Proxy::Proxy $(nat 2)) return f :: a1 -> a2 -> m b
-compose :: (Uncurry n t , Curry (GetArg n t) a) =>
-  Proxy n -> (GetRet n t -> a) -> t -> GetArg n t `Curried` a
+compose :: (Uncurry n t , Curry (GetArgs n t) a) =>
+  Proxy n -> (GetRet n t -> a) -> t -> GetArgs n t `Curried` a
 compose p g f = curry (g . uncurry p f)
 
 ----------------------------------------------------------------

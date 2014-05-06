@@ -35,18 +35,18 @@ globalIndentLevel = unsafePerformIO $ newIORef 0
 unsafeMemoize :: forall n t.
   ( CurryUncurry n t
 
-  , Ord      (GetArg n t)
+  , Ord      (GetArgs n t)
 
-  , GetArg n (GetArg n t `Curried` IO (GetRet n t)) ~ GetArg n t
-  , GetRet n (GetArg n t `Curried` IO (GetRet n t)) ~ IO (GetRet n t)
+  , GetArgs n (GetArgs n t `Curried` IO (GetRet n t)) ~ GetArgs n t
+  , GetRet  n (GetArgs n t `Curried` IO (GetRet n t)) ~ IO (GetRet n t)
 
-  , GetArgM   (GetArg n t `Curried` IO (GetRet n t)) ~ GetArg n t
-  , GetRetM   (GetArg n t `Curried` IO (GetRet n t)) ~ GetRet n t
-  , GetMonad  (GetArg n t `Curried` IO (GetRet n t)) ~ IO
+  , GetArgsM  (GetArgs n t `Curried` IO (GetRet n t)) ~ GetArgs n t
+  , GetRetM   (GetArgs n t `Curried` IO (GetRet n t)) ~ GetRet n t
+  , GetMonad  (GetArgs n t `Curried` IO (GetRet n t)) ~ IO
 
-  , Curry (GetArg n t) (IO (GetRet n t))
-  , Uncurry n (GetArg n t `Curried` IO (GetRet n t))
-  , UncurryM  (GetArg n t `Curried` IO (GetRet n t))
+  , Curry (GetArgs n t) (IO (GetRet n t))
+  , Uncurry n (GetArgs n t `Curried` IO (GetRet n t))
+  , UncurryM  (GetArgs n t `Curried` IO (GetRet n t))
   ) => Proxy n -> t -> t
 unsafeMemoize p f = unsafePerformIO $ do
   cacheRef <- newIORef Map.empty

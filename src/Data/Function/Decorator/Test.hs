@@ -64,7 +64,7 @@ deriving instance Show (LogEvent AllShow)
 instance Signature String where
   name = id
   type Before String = String
-  type Arg String = String
+  type Args String = String
   type Ret String = String
   type After String = String
 
@@ -91,9 +91,9 @@ f' f n = do
 ----------------------------------------------------------------
 -- Auto logging example.
 
-class    (Signature t , Show t , Show (Before t) , Show (Arg t) , Show (Ret t) , Show (After t))
+class    (Signature t , Show t , Show (Before t) , Show (Args t) , Show (Ret t) , Show (After t))
   => AllShow t
-instance (Signature t , Show t , Show (Before t) , Show (Arg t) , Show (Ret t) , Show (After t))
+instance (Signature t , Show t , Show (Before t) , Show (Args t) , Show (Ret t) , Show (After t))
   => AllShow t
 
 fSimple :: FTy
@@ -289,7 +289,7 @@ logMain = do
 
 type MemoM = StateT S IO
 
-data S = S { _fibDict :: Map.Map (GetArgM FibTy) (GetRetM FibTy)
+data S = S { _fibDict :: Map.Map (GetArgsM FibTy) (GetRetM FibTy)
            , _hDict :: Map.Map String (H Typeable)
            , _indentRef :: IORef Int
            }
