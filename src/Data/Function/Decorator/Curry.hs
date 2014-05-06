@@ -27,6 +27,8 @@ class Monad (MonadM t) => UncurryM (t :: *) where
   type MonadM t :: * -> *
   uncurryM :: t -> UncurriedM t
 
+type UncurriedM t = ArgsM t -> MonadM t (RetM t)
+
 -- It seems I've got this working for all types of the form
 --
 --   a1 -> ... -> an -> m a
@@ -101,18 +103,6 @@ instance Curry () b where
   type () ->* b = b
   curry f = f ()
 
-type UncurriedM        t = ArgsM t ->  MonadM t (RetM t)
--- A fancy identity function.
-type CurriedUncurriedM t = ArgsM t ->* MonadM t (RetM t)
-
--- The 'CurryUncurryM' is a constraint synonym and needs
--- '-XConstraintKinds'.
-type CurryUncurryM t =
-  ( UncurryM t
-  , Curry (ArgsM t) (MonadM t (RetM t))
-  , CurriedUncurriedM t ~ t
-  )
-
 ----------------------------------------------------------------
 -- Uncurrying which does not assume a monadic return.
 --
@@ -127,14 +117,6 @@ type CurryUncurryM t =
 -- type" 'c', or as '(a , ()) -> (b -> c)', with return type 'b -> c'.
 -- So, non-monadic uncurrying is ambiguous in general!
 
-type Uncurried        (n :: Nat) (t :: *) = Args n t ->  Ret n t
-type CurriedUncurried (n :: Nat) (t :: *) = Args n t ->* Ret n t
-type CurryUncurry     (n :: Nat) (t :: *) =
-  ( Uncurry n t
-  , Curry (Args n t) (Ret n t)
-  , CurriedUncurried n t ~ t
-  )
-
 -- The 'CurryUncurry n t' constraint is not used in the definition, but
 -- you want it in practice when you use 'Uncurry n t', and it serves as
 -- a sanity check.
@@ -142,6 +124,8 @@ class Uncurry (n :: Nat) (t :: *) where
   type Args n t :: *
   type Ret  n t :: *
   uncurry :: Proxy n -> t -> Uncurried n t
+
+type Uncurried n t = Args n t -> Ret n t
 
 instance Uncurry n b => Uncurry (Succ n) (a -> b) where
   type Args (Succ n) (a -> b) = (a , Args n b)
@@ -152,6 +136,9 @@ instance Uncurry Zero b where
   type Args Zero b = ()
   type Ret  Zero b = b
   uncurry _ f () = f
+
+----------------------------------------------------------------
+-- Type-level nats for specifying how many args to uncurry.
 
 -- See
 -- http://stackoverflow.com/questions/20809998/type-level-nats-with-literals-and-an-injective-successor-n-ary-compose
@@ -181,3 +168,44 @@ compose :: (Uncurry n t , Curry (Args n t) a) =>
 compose p g f = curry (g . uncurry p f)
 
 ----------------------------------------------------------------
+-- Laws relating currying and uncurrying.
+--
+-- We can't prove these laws in general (universally quantified), but
+-- in any specific case (instantiation) GHC can check that they hold.
+--
+-- The laws are constraint synonyms and need '-XConstraintKinds'.
+
+----------------------------------------------------------------
+
+-- Laws for currying *after* uncurrying.
+
+type CurryUncurryM (t :: *) =
+  ( UncurryM t
+  , Curry (ArgsM t) (MonadM t (RetM t))
+  , (ArgsM t ->* MonadM t (RetM t)) ~ t
+  )
+
+type CurryUncurry (n :: Nat) (t :: *) =
+  ( Uncurry n t
+  , Curry (Args n t) (Ret n t)
+  , (Args n t ->* Ret n t) ~ t
+  )
+
+----------------------------------------------------------------
+
+-- Laws for currying *before* uncurrying.
+
+type UncurryCurry (n :: Nat) (as :: *) (r :: *) =
+  ( Curry as r
+  , Uncurry n (as ->* r)
+  , Args n (as ->* r) ~ as
+  , Ret  n (as ->* r) ~ r
+  )
+
+type UncurryMCurry (as :: *) (m :: * -> *) (r :: *) =
+  ( Curry as (m r)
+  , UncurryM (as ->* m r)
+  , ArgsM  (as ->* m r) ~ as
+  , RetM   (as ->* m r) ~ r
+  , MonadM (as ->* m r) ~ m
+  )
