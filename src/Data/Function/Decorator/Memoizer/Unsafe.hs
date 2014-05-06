@@ -10,7 +10,7 @@
 
 module Data.Function.Decorator.Memoizer.Unsafe where
 
-import Prelude hiding (curry , uncurry)
+import Prelude hiding (lookup)
 
 import Control.Applicative
 import Data.IORef
@@ -19,26 +19,40 @@ import Data.Proxy
 import System.IO.Unsafe
 
 import Data.Function.Decorator.Curry
--- import Data.Function.Decorator.Logger.HetCall
 import Data.Function.Decorator.Memoizer
+import Data.Function.Decorator.Unsafe
 
 ----------------------------------------------------------------
 
-{-# NOINLINE globalIndentLevel #-}
-globalIndentLevel :: IORef Int
-globalIndentLevel = unsafePerformIO $ newIORef 0
-
--- This is a special case of a general pattern: make a unsafe version
--- of a safe function by wrapping in 'unsafePeformBlah'.
-
 {-# NOINLINE unsafeMemoize #-}
-unsafeMemoize :: forall n t.
+unsafeMemoize ::
+  ( UnsafePurifiable n t
+  , Ord (Args n t)
+  ) => Proxy n -> t -> t
+unsafeMemoize p =
+  unsafePurify p makeDecorator
+  where
+    makeDecorator = do
+      cacheRef <- newIORef Map.empty
+      let lookup arg =
+            Map.lookup arg <$> readIORef cacheRef
+          insert arg ret =
+            modifyIORef' cacheRef (Map.insert arg ret)
+      return $ simpleMemoize lookup insert
+
+----------------------------------------------------------------
+-- Original version not using 'unsafePurify'.
+--
+-- Might be easier to understand ...
+
+{-# NOINLINE unsafeMemoize' #-}
+unsafeMemoize' :: forall n t.
   ( CurryUncurry n t
   , UncurryCurry n (Args n t) (IO (Ret n t))
   , UncurryMCurry  (Args n t)  IO (Ret n t)
   , Ord (Args n t)
   ) => Proxy n -> t -> t
-unsafeMemoize p f = unsafePerformIO $ do
+unsafeMemoize' p f = unsafePerformIO $ do
   cacheRef <- newIORef Map.empty
   let lookup arg =
         Map.lookup arg <$> readIORef cacheRef
