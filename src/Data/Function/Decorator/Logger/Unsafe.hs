@@ -10,8 +10,6 @@
 
 module Data.Function.Decorator.Logger.Unsafe where
 
-import Prelude hiding (curry , uncurry)
-
 import Data.IORef
 import Data.Proxy
 import System.IO.Unsafe
@@ -19,6 +17,7 @@ import System.IO.Unsafe
 import Data.Function.Decorator.Curry
 import Data.Function.Decorator.Logger.HetCall
 import Data.Function.Decorator.Logger.Logger
+import Data.Function.Decorator.Unsafe
 
 ----------------------------------------------------------------
 
@@ -26,18 +25,31 @@ import Data.Function.Decorator.Logger.Logger
 globalIndentLevel :: IORef Int
 globalIndentLevel = unsafePerformIO $ newIORef 0
 
--- This is a special case of a general pattern: make a unsafe version
--- of a safe function by wrapping in 'unsafePeformBlah'.
-
 {-# NOINLINE unsafeTrace #-}
-unsafeTrace :: forall n t.
+unsafeTrace ::
+  ( UnsafePurifiable n t
+  , HFold Show (Args n t)
+  , Show (Ret n t)
+  ) => Proxy n -> String -> t -> t
+unsafeTrace p name =
+  unsafePurify p makeDecorator
+  where
+    makeDecorator = return $ trace (return globalIndentLevel) name
+
+----------------------------------------------------------------
+-- Original version not using 'unsafePurify'.
+--
+-- Might be easier to understand ...
+
+{-# NOINLINE unsafeTrace' #-}
+unsafeTrace' :: forall n t.
   ( CurryUncurry n t
   , UncurryCurry n (Args n t) (IO (Ret n t))
   , UncurryMCurry  (Args n t)  IO (Ret n t)
   , HFold Show (Args n t)
   , Show (Ret n t)
   ) => Proxy n -> String -> t -> t
-unsafeTrace p name f =
+unsafeTrace' p name f =
   compose p unsafePerformIO' .
   trace (return globalIndentLevel) name $
   compose p return' f
