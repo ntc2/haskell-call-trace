@@ -21,7 +21,7 @@ import Language.Haskell.TH
 -- Tricky: to put a class constraint on an associated type we make it
 -- a premise in the class signature!  I can't find any way to put it
 -- in the class body directly.
-class Monad (MonadM t) => UncurryM t where
+class Monad (MonadM t) => UncurryM (t :: *) where
   type ArgsM  t :: *
   type RetM   t :: *
   type MonadM t :: * -> *
@@ -79,7 +79,7 @@ instance UncurryM (IO r) where
 ----------------------------------------------------------------
 -- Type level computation of curried types.
 
-class Curry as b where
+class Curry (as :: *) (b :: *) where
   -- Compute the curried type corresponding to the uncurried type with
   -- domain tuple 'as' and range 'bs'.
   --
