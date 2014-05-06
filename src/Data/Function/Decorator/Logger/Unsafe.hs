@@ -32,23 +32,8 @@ globalIndentLevel = unsafePerformIO $ newIORef 0
 {-# NOINLINE unsafeTrace #-}
 unsafeTrace :: forall n t.
   ( CurryUncurry n t
--- XXX: introduce a synonym for this long type:
---
---  , Args n t ->* IO (Ret n t) ~ foo
---
--- or even better: introduce one big synonym for all of these
--- constraints!
-  , Args n (Args n t ->* IO (Ret n t)) ~ Args n t
-  , Ret  n (Args n t ->* IO (Ret n t)) ~ IO (Ret n t)
-
-  , ArgsM  (Args n t ->* IO (Ret n t)) ~ Args n t
-  , RetM   (Args n t ->* IO (Ret n t)) ~ Ret n t
-  , MonadM (Args n t ->* IO (Ret n t)) ~ IO
-
-  , Curry (Args n t) (IO (Ret n t))
-  , Uncurry n (Args n t ->* IO (Ret n t))
-  , UncurryM  (Args n t ->* IO (Ret n t))
-
+  , UncurryCurry n (Args n t) (IO (Ret n t))
+  , UncurryMCurry  (Args n t)  IO (Ret n t)
   , HFold Show (Args n t)
   , Show (Ret n t)
   ) => Proxy n -> String -> t -> t
