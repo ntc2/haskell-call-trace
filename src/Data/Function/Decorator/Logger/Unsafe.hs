@@ -34,23 +34,23 @@ unsafeTrace :: forall n t.
   ( CurryUncurry n t
 -- XXX: introduce a synonym for this long type:
 --
---  , GetArgs n t `Curried` IO (GetRet n t) ~ foo
+--  , Args n t `Curried` IO (Ret n t) ~ foo
 --
 -- or even better: introduce one big synonym for all of these
 -- constraints!
-  , GetArgs n (GetArgs n t `Curried` IO (GetRet n t)) ~ GetArgs n t
-  , GetRet  n (GetArgs n t `Curried` IO (GetRet n t)) ~ IO (GetRet n t)
+  , Args n (Args n t `Curried` IO (Ret n t)) ~ Args n t
+  , Ret  n (Args n t `Curried` IO (Ret n t)) ~ IO (Ret n t)
 
-  , GetArgsM  (GetArgs n t `Curried` IO (GetRet n t)) ~ GetArgs n t
-  , GetRetM   (GetArgs n t `Curried` IO (GetRet n t)) ~ GetRet n t
-  , GetMonad  (GetArgs n t `Curried` IO (GetRet n t)) ~ IO
+  , ArgsM  (Args n t `Curried` IO (Ret n t)) ~ Args n t
+  , RetM   (Args n t `Curried` IO (Ret n t)) ~ Ret n t
+  , MonadM (Args n t `Curried` IO (Ret n t)) ~ IO
 
-  , Curry (GetArgs n t) (IO (GetRet n t))
-  , Uncurry n (GetArgs n t `Curried` IO (GetRet n t))
-  , UncurryM  (GetArgs n t `Curried` IO (GetRet n t))
+  , Curry (Args n t) (IO (Ret n t))
+  , Uncurry n (Args n t `Curried` IO (Ret n t))
+  , UncurryM  (Args n t `Curried` IO (Ret n t))
 
-  , HFold Show (GetArgs n t)
-  , Show (GetRet n t)
+  , HFold Show (Args n t)
+  , Show (Ret n t)
   ) => Proxy n -> String -> t -> t
 unsafeTrace p name f =
   compose p unsafePerformIO' .
@@ -58,8 +58,8 @@ unsafeTrace p name f =
   compose p return' f
   where
     -- Polymorphism confuses 'compose'.
-    return'          :: GetRet n t -> IO (GetRet n t)
-    unsafePerformIO' :: IO (GetRet n t) -> GetRet n t
+    return'          :: Ret n t -> IO (Ret n t)
+    unsafePerformIO' :: IO (Ret n t) -> Ret n t
     -- Subtle: make our 'return' strict to ensure that effects in
     -- recursive calls wrapped in 'unsafePerformIO' are correctly
     -- sequenced.

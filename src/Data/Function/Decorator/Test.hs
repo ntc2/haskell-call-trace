@@ -49,7 +49,7 @@ import qualified Data.Map.Strict as Map
 import Data.Typeable
 import Text.Printf
 
-import Data.Function.Decorator.Curry
+import Data.Function.Decorator.Curry hiding (Args , Ret)
 import Data.Function.Decorator.Memoizer
 import Data.Function.Decorator.Memoizer.Unsafe
 
@@ -289,7 +289,7 @@ logMain = do
 
 type MemoM = StateT S IO
 
-data S = S { _fibDict :: Map.Map (GetArgsM FibTy) (GetRetM FibTy)
+data S = S { _fibDict :: Map.Map (ArgsM FibTy) (RetM FibTy)
            , _hDict :: Map.Map String (H Typeable)
            , _indentRef :: IORef Int
            }

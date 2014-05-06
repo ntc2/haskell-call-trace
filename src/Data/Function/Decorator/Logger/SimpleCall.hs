@@ -35,8 +35,8 @@ instance (SingI tag , UncurryM sig)
   -- 'tag'.
   name _ = fromSing (sing::Sing tag)
   type Before (SimpleCall tag before sig after) = before
-  type Args   (SimpleCall tag before sig after) = GetArgsM sig
-  type Ret    (SimpleCall tag before sig after) = GetRetM sig
+  type Args   (SimpleCall tag before sig after) = ArgsM sig
+  type Ret    (SimpleCall tag before sig after) = RetM sig
   type After  (SimpleCall tag before sig after) = after
 
 ----------------------------------------------------------------

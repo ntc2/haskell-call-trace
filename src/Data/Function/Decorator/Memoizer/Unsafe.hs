@@ -35,18 +35,18 @@ globalIndentLevel = unsafePerformIO $ newIORef 0
 unsafeMemoize :: forall n t.
   ( CurryUncurry n t
 
-  , Ord      (GetArgs n t)
+  , Ord (Args n t)
 
-  , GetArgs n (GetArgs n t `Curried` IO (GetRet n t)) ~ GetArgs n t
-  , GetRet  n (GetArgs n t `Curried` IO (GetRet n t)) ~ IO (GetRet n t)
+  , Args n (Args n t `Curried` IO (Ret n t)) ~ Args n t
+  , Ret  n (Args n t `Curried` IO (Ret n t)) ~ IO (Ret n t)
 
-  , GetArgsM  (GetArgs n t `Curried` IO (GetRet n t)) ~ GetArgs n t
-  , GetRetM   (GetArgs n t `Curried` IO (GetRet n t)) ~ GetRet n t
-  , GetMonad  (GetArgs n t `Curried` IO (GetRet n t)) ~ IO
+  , ArgsM  (Args n t `Curried` IO (Ret n t)) ~ Args n t
+  , RetM   (Args n t `Curried` IO (Ret n t)) ~ Ret n t
+  , MonadM (Args n t `Curried` IO (Ret n t)) ~ IO
 
-  , Curry (GetArgs n t) (IO (GetRet n t))
-  , Uncurry n (GetArgs n t `Curried` IO (GetRet n t))
-  , UncurryM  (GetArgs n t `Curried` IO (GetRet n t))
+  , Curry (Args n t) (IO (Ret n t))
+  , Uncurry n (Args n t `Curried` IO (Ret n t))
+  , UncurryM  (Args n t `Curried` IO (Ret n t))
   ) => Proxy n -> t -> t
 unsafeMemoize p f = unsafePerformIO $ do
   cacheRef <- newIORef Map.empty
@@ -61,8 +61,8 @@ unsafeMemoize p f = unsafePerformIO $ do
     compose p return' f
   where
     -- Polymorphism confuses 'compose'.
-    return'          :: GetRet n t -> IO (GetRet n t)
-    unsafePerformIO' :: IO (GetRet n t) -> GetRet n t
+    return'          :: Ret n t -> IO (Ret n t)
+    unsafePerformIO' :: IO (Ret n t) -> Ret n t
     -- Subtle: make our 'return' strict to ensure that effects in
     -- recursive calls wrapped in 'unsafePerformIO' are correctly
     -- sequenced.
