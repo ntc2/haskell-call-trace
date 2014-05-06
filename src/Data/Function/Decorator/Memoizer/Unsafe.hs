@@ -37,16 +37,16 @@ unsafeMemoize :: forall n t.
 
   , Ord (Args n t)
 
-  , Args n (Args n t `Curried` IO (Ret n t)) ~ Args n t
-  , Ret  n (Args n t `Curried` IO (Ret n t)) ~ IO (Ret n t)
+  , Args n (Args n t ->* IO (Ret n t)) ~ Args n t
+  , Ret  n (Args n t ->* IO (Ret n t)) ~ IO (Ret n t)
 
-  , ArgsM  (Args n t `Curried` IO (Ret n t)) ~ Args n t
-  , RetM   (Args n t `Curried` IO (Ret n t)) ~ Ret n t
-  , MonadM (Args n t `Curried` IO (Ret n t)) ~ IO
+  , ArgsM  (Args n t ->* IO (Ret n t)) ~ Args n t
+  , RetM   (Args n t ->* IO (Ret n t)) ~ Ret n t
+  , MonadM (Args n t ->* IO (Ret n t)) ~ IO
 
   , Curry (Args n t) (IO (Ret n t))
-  , Uncurry n (Args n t `Curried` IO (Ret n t))
-  , UncurryM  (Args n t `Curried` IO (Ret n t))
+  , Uncurry n (Args n t ->* IO (Ret n t))
+  , UncurryM  (Args n t ->* IO (Ret n t))
   ) => Proxy n -> t -> t
 unsafeMemoize p f = unsafePerformIO $ do
   cacheRef <- newIORef Map.empty

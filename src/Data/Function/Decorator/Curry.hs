@@ -79,26 +79,31 @@ instance UncurryM (IO r) where
 ----------------------------------------------------------------
 -- Type level computation of curried types.
 
-class Curry a b where
-  type Curried a b :: *
+class Curry as b where
+  -- Compute the curried type corresponding to the uncurried type with
+  -- domain tuple 'as' and range 'bs'.
+  --
+  -- Mnemonic: 'as ->* b' means "insert zero or more ('*'-many) arrows
+  -- between the 'as' and 'b'.
+  type as ->* b :: *
   -- This version is right nested like 'UncurryM.ArgsM', whereas
   -- iterated 'Prelude.curry' is left nested.  We can probably make a
   -- left-nested version using type-level snoc, but then we may need
   -- type-level snoc lemmas, which will not be fun ...
-  curry :: (a -> b) -> a `Curried` b
+  curry :: (as -> b) -> as ->* b
 
 instance Curry as b => Curry (a , as) b where
-  type Curried (a , as) b = a -> Curried as b
+  type (a , as) ->* b = a -> as ->* b
   -- The essence of the continuation trick in 'collectAndCallCont'.
   curry f x = curry (\ xs -> f (x , xs))
 
 instance Curry () b where
-  type Curried () b = b
+  type () ->* b = b
   curry f = f ()
 
-type UncurriedM        t = ArgsM t ->        MonadM t (RetM t)
+type UncurriedM        t = ArgsM t ->  MonadM t (RetM t)
 -- A fancy identity function.
-type CurriedUncurriedM t = ArgsM t `Curried` MonadM t (RetM t)
+type CurriedUncurriedM t = ArgsM t ->* MonadM t (RetM t)
 
 -- The 'CurryUncurryM' is a constraint synonym and needs
 -- '-XConstraintKinds'.
@@ -122,8 +127,8 @@ type CurryUncurryM t =
 -- type" 'c', or as '(a , ()) -> (b -> c)', with return type 'b -> c'.
 -- So, non-monadic uncurrying is ambiguous in general!
 
-type Uncurried        (n :: Nat) (t :: *) = Args n t -> Ret n t
-type CurriedUncurried (n :: Nat) (t :: *) = Args n t `Curried` Ret n t
+type Uncurried        (n :: Nat) (t :: *) = Args n t ->  Ret n t
+type CurriedUncurried (n :: Nat) (t :: *) = Args n t ->* Ret n t
 type CurryUncurry     (n :: Nat) (t :: *) =
   ( Uncurry n t
   , Curry (Args n t) (Ret n t)
@@ -172,7 +177,7 @@ nat n = [t| Succ $(nat (n-1)) |]
 --
 --   compose (Proxy::Proxy $(nat 2)) return f :: a1 -> a2 -> m b
 compose :: (Uncurry n t , Curry (Args n t) a) =>
-  Proxy n -> (Ret n t -> a) -> t -> Args n t `Curried` a
+  Proxy n -> (Ret n t -> a) -> t -> Args n t ->* a
 compose p g f = curry (g . uncurry p f)
 
 ----------------------------------------------------------------

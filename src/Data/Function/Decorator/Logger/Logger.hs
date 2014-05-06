@@ -50,7 +50,7 @@ class Monad m => EventLogger c m where
 instance MonadWriter [LogEvent c] m => EventLogger c m where
   logEvent e = tell [e]
 
--- Note: the 'ArgsM t `Curried` MonadM t (RetM t)' is just a
+-- Note: the 'ArgsM t ->* MonadM t (RetM t)' is just a
 -- fancy way to write 't' (that GHC prefers). The synonym
 -- 'CurriedUncurriedM t' expands to that.
 log :: forall tag before t after c
