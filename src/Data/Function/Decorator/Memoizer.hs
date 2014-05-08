@@ -150,13 +150,13 @@ simpleMemoize :: forall t. CurryUncurryM t
               -> t
 simpleMemoize lookup insert f = curry k where
   k :: UncurriedM t
-  k arg = do
-    maybeCached <- lookup arg
+  k args = do
+    maybeCached <- lookup args
     case maybeCached of
       Just ret -> return ret
       Nothing -> do
-        ret <- uncurryM f arg
-        insert arg ret
+        ret <- uncurryM f args
+        insert args ret
         return ret
 
 -- Memoize a function using the given 'lookup' and 'insert' functions
@@ -184,15 +184,15 @@ castMemoize :: forall t.
             -> t
 castMemoize lookup insert tag f = curry k where
   k :: UncurriedM t
-  k arg = do
+  k args = do
     cache <- getCache
-    case Map.lookup arg cache of
+    case Map.lookup args cache of
       Just ret -> return ret
       Nothing -> do
-        ret <- uncurryM f arg
+        ret <- uncurryM f args
         -- Careful: we need to look up the cache again since the call
         -- may have mutated it.
-        insert tag . H . Map.insert arg ret =<< getCache
+        insert tag . H . Map.insert args ret =<< getCache
         return ret
 
   getCache :: MonadM t (Map.Map (ArgsM t) (RetM t))

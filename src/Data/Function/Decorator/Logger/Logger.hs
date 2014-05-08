@@ -65,13 +65,13 @@ log :: forall tag before t after c
     -> t
 log _ ms1 ms2 f = curry k where
   k :: UncurriedM t
-  k arg = do
+  k args = do
     let call = SimpleCall::SimpleCall tag before t after
     s1 <- ms1
-    logEvent (BeginCall call s1 arg::LogEvent c)
-    ret <- uncurryM f arg
+    logEvent (BeginCall call s1 args::LogEvent c)
+    ret <- uncurryM f args
     s2 <- ms2
-    logEvent (EndCall call s1 arg ret s2::LogEvent c)
+    logEvent (EndCall call s1 args ret s2::LogEvent c)
     return ret
 
 ----------------------------------------------------------------

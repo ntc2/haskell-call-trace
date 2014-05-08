@@ -34,10 +34,10 @@ unsafeMemoize p =
   where
     makeDecorator = do
       cacheRef <- newIORef Map.empty
-      let lookup arg =
-            Map.lookup arg <$> readIORef cacheRef
-          insert arg ret =
-            modifyIORef' cacheRef (Map.insert arg ret)
+      let lookup args =
+            Map.lookup args <$> readIORef cacheRef
+          insert args ret =
+            modifyIORef' cacheRef (Map.insert args ret)
       return $ simpleMemoize lookup insert
 
 ----------------------------------------------------------------
@@ -54,10 +54,10 @@ unsafeMemoize' :: forall n t.
   ) => Proxy n -> t -> t
 unsafeMemoize' p f = unsafePerformIO $ do
   cacheRef <- newIORef Map.empty
-  let lookup arg =
-        Map.lookup arg <$> readIORef cacheRef
-      insert arg ret =
-        modifyIORef' cacheRef (Map.insert arg ret)
+  let lookup args =
+        Map.lookup args <$> readIORef cacheRef
+      insert args ret =
+        modifyIORef' cacheRef (Map.insert args ret)
 
   return $
     compose p unsafePerformIO' .

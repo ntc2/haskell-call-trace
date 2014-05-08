@@ -106,11 +106,11 @@ callAndReturn , callAndError :: P c (Ex2T (LogTree c))
 callAndReturn = do
   BeginCall {} <- beginCall
   children <- forest
-  EndCall call before arg ret after <- endCall
-  return . Ex2T $ CallAndReturn call before arg children ret after
+  EndCall call before args ret after <- endCall
+  return . Ex2T $ CallAndReturn call before args children ret after
 
 callAndError = do
-  BeginCall call before arg <- beginCall
+  BeginCall call before args <- beginCall
   children <- forest <* eof
   return . Ex2T $
     -- May be more understandable to have two different error nodes,
@@ -127,9 +127,9 @@ callAndError = do
     -- trace in the success case ...
     case last children of
       l | not (null children) , Ex2T (CallAndError {}) <- l ->
-        CallAndError call before arg (init children) (Just l)
+        CallAndError call before args (init children) (Just l)
       _ ->
-        CallAndError call before arg children Nothing
+        CallAndError call before args children Nothing
 
 ----------------------------------------------------------------
 -- Token parsers.

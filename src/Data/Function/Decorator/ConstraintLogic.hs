@@ -75,14 +75,14 @@ coerceLogTree :: forall c1 c2.
 --   '(call::call)' on the call argument we can scope. I didn't know
 --   GHC supported such local signatures on arguments until I tried it
 --   ... not sure what I would have done if it hadn't worked ...
-coerceLogTree impl (Ex2T (CallAndReturn (call::call) before arg children ret after)) =
+coerceLogTree impl (Ex2T (CallAndReturn (call::call) before args children ret after)) =
   case impl (Reify::Reify c1 call) of
-    Reify -> Ex2T $ CallAndReturn call before arg children' ret after
+    Reify -> Ex2T $ CallAndReturn call before args children' ret after
   where
     children' = map (coerceLogTree impl) children
-coerceLogTree impl (Ex2T (CallAndError (call::call) before arg children who)) =
+coerceLogTree impl (Ex2T (CallAndError (call::call) before args children who)) =
   case impl (Reify::Reify c1 call) of
-    Reify -> Ex2T $ CallAndError call before arg children' who'
+    Reify -> Ex2T $ CallAndError call before args children' who'
   where
     children' = map (coerceLogTree impl) children
     who' = fmap (coerceLogTree impl) who
@@ -121,8 +121,8 @@ coerceLogTree' :: forall c1 c2.
 --     In the expression: map (coerceLogTree' impl) children
 --
 -- What is an "untouchable" variable?
-coerceLogTree' impl (Ex2T (CallAndReturn (call::call) before arg children ret after)) =
-  impl' callAndReturn call before arg children' ret after
+coerceLogTree' impl (Ex2T (CallAndReturn (call::call) before args children ret after)) =
+  impl' callAndReturn call before args children' ret after
   where
     callAndReturn :: c2 call =>
       call -> Before call -> Args call -> LogForest c2 -> Ret call -> After call
@@ -134,8 +134,8 @@ coerceLogTree' impl (Ex2T (CallAndReturn (call::call) before arg children ret af
 
     children' :: LogForest c2
     children' = map (coerceLogTree' impl) children
-coerceLogTree' impl (Ex2T (CallAndError (call::call) before arg children who)) =
-  impl' callAndError call before arg children' who'
+coerceLogTree' impl (Ex2T (CallAndError (call::call) before args children who)) =
+  impl' callAndError call before args children' who'
   where
     callAndError :: c2 call =>
       call -> Before call -> Args call -> LogForest c2 -> Maybe (Ex2T (LogTree c2))
