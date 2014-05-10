@@ -431,7 +431,7 @@ tracedPureFib =
 
 memoizedPureFib :: PureFibTy
 memoizedPureFib =
-  fix (unsafeMemoize (Proxy::Proxy $(nat 1)) . openPureFib)
+  fix (unsafeMemoize $(proxyNat 1) . openPureFib)
 
 tracedMemoizedPureFib :: PureFibTy
 tracedMemoizedPureFib =

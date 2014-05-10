@@ -152,6 +152,9 @@ nat :: Integer -> Q Type
 nat 0 = [t| Zero |]
 nat n = [t| Succ $(nat (n-1)) |]
 
+proxyNat :: Integer -> Q Exp
+proxyNat n = [| Proxy :: Proxy $(nat n) |]
+
 ----------------------------------------------------------------
 -- An 'n'-ary compose.
 
