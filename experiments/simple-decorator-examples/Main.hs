@@ -43,8 +43,6 @@ def memoize(f):
 
 module Main where
 
-import GHC.TypeLits
-
 import Control.Applicative
 import Data.Function (fix) -- ???!!! GHCi also fails to find 'fix'. There be dragons ...
 import Data.IORef
@@ -65,6 +63,17 @@ import Data.Function.Decorator.Unsafe
 -- pure way to get your hands on an 'IORef'.  However, it can be used
 -- purely with open definitions.
 
+-- We can leave off the type sigs here, and GHC actually infers
+-- something relatively friendly:
+{-
+Main.hs:72:1: Warning:
+    Top-level binding with no type signature:
+      trace :: forall t.
+               (Show (ArgsM t), Show (RetM t), UncurryM t,
+                Curry (ArgsM t) (IO (RetM t)), MonadM t ~ IO) =>
+               IORef Int -> [Char] -> t -> ArgsM t ->* IO (RetM t)
+-}
+-- The only difference is the 'ArgsM t ->* IO (RetM t)'!
 trace :: forall t.
   ( CurryUncurryM t
   , Show (ArgsM t)
@@ -222,6 +231,7 @@ pow = unsafeTrace $(proxyNat 2) "pow" pow' where
     else pow b (p `div` 2) * pow b (p - (p `div` 2))
 
 -- Fixpoint.
+openPow :: (Int -> Int -> Int) -> (Int -> Int -> Int)
 openPow pow b p =
   if p <= 1
   then b * p
