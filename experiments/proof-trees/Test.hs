@@ -4,6 +4,8 @@
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE DataKinds #-}
+{-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE ConstraintKinds #-}
 
 module Test where
 
@@ -21,9 +23,12 @@ import System.Exit (exitWith, ExitCode(..))
 import Text.Parsec hiding (Stream , between)
 import qualified Text.Parsec
 
+import Data.Function.Decorator.ConstraintLogic
 import Data.Function.Decorator.Logger.LogTree
 import Data.Function.Decorator.Logger.Processor.ProofTree
+import Data.Function.Decorator.Logger.Processor.UnixTree
 import Data.Function.Decorator.Logger.Logger
+import Data.Function.Decorator.Logger.HetCall (SigAll , heterogenize)
 import Data.Function.Decorator.Logger.SimpleCall
 
 ----------------------------------------------------------------
@@ -85,7 +90,8 @@ callParser p = either (error . show) id
 -- Type checker.
 
 type Mode = Bool
-type Stream = LogStream (ProofTree Mode)
+type C = ProofTree Mode :&&: SigAll Show
+type Stream = LogStream C
 type M a = ErrorT String (ReaderT Ctx (Writer Stream)) a
 runM :: Ctx -> M a -> (Either String a , Stream)
 runM ctx = runWriter . flip runReaderT ctx . runErrorT
@@ -203,14 +209,27 @@ conclusion mode ctx tm e = (judgment mode , rule tm)
 ----------------------------------------------------------------
 -- Bring it all together.
 
-pipeline :: Mode -> Ctx -> String -> String
-pipeline mode ctx =
-  proofTree mode
-  . either (error . show) (!! 0)
+pipeline :: Ctx -> String -> LogForest C
+pipeline ctx =
+    either (error . show) id
   . stream2Forest
   . execM ctx
   . infer
   . callParser tm
+
+makeProofTree :: Mode -> LogForest C -> String
+makeProofTree mode =
+  proofTree mode .
+  coerceLogTree' (\x -> x) .
+  head
+
+makeUnixTree :: LogForest C -> String
+makeUnixTree =
+  unlines .
+  unixTree .
+  heterogenize (Proxy::Proxy Show) (Proxy::Proxy "default:bracket") .
+  coerceLogTree' (\x -> x) .
+  head
 
 makeDoc :: String -> String
 makeDoc tex = unlines
@@ -230,7 +249,7 @@ makeDoc tex = unlines
   ]
 
 -- Reusable main.
-mainWith :: (Mode -> Ctx -> String -> String) -> IO ()
+mainWith :: (Ctx -> String -> LogForest C) -> IO ()
 mainWith pipeline = do
   args <- getArgs
   when (not $ length args == 3) $ do
@@ -240,8 +259,11 @@ mainWith pipeline = do
     exitWith (ExitFailure 2)
   let mode = read $ args !! 0
   let ctx' = callParser ctx $ args !! 1
-  let tex = pipeline mode ctx' $ args !! 2
+  let forest = pipeline ctx' $ args !! 2
+  let tex = makeProofTree mode forest
+  let unix = makeUnixTree forest
   putStr . makeDoc $ tex
+  err unix
   where
     err = hPutStrLn stderr
 

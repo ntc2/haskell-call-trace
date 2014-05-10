@@ -5,12 +5,15 @@
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE DataKinds #-}
+{-# LANGUAGE RecordWildCards #-}
 
 module Data.Function.Decorator.Logger.Processor.UnixTree where
 
 import Control.Exception.Base (assert)
 
 import Data.Function.Decorator.Logger.LogTree
+import Data.Function.Decorator.Logger.HetCall
+import Data.Function.Decorator.ConstraintLogic
 
 ----------------------------------------------------------------
 
@@ -43,6 +46,53 @@ layer' = layer ("─ " , "┬ " , "├ " , "└ ")
                ("├─" , "│ " , "└─" , "  ")
 
                ("╞ " , "╘ ")
+
+----------------------------------------------------------------
+-- Generic 'UnixTree' processors for trees whose parts satisfy 'Show'.
+--
+-- These are good defaults if you don't want to craft your own custom
+-- 'UnixTree' processor instance.
+
+-- An instance for 'Show' that brackets the subcalls between the
+-- before state and args and the return value and after state.
+instance UnixTree (HetCall Show "default:bracket") where
+  callAndReturn (CallAndReturn {..}) =
+    ( [ unH show _before
+      , formatCall (name _call) _arg ]
+    , [ unH show _ret
+      , unH show _after ] )
+  callAndError (CallAndError {..}) =
+    ( [ unH show _before'
+      , formatCall (name _call') _arg' ]
+    , [ maybe "<error: here>" (const "<error: there>") _how ] )
+
+-- An instance for 'Show' that puts everything (before, args, return,
+-- after) in the header.
+instance UnixTree (HetCall Show "default:header") where
+  callAndReturn (CallAndReturn {..}) =
+    ( [ unH show _before
+      , formatCall (name _call) _arg ++ " = " ++ unH show _ret
+      , unH show _after ]
+    , [] )
+  callAndError (CallAndError {..}) =
+    ( [ unH show _before'
+      , formatCall (name _call') _arg' ++ " = " ++
+          maybe "<error: here>" (const "<error: there>") _how ]
+    , [] )
+
+-- An instance for 'Show' that puts everything (before, args, return,
+-- after) in a single line in the header.
+instance UnixTree (HetCall Show "default:oneline") where
+  callAndReturn (CallAndReturn {..}) =
+    ( [ "<" ++ unH show _before ++ "> " ++
+        formatCall (name _call) _arg ++ " = " ++ unH show _ret ++
+        " <" ++ unH show _after ++ ">" ]
+    , [] )
+  callAndError (CallAndError {..}) =
+    ( [ "<" ++ unH show _before' ++ "> " ++
+        formatCall (name _call') _arg' ++ " = " ++
+          maybe "<error: here>" (const "<error: there>") _how ]
+    , [] )
 
 ----------------------------------------------------------------
 

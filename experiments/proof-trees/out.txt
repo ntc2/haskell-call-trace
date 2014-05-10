@@ -1,0 +1,2225 @@
+./tm2latex.sh tmp/proof-tree S.ctx  'x:P->Q->R,y:P->Q,z:P' 'xz(yz)'
+┬ [("x",TyVar "P" :->: (TyVar "Q" :->: TyVar "R")),("y",TyVar "P" :->: TyVar "Q"),("z",TyVar "P")]
+├ infer ((TmVar "x" :@: TmVar "z") :@: (TmVar "y" :@: TmVar "z"))
+├─┬ [("x",TyVar "P" :->: (TyVar "Q" :->: TyVar "R")),("y",TyVar "P" :->: TyVar "Q"),("z",TyVar "P")]
+│ ├ infer (TmVar "x" :@: TmVar "z")
+│ ├─┬ [("x",TyVar "P" :->: (TyVar "Q" :->: TyVar "R")),("y",TyVar "P" :->: TyVar "Q"),("z",TyVar "P")]
+│ │ ├ infer (TmVar "x")
+│ │ ╞ TyVar "P" :->: (TyVar "Q" :->: TyVar "R")
+│ │ ╘ ()
+│ ├─┬ [("x",TyVar "P" :->: (TyVar "Q" :->: TyVar "R")),("y",TyVar "P" :->: TyVar "Q"),("z",TyVar "P")]
+│ │ ├ infer (TmVar "z")
+│ │ ╞ TyVar "P"
+│ │ ╘ ()
+│ ╞ TyVar "Q" :->: TyVar "R"
+│ ╘ ()
+├─┬ [("x",TyVar "P" :->: (TyVar "Q" :->: TyVar "R")),("y",TyVar "P" :->: TyVar "Q"),("z",TyVar "P")]
+│ ├ infer (TmVar "y" :@: TmVar "z")
+│ ├─┬ [("x",TyVar "P" :->: (TyVar "Q" :->: TyVar "R")),("y",TyVar "P" :->: TyVar "Q"),("z",TyVar "P")]
+│ │ ├ infer (TmVar "y")
+│ │ ╞ TyVar "P" :->: TyVar "Q"
+│ │ ╘ ()
+│ ├─┬ [("x",TyVar "P" :->: (TyVar "Q" :->: TyVar "R")),("y",TyVar "P" :->: TyVar "Q"),("z",TyVar "P")]
+│ │ ├ infer (TmVar "z")
+│ │ ╞ TyVar "P"
+│ │ ╘ ()
+│ ╞ TyVar "Q"
+│ ╘ ()
+╞ TyVar "R"
+╘ ()
+
+make[1]: Entering directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
+pdflatex -output-directory=tmp tmp/proof-tree.S.ctx.True.tex
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian)
+entering extended mode
+(./tmp/proof-tree.S.ctx.True.tex
+LaTeX2e <2009/09/24>
+Babel <v3.8l> and hyphenation patterns for english, usenglishmax, dumylang, noh
+yphenation, ibycus, monogreek, greek, ancientgreek, loaded.
+(/usr/share/texmf-texlive/tex/latex/base/article.cls
+Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
+(/usr/share/texmf-texlive/tex/latex/base/size10.clo))
+(/usr/share/texmf-texlive/tex/latex/lkproof/proof.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(/usr/share/texmf-texlive/tex/latex/amsmath/amstext.sty
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsgen.sty))
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsbsy.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsopn.sty))
+(/usr/share/texmf-texlive/tex/latex/geometry/geometry.sty
+(/usr/share/texmf-texlive/tex/latex/graphics/keyval.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifpdf.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifvtex.sty)
+(/usr/share/texmf-texlive/tex/xelatex/xetexconfig/geometry.cfg))
+(/usr/share/texmf-texlive/tex/latex/preprint/fullpage.sty)
+(/usr/share/texmf-texlive/tex/latex/iwona/iwona.sty)
+(/usr/share/texmf-texlive/tex/latex/base/fontenc.sty
+(/usr/share/texmf-texlive/tex/latex/base/t1enc.def)
+(/usr/share/texmf-texlive/tex/latex/iwona/t1iwonalc.fd))
+(tmp/proof-tree.S.ctx.True.aux)
+*geometry auto-detecting driver*
+*geometry detected driver: pdftex*
+(/usr/share/texmf-texlive/tex/latex/iwona/ot1iwonalcm.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omliwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omsiwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omxiwonalc.fd) [1{/var/lib/texmf/font
+s/map/pdftex/updmap/pdftex.map}] (tmp/proof-tree.S.ctx.True.aux) ){/usr/share/t
+exmf-texlive/fonts/enc/dvips/iwona/iwona-ec.enc}{/usr/share/texmf-texlive/fonts
+/enc/dvips/iwona/iwonacap-ec.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iwon
+a/iwona-sy.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iwona/iwona-rm.enc}{/u
+sr/share/texmf-texlive/fonts/enc/dvips/iwona/iwona-mi.enc}</usr/share/texmf-tex
+live/fonts/type1/public/iwona/iwonacl.pfb></usr/share/texmf-texlive/fonts/type1
+/public/iwona/iwonacli.pfb>
+Output written on tmp/proof-tree.S.ctx.True.pdf (1 page, 35786 bytes).
+Transcript written on tmp/proof-tree.S.ctx.True.log.
+make[1]: Leaving directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
+┬ [("x",TyVar "P" :->: (TyVar "Q" :->: TyVar "R")),("y",TyVar "P" :->: TyVar "Q"),("z",TyVar "P")]
+├ infer ((TmVar "x" :@: TmVar "z") :@: (TmVar "y" :@: TmVar "z"))
+├─┬ [("x",TyVar "P" :->: (TyVar "Q" :->: TyVar "R")),("y",TyVar "P" :->: TyVar "Q"),("z",TyVar "P")]
+│ ├ infer (TmVar "x" :@: TmVar "z")
+│ ├─┬ [("x",TyVar "P" :->: (TyVar "Q" :->: TyVar "R")),("y",TyVar "P" :->: TyVar "Q"),("z",TyVar "P")]
+│ │ ├ infer (TmVar "x")
+│ │ ╞ TyVar "P" :->: (TyVar "Q" :->: TyVar "R")
+│ │ ╘ ()
+│ ├─┬ [("x",TyVar "P" :->: (TyVar "Q" :->: TyVar "R")),("y",TyVar "P" :->: TyVar "Q"),("z",TyVar "P")]
+│ │ ├ infer (TmVar "z")
+│ │ ╞ TyVar "P"
+│ │ ╘ ()
+│ ╞ TyVar "Q" :->: TyVar "R"
+│ ╘ ()
+├─┬ [("x",TyVar "P" :->: (TyVar "Q" :->: TyVar "R")),("y",TyVar "P" :->: TyVar "Q"),("z",TyVar "P")]
+│ ├ infer (TmVar "y" :@: TmVar "z")
+│ ├─┬ [("x",TyVar "P" :->: (TyVar "Q" :->: TyVar "R")),("y",TyVar "P" :->: TyVar "Q"),("z",TyVar "P")]
+│ │ ├ infer (TmVar "y")
+│ │ ╞ TyVar "P" :->: TyVar "Q"
+│ │ ╘ ()
+│ ├─┬ [("x",TyVar "P" :->: (TyVar "Q" :->: TyVar "R")),("y",TyVar "P" :->: TyVar "Q"),("z",TyVar "P")]
+│ │ ├ infer (TmVar "z")
+│ │ ╞ TyVar "P"
+│ │ ╘ ()
+│ ╞ TyVar "Q"
+│ ╘ ()
+╞ TyVar "R"
+╘ ()
+
+make[1]: Entering directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
+pdflatex -output-directory=tmp tmp/proof-tree.S.ctx.False.tex
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian)
+entering extended mode
+(./tmp/proof-tree.S.ctx.False.tex
+LaTeX2e <2009/09/24>
+Babel <v3.8l> and hyphenation patterns for english, usenglishmax, dumylang, noh
+yphenation, ibycus, monogreek, greek, ancientgreek, loaded.
+(/usr/share/texmf-texlive/tex/latex/base/article.cls
+Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
+(/usr/share/texmf-texlive/tex/latex/base/size10.clo))
+(/usr/share/texmf-texlive/tex/latex/lkproof/proof.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(/usr/share/texmf-texlive/tex/latex/amsmath/amstext.sty
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsgen.sty))
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsbsy.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsopn.sty))
+(/usr/share/texmf-texlive/tex/latex/geometry/geometry.sty
+(/usr/share/texmf-texlive/tex/latex/graphics/keyval.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifpdf.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifvtex.sty)
+(/usr/share/texmf-texlive/tex/xelatex/xetexconfig/geometry.cfg))
+(/usr/share/texmf-texlive/tex/latex/preprint/fullpage.sty)
+(/usr/share/texmf-texlive/tex/latex/iwona/iwona.sty)
+(/usr/share/texmf-texlive/tex/latex/base/fontenc.sty
+(/usr/share/texmf-texlive/tex/latex/base/t1enc.def)
+(/usr/share/texmf-texlive/tex/latex/iwona/t1iwonalc.fd))
+(tmp/proof-tree.S.ctx.False.aux)
+*geometry auto-detecting driver*
+*geometry detected driver: pdftex*
+(/usr/share/texmf-texlive/tex/latex/iwona/ot1iwonalcm.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omliwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omsiwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omxiwonalc.fd) [1{/var/lib/texmf/font
+s/map/pdftex/updmap/pdftex.map}] (tmp/proof-tree.S.ctx.False.aux) ){/usr/share/
+texmf-texlive/fonts/enc/dvips/iwona/iwona-ec.enc}{/usr/share/texmf-texlive/font
+s/enc/dvips/iwona/iwonacap-ec.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iwo
+na/iwona-sy.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iwona/iwona-mi.enc}</
+usr/share/texmf-texlive/fonts/type1/public/iwona/iwonacl.pfb></usr/share/texmf-
+texlive/fonts/type1/public/iwona/iwonacli.pfb>
+Output written on tmp/proof-tree.S.ctx.False.pdf (1 page, 32361 bytes).
+Transcript written on tmp/proof-tree.S.ctx.False.log.
+make[1]: Leaving directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
+./tm2latex.sh tmp/proof-tree S.lam  ''                     '\x:P->Q->R.\y:P->Q.\z:P.xz(yz)'
+┬ []
+├ infer (Lam "x" (TyVar "P" :->: (TyVar "Q" :->: TyVar "R")) (Lam "y" (TyVar "P" :->: TyVar "Q") (Lam "z" (TyVar "P") ((TmVar "x" :@: TmVar "z") :@: (TmVar "y" :@: TmVar "z")))))
+├─┬ [("x",TyVar "P" :->: (TyVar "Q" :->: TyVar "R"))]
+│ ├ infer (Lam "y" (TyVar "P" :->: TyVar "Q") (Lam "z" (TyVar "P") ((TmVar "x" :@: TmVar "z") :@: (TmVar "y" :@: TmVar "z"))))
+│ ├─┬ [("x",TyVar "P" :->: (TyVar "Q" :->: TyVar "R")),("y",TyVar "P" :->: TyVar "Q")]
+│ │ ├ infer (Lam "z" (TyVar "P") ((TmVar "x" :@: TmVar "z") :@: (TmVar "y" :@: TmVar "z")))
+│ │ ├─┬ [("x",TyVar "P" :->: (TyVar "Q" :->: TyVar "R")),("y",TyVar "P" :->: TyVar "Q"),("z",TyVar "P")]
+│ │ │ ├ infer ((TmVar "x" :@: TmVar "z") :@: (TmVar "y" :@: TmVar "z"))
+│ │ │ ├─┬ [("x",TyVar "P" :->: (TyVar "Q" :->: TyVar "R")),("y",TyVar "P" :->: TyVar "Q"),("z",TyVar "P")]
+│ │ │ │ ├ infer (TmVar "x" :@: TmVar "z")
+│ │ │ │ ├─┬ [("x",TyVar "P" :->: (TyVar "Q" :->: TyVar "R")),("y",TyVar "P" :->: TyVar "Q"),("z",TyVar "P")]
+│ │ │ │ │ ├ infer (TmVar "x")
+│ │ │ │ │ ╞ TyVar "P" :->: (TyVar "Q" :->: TyVar "R")
+│ │ │ │ │ ╘ ()
+│ │ │ │ ├─┬ [("x",TyVar "P" :->: (TyVar "Q" :->: TyVar "R")),("y",TyVar "P" :->: TyVar "Q"),("z",TyVar "P")]
+│ │ │ │ │ ├ infer (TmVar "z")
+│ │ │ │ │ ╞ TyVar "P"
+│ │ │ │ │ ╘ ()
+│ │ │ │ ╞ TyVar "Q" :->: TyVar "R"
+│ │ │ │ ╘ ()
+│ │ │ ├─┬ [("x",TyVar "P" :->: (TyVar "Q" :->: TyVar "R")),("y",TyVar "P" :->: TyVar "Q"),("z",TyVar "P")]
+│ │ │ │ ├ infer (TmVar "y" :@: TmVar "z")
+│ │ │ │ ├─┬ [("x",TyVar "P" :->: (TyVar "Q" :->: TyVar "R")),("y",TyVar "P" :->: TyVar "Q"),("z",TyVar "P")]
+│ │ │ │ │ ├ infer (TmVar "y")
+│ │ │ │ │ ╞ TyVar "P" :->: TyVar "Q"
+│ │ │ │ │ ╘ ()
+│ │ │ │ ├─┬ [("x",TyVar "P" :->: (TyVar "Q" :->: TyVar "R")),("y",TyVar "P" :->: TyVar "Q"),("z",TyVar "P")]
+│ │ │ │ │ ├ infer (TmVar "z")
+│ │ │ │ │ ╞ TyVar "P"
+│ │ │ │ │ ╘ ()
+│ │ │ │ ╞ TyVar "Q"
+│ │ │ │ ╘ ()
+│ │ │ ╞ TyVar "R"
+│ │ │ ╘ ()
+│ │ ╞ TyVar "P" :->: TyVar "R"
+│ │ ╘ ()
+│ ╞ (TyVar "P" :->: TyVar "Q") :->: (TyVar "P" :->: TyVar "R")
+│ ╘ ()
+╞ (TyVar "P" :->: (TyVar "Q" :->: TyVar "R")) :->: ((TyVar "P" :->: TyVar "Q") :->: (TyVar "P" :->: TyVar "R"))
+╘ ()
+
+make[1]: Entering directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
+pdflatex -output-directory=tmp tmp/proof-tree.S.lam.True.tex
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian)
+entering extended mode
+(./tmp/proof-tree.S.lam.True.tex
+LaTeX2e <2009/09/24>
+Babel <v3.8l> and hyphenation patterns for english, usenglishmax, dumylang, noh
+yphenation, ibycus, monogreek, greek, ancientgreek, loaded.
+(/usr/share/texmf-texlive/tex/latex/base/article.cls
+Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
+(/usr/share/texmf-texlive/tex/latex/base/size10.clo))
+(/usr/share/texmf-texlive/tex/latex/lkproof/proof.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(/usr/share/texmf-texlive/tex/latex/amsmath/amstext.sty
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsgen.sty))
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsbsy.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsopn.sty))
+(/usr/share/texmf-texlive/tex/latex/geometry/geometry.sty
+(/usr/share/texmf-texlive/tex/latex/graphics/keyval.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifpdf.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifvtex.sty)
+(/usr/share/texmf-texlive/tex/xelatex/xetexconfig/geometry.cfg))
+(/usr/share/texmf-texlive/tex/latex/preprint/fullpage.sty)
+(/usr/share/texmf-texlive/tex/latex/iwona/iwona.sty)
+(/usr/share/texmf-texlive/tex/latex/base/fontenc.sty
+(/usr/share/texmf-texlive/tex/latex/base/t1enc.def)
+(/usr/share/texmf-texlive/tex/latex/iwona/t1iwonalc.fd))
+(tmp/proof-tree.S.lam.True.aux)
+*geometry auto-detecting driver*
+*geometry detected driver: pdftex*
+(/usr/share/texmf-texlive/tex/latex/iwona/ot1iwonalcm.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omliwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omsiwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omxiwonalc.fd) [1{/var/lib/texmf/font
+s/map/pdftex/updmap/pdftex.map}] (tmp/proof-tree.S.lam.True.aux) ){/usr/share/t
+exmf-texlive/fonts/enc/dvips/iwona/iwona-ec.enc}{/usr/share/texmf-texlive/fonts
+/enc/dvips/iwona/iwonacap-ec.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iwon
+a/iwona-sy.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iwona/iwona-rm.enc}{/u
+sr/share/texmf-texlive/fonts/enc/dvips/iwona/iwona-mi.enc}</usr/share/texmf-tex
+live/fonts/type1/public/iwona/iwonacl.pfb></usr/share/texmf-texlive/fonts/type1
+/public/iwona/iwonacli.pfb>
+Output written on tmp/proof-tree.S.lam.True.pdf (1 page, 38507 bytes).
+Transcript written on tmp/proof-tree.S.lam.True.log.
+make[1]: Leaving directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
+┬ []
+├ infer (Lam "x" (TyVar "P" :->: (TyVar "Q" :->: TyVar "R")) (Lam "y" (TyVar "P" :->: TyVar "Q") (Lam "z" (TyVar "P") ((TmVar "x" :@: TmVar "z") :@: (TmVar "y" :@: TmVar "z")))))
+├─┬ [("x",TyVar "P" :->: (TyVar "Q" :->: TyVar "R"))]
+│ ├ infer (Lam "y" (TyVar "P" :->: TyVar "Q") (Lam "z" (TyVar "P") ((TmVar "x" :@: TmVar "z") :@: (TmVar "y" :@: TmVar "z"))))
+│ ├─┬ [("x",TyVar "P" :->: (TyVar "Q" :->: TyVar "R")),("y",TyVar "P" :->: TyVar "Q")]
+│ │ ├ infer (Lam "z" (TyVar "P") ((TmVar "x" :@: TmVar "z") :@: (TmVar "y" :@: TmVar "z")))
+│ │ ├─┬ [("x",TyVar "P" :->: (TyVar "Q" :->: TyVar "R")),("y",TyVar "P" :->: TyVar "Q"),("z",TyVar "P")]
+│ │ │ ├ infer ((TmVar "x" :@: TmVar "z") :@: (TmVar "y" :@: TmVar "z"))
+│ │ │ ├─┬ [("x",TyVar "P" :->: (TyVar "Q" :->: TyVar "R")),("y",TyVar "P" :->: TyVar "Q"),("z",TyVar "P")]
+│ │ │ │ ├ infer (TmVar "x" :@: TmVar "z")
+│ │ │ │ ├─┬ [("x",TyVar "P" :->: (TyVar "Q" :->: TyVar "R")),("y",TyVar "P" :->: TyVar "Q"),("z",TyVar "P")]
+│ │ │ │ │ ├ infer (TmVar "x")
+│ │ │ │ │ ╞ TyVar "P" :->: (TyVar "Q" :->: TyVar "R")
+│ │ │ │ │ ╘ ()
+│ │ │ │ ├─┬ [("x",TyVar "P" :->: (TyVar "Q" :->: TyVar "R")),("y",TyVar "P" :->: TyVar "Q"),("z",TyVar "P")]
+│ │ │ │ │ ├ infer (TmVar "z")
+│ │ │ │ │ ╞ TyVar "P"
+│ │ │ │ │ ╘ ()
+│ │ │ │ ╞ TyVar "Q" :->: TyVar "R"
+│ │ │ │ ╘ ()
+│ │ │ ├─┬ [("x",TyVar "P" :->: (TyVar "Q" :->: TyVar "R")),("y",TyVar "P" :->: TyVar "Q"),("z",TyVar "P")]
+│ │ │ │ ├ infer (TmVar "y" :@: TmVar "z")
+│ │ │ │ ├─┬ [("x",TyVar "P" :->: (TyVar "Q" :->: TyVar "R")),("y",TyVar "P" :->: TyVar "Q"),("z",TyVar "P")]
+│ │ │ │ │ ├ infer (TmVar "y")
+│ │ │ │ │ ╞ TyVar "P" :->: TyVar "Q"
+│ │ │ │ │ ╘ ()
+│ │ │ │ ├─┬ [("x",TyVar "P" :->: (TyVar "Q" :->: TyVar "R")),("y",TyVar "P" :->: TyVar "Q"),("z",TyVar "P")]
+│ │ │ │ │ ├ infer (TmVar "z")
+│ │ │ │ │ ╞ TyVar "P"
+│ │ │ │ │ ╘ ()
+│ │ │ │ ╞ TyVar "Q"
+│ │ │ │ ╘ ()
+│ │ │ ╞ TyVar "R"
+│ │ │ ╘ ()
+│ │ ╞ TyVar "P" :->: TyVar "R"
+│ │ ╘ ()
+│ ╞ (TyVar "P" :->: TyVar "Q") :->: (TyVar "P" :->: TyVar "R")
+│ ╘ ()
+╞ (TyVar "P" :->: (TyVar "Q" :->: TyVar "R")) :->: ((TyVar "P" :->: TyVar "Q") :->: (TyVar "P" :->: TyVar "R"))
+╘ ()
+
+make[1]: Entering directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
+pdflatex -output-directory=tmp tmp/proof-tree.S.lam.False.tex
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian)
+entering extended mode
+(./tmp/proof-tree.S.lam.False.tex
+LaTeX2e <2009/09/24>
+Babel <v3.8l> and hyphenation patterns for english, usenglishmax, dumylang, noh
+yphenation, ibycus, monogreek, greek, ancientgreek, loaded.
+(/usr/share/texmf-texlive/tex/latex/base/article.cls
+Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
+(/usr/share/texmf-texlive/tex/latex/base/size10.clo))
+(/usr/share/texmf-texlive/tex/latex/lkproof/proof.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(/usr/share/texmf-texlive/tex/latex/amsmath/amstext.sty
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsgen.sty))
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsbsy.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsopn.sty))
+(/usr/share/texmf-texlive/tex/latex/geometry/geometry.sty
+(/usr/share/texmf-texlive/tex/latex/graphics/keyval.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifpdf.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifvtex.sty)
+(/usr/share/texmf-texlive/tex/xelatex/xetexconfig/geometry.cfg))
+(/usr/share/texmf-texlive/tex/latex/preprint/fullpage.sty)
+(/usr/share/texmf-texlive/tex/latex/iwona/iwona.sty)
+(/usr/share/texmf-texlive/tex/latex/base/fontenc.sty
+(/usr/share/texmf-texlive/tex/latex/base/t1enc.def)
+(/usr/share/texmf-texlive/tex/latex/iwona/t1iwonalc.fd))
+(tmp/proof-tree.S.lam.False.aux)
+*geometry auto-detecting driver*
+*geometry detected driver: pdftex*
+(/usr/share/texmf-texlive/tex/latex/iwona/ot1iwonalcm.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omliwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omsiwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omxiwonalc.fd) [1{/var/lib/texmf/font
+s/map/pdftex/updmap/pdftex.map}] (tmp/proof-tree.S.lam.False.aux) ){/usr/share/
+texmf-texlive/fonts/enc/dvips/iwona/iwona-rm.enc}{/usr/share/texmf-texlive/font
+s/enc/dvips/iwona/iwona-ec.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iwona/
+iwonacap-ec.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iwona/iwona-sy.enc}{/
+usr/share/texmf-texlive/fonts/enc/dvips/iwona/iwona-mi.enc}</usr/share/texmf-te
+xlive/fonts/type1/public/iwona/iwonacl.pfb></usr/share/texmf-texlive/fonts/type
+1/public/iwona/iwonacli.pfb>
+Output written on tmp/proof-tree.S.lam.False.pdf (1 page, 35206 bytes).
+Transcript written on tmp/proof-tree.S.lam.False.log.
+make[1]: Leaving directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
+./tm2latex.sh tmp/proof-tree S.err  ''                     '\x:P->Q->R.\y:P->Q.\z:P.xzyz'
+┬ []
+├ infer (Lam "x" (TyVar "P" :->: (TyVar "Q" :->: TyVar "R")) (Lam "y" (TyVar "P" :->: TyVar "Q") (Lam "z" (TyVar "P") (((TmVar "x" :@: TmVar "z") :@: TmVar "y") :@: TmVar "z"))))
+├─┬ [("x",TyVar "P" :->: (TyVar "Q" :->: TyVar "R"))]
+│ ├ infer (Lam "y" (TyVar "P" :->: TyVar "Q") (Lam "z" (TyVar "P") (((TmVar "x" :@: TmVar "z") :@: TmVar "y") :@: TmVar "z")))
+│ ├─┬ [("x",TyVar "P" :->: (TyVar "Q" :->: TyVar "R")),("y",TyVar "P" :->: TyVar "Q")]
+│ │ ├ infer (Lam "z" (TyVar "P") (((TmVar "x" :@: TmVar "z") :@: TmVar "y") :@: TmVar "z"))
+│ │ ├─┬ [("x",TyVar "P" :->: (TyVar "Q" :->: TyVar "R")),("y",TyVar "P" :->: TyVar "Q"),("z",TyVar "P")]
+│ │ │ ├ infer (((TmVar "x" :@: TmVar "z") :@: TmVar "y") :@: TmVar "z")
+│ │ │ ├─┬ [("x",TyVar "P" :->: (TyVar "Q" :->: TyVar "R")),("y",TyVar "P" :->: TyVar "Q"),("z",TyVar "P")]
+│ │ │ │ ├ infer ((TmVar "x" :@: TmVar "z") :@: TmVar "y")
+│ │ │ │ ├─┬ [("x",TyVar "P" :->: (TyVar "Q" :->: TyVar "R")),("y",TyVar "P" :->: TyVar "Q"),("z",TyVar "P")]
+│ │ │ │ │ ├ infer (TmVar "x" :@: TmVar "z")
+│ │ │ │ │ ├─┬ [("x",TyVar "P" :->: (TyVar "Q" :->: TyVar "R")),("y",TyVar "P" :->: TyVar "Q"),("z",TyVar "P")]
+│ │ │ │ │ │ ├ infer (TmVar "x")
+│ │ │ │ │ │ ╞ TyVar "P" :->: (TyVar "Q" :->: TyVar "R")
+│ │ │ │ │ │ ╘ ()
+│ │ │ │ │ ├─┬ [("x",TyVar "P" :->: (TyVar "Q" :->: TyVar "R")),("y",TyVar "P" :->: TyVar "Q"),("z",TyVar "P")]
+│ │ │ │ │ │ ├ infer (TmVar "z")
+│ │ │ │ │ │ ╞ TyVar "P"
+│ │ │ │ │ │ ╘ ()
+│ │ │ │ │ ╞ TyVar "Q" :->: TyVar "R"
+│ │ │ │ │ ╘ ()
+│ │ │ │ ├─┬ [("x",TyVar "P" :->: (TyVar "Q" :->: TyVar "R")),("y",TyVar "P" :->: TyVar "Q"),("z",TyVar "P")]
+│ │ │ │ │ ├ infer (TmVar "y")
+│ │ │ │ │ ╞ TyVar "P" :->: TyVar "Q"
+│ │ │ │ │ ╘ ()
+│ │ │ │ ╘ <error: here>
+│ │ │ ╘ <error: there>
+│ │ ╘ <error: there>
+│ ╘ <error: there>
+╘ <error: there>
+
+make[1]: Entering directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
+pdflatex -output-directory=tmp tmp/proof-tree.S.err.True.tex
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian)
+entering extended mode
+(./tmp/proof-tree.S.err.True.tex
+LaTeX2e <2009/09/24>
+Babel <v3.8l> and hyphenation patterns for english, usenglishmax, dumylang, noh
+yphenation, ibycus, monogreek, greek, ancientgreek, loaded.
+(/usr/share/texmf-texlive/tex/latex/base/article.cls
+Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
+(/usr/share/texmf-texlive/tex/latex/base/size10.clo))
+(/usr/share/texmf-texlive/tex/latex/lkproof/proof.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(/usr/share/texmf-texlive/tex/latex/amsmath/amstext.sty
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsgen.sty))
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsbsy.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsopn.sty))
+(/usr/share/texmf-texlive/tex/latex/geometry/geometry.sty
+(/usr/share/texmf-texlive/tex/latex/graphics/keyval.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifpdf.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifvtex.sty)
+(/usr/share/texmf-texlive/tex/xelatex/xetexconfig/geometry.cfg))
+(/usr/share/texmf-texlive/tex/latex/preprint/fullpage.sty)
+(/usr/share/texmf-texlive/tex/latex/iwona/iwona.sty)
+(/usr/share/texmf-texlive/tex/latex/base/fontenc.sty
+(/usr/share/texmf-texlive/tex/latex/base/t1enc.def)
+(/usr/share/texmf-texlive/tex/latex/iwona/t1iwonalc.fd))
+(tmp/proof-tree.S.err.True.aux)
+*geometry auto-detecting driver*
+*geometry detected driver: pdftex*
+(/usr/share/texmf-texlive/tex/latex/iwona/ot1iwonalcm.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omliwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omsiwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omxiwonalc.fd) [1{/var/lib/texmf/font
+s/map/pdftex/updmap/pdftex.map}] (tmp/proof-tree.S.err.True.aux) ){/usr/share/t
+exmf-texlive/fonts/enc/dvips/iwona/iwona-ec.enc}{/usr/share/texmf-texlive/fonts
+/enc/dvips/iwona/iwonacap-ec.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iwon
+a/iwona-sy.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iwona/iwona-rm.enc}{/u
+sr/share/texmf-texlive/fonts/enc/dvips/iwona/iwona-mi.enc}</usr/share/texmf-tex
+live/fonts/type1/public/iwona/iwonacl.pfb></usr/share/texmf-texlive/fonts/type1
+/public/iwona/iwonacli.pfb>
+Output written on tmp/proof-tree.S.err.True.pdf (1 page, 38391 bytes).
+Transcript written on tmp/proof-tree.S.err.True.log.
+make[1]: Leaving directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
+┬ []
+├ infer (Lam "x" (TyVar "P" :->: (TyVar "Q" :->: TyVar "R")) (Lam "y" (TyVar "P" :->: TyVar "Q") (Lam "z" (TyVar "P") (((TmVar "x" :@: TmVar "z") :@: TmVar "y") :@: TmVar "z"))))
+├─┬ [("x",TyVar "P" :->: (TyVar "Q" :->: TyVar "R"))]
+│ ├ infer (Lam "y" (TyVar "P" :->: TyVar "Q") (Lam "z" (TyVar "P") (((TmVar "x" :@: TmVar "z") :@: TmVar "y") :@: TmVar "z")))
+│ ├─┬ [("x",TyVar "P" :->: (TyVar "Q" :->: TyVar "R")),("y",TyVar "P" :->: TyVar "Q")]
+│ │ ├ infer (Lam "z" (TyVar "P") (((TmVar "x" :@: TmVar "z") :@: TmVar "y") :@: TmVar "z"))
+│ │ ├─┬ [("x",TyVar "P" :->: (TyVar "Q" :->: TyVar "R")),("y",TyVar "P" :->: TyVar "Q"),("z",TyVar "P")]
+│ │ │ ├ infer (((TmVar "x" :@: TmVar "z") :@: TmVar "y") :@: TmVar "z")
+│ │ │ ├─┬ [("x",TyVar "P" :->: (TyVar "Q" :->: TyVar "R")),("y",TyVar "P" :->: TyVar "Q"),("z",TyVar "P")]
+│ │ │ │ ├ infer ((TmVar "x" :@: TmVar "z") :@: TmVar "y")
+│ │ │ │ ├─┬ [("x",TyVar "P" :->: (TyVar "Q" :->: TyVar "R")),("y",TyVar "P" :->: TyVar "Q"),("z",TyVar "P")]
+│ │ │ │ │ ├ infer (TmVar "x" :@: TmVar "z")
+│ │ │ │ │ ├─┬ [("x",TyVar "P" :->: (TyVar "Q" :->: TyVar "R")),("y",TyVar "P" :->: TyVar "Q"),("z",TyVar "P")]
+│ │ │ │ │ │ ├ infer (TmVar "x")
+│ │ │ │ │ │ ╞ TyVar "P" :->: (TyVar "Q" :->: TyVar "R")
+│ │ │ │ │ │ ╘ ()
+│ │ │ │ │ ├─┬ [("x",TyVar "P" :->: (TyVar "Q" :->: TyVar "R")),("y",TyVar "P" :->: TyVar "Q"),("z",TyVar "P")]
+│ │ │ │ │ │ ├ infer (TmVar "z")
+│ │ │ │ │ │ ╞ TyVar "P"
+│ │ │ │ │ │ ╘ ()
+│ │ │ │ │ ╞ TyVar "Q" :->: TyVar "R"
+│ │ │ │ │ ╘ ()
+│ │ │ │ ├─┬ [("x",TyVar "P" :->: (TyVar "Q" :->: TyVar "R")),("y",TyVar "P" :->: TyVar "Q"),("z",TyVar "P")]
+│ │ │ │ │ ├ infer (TmVar "y")
+│ │ │ │ │ ╞ TyVar "P" :->: TyVar "Q"
+│ │ │ │ │ ╘ ()
+│ │ │ │ ╘ <error: here>
+│ │ │ ╘ <error: there>
+│ │ ╘ <error: there>
+│ ╘ <error: there>
+╘ <error: there>
+
+make[1]: Entering directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
+pdflatex -output-directory=tmp tmp/proof-tree.S.err.False.tex
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian)
+entering extended mode
+(./tmp/proof-tree.S.err.False.tex
+LaTeX2e <2009/09/24>
+Babel <v3.8l> and hyphenation patterns for english, usenglishmax, dumylang, noh
+yphenation, ibycus, monogreek, greek, ancientgreek, loaded.
+(/usr/share/texmf-texlive/tex/latex/base/article.cls
+Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
+(/usr/share/texmf-texlive/tex/latex/base/size10.clo))
+(/usr/share/texmf-texlive/tex/latex/lkproof/proof.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(/usr/share/texmf-texlive/tex/latex/amsmath/amstext.sty
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsgen.sty))
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsbsy.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsopn.sty))
+(/usr/share/texmf-texlive/tex/latex/geometry/geometry.sty
+(/usr/share/texmf-texlive/tex/latex/graphics/keyval.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifpdf.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifvtex.sty)
+(/usr/share/texmf-texlive/tex/xelatex/xetexconfig/geometry.cfg))
+(/usr/share/texmf-texlive/tex/latex/preprint/fullpage.sty)
+(/usr/share/texmf-texlive/tex/latex/iwona/iwona.sty)
+(/usr/share/texmf-texlive/tex/latex/base/fontenc.sty
+(/usr/share/texmf-texlive/tex/latex/base/t1enc.def)
+(/usr/share/texmf-texlive/tex/latex/iwona/t1iwonalc.fd))
+(tmp/proof-tree.S.err.False.aux)
+*geometry auto-detecting driver*
+*geometry detected driver: pdftex*
+(/usr/share/texmf-texlive/tex/latex/iwona/ot1iwonalcm.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omliwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omsiwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omxiwonalc.fd) [1{/var/lib/texmf/font
+s/map/pdftex/updmap/pdftex.map}] (tmp/proof-tree.S.err.False.aux) ){/usr/share/
+texmf-texlive/fonts/enc/dvips/iwona/iwona-rm.enc}{/usr/share/texmf-texlive/font
+s/enc/dvips/iwona/iwona-ec.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iwona/
+iwonacap-ec.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iwona/iwona-sy.enc}{/
+usr/share/texmf-texlive/fonts/enc/dvips/iwona/iwona-mi.enc}</usr/share/texmf-te
+xlive/fonts/type1/public/iwona/iwonacl.pfb></usr/share/texmf-texlive/fonts/type
+1/public/iwona/iwonacli.pfb>
+Output written on tmp/proof-tree.S.err.False.pdf (1 page, 37231 bytes).
+Transcript written on tmp/proof-tree.S.err.False.log.
+make[1]: Leaving directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
+./tm2latex.sh tmp/proof-tree K.ctx  'x:P,y:Q'              'x'
+┬ [("x",TyVar "P"),("y",TyVar "Q")]
+├ infer (TmVar "x")
+╞ TyVar "P"
+╘ ()
+
+make[1]: Entering directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
+pdflatex -output-directory=tmp tmp/proof-tree.K.ctx.True.tex
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian)
+entering extended mode
+(./tmp/proof-tree.K.ctx.True.tex
+LaTeX2e <2009/09/24>
+Babel <v3.8l> and hyphenation patterns for english, usenglishmax, dumylang, noh
+yphenation, ibycus, monogreek, greek, ancientgreek, loaded.
+(/usr/share/texmf-texlive/tex/latex/base/article.cls
+Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
+(/usr/share/texmf-texlive/tex/latex/base/size10.clo))
+(/usr/share/texmf-texlive/tex/latex/lkproof/proof.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(/usr/share/texmf-texlive/tex/latex/amsmath/amstext.sty
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsgen.sty))
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsbsy.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsopn.sty))
+(/usr/share/texmf-texlive/tex/latex/geometry/geometry.sty
+(/usr/share/texmf-texlive/tex/latex/graphics/keyval.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifpdf.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifvtex.sty)
+(/usr/share/texmf-texlive/tex/xelatex/xetexconfig/geometry.cfg))
+(/usr/share/texmf-texlive/tex/latex/preprint/fullpage.sty)
+(/usr/share/texmf-texlive/tex/latex/iwona/iwona.sty)
+(/usr/share/texmf-texlive/tex/latex/base/fontenc.sty
+(/usr/share/texmf-texlive/tex/latex/base/t1enc.def)
+(/usr/share/texmf-texlive/tex/latex/iwona/t1iwonalc.fd))
+(tmp/proof-tree.K.ctx.True.aux)
+*geometry auto-detecting driver*
+*geometry detected driver: pdftex*
+(/usr/share/texmf-texlive/tex/latex/iwona/ot1iwonalcm.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omliwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omsiwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omxiwonalc.fd) [1{/var/lib/texmf/font
+s/map/pdftex/updmap/pdftex.map}] (tmp/proof-tree.K.ctx.True.aux) ){/usr/share/t
+exmf-texlive/fonts/enc/dvips/iwona/iwona-ec.enc}{/usr/share/texmf-texlive/fonts
+/enc/dvips/iwona/iwonacap-ec.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iwon
+a/iwona-sy.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iwona/iwona-rm.enc}{/u
+sr/share/texmf-texlive/fonts/enc/dvips/iwona/iwona-mi.enc}</usr/share/texmf-tex
+live/fonts/type1/public/iwona/iwonacl.pfb></usr/share/texmf-texlive/fonts/type1
+/public/iwona/iwonacli.pfb>
+Output written on tmp/proof-tree.K.ctx.True.pdf (1 page, 34358 bytes).
+Transcript written on tmp/proof-tree.K.ctx.True.log.
+make[1]: Leaving directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
+┬ [("x",TyVar "P"),("y",TyVar "Q")]
+├ infer (TmVar "x")
+╞ TyVar "P"
+╘ ()
+
+make[1]: Entering directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
+pdflatex -output-directory=tmp tmp/proof-tree.K.ctx.False.tex
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian)
+entering extended mode
+(./tmp/proof-tree.K.ctx.False.tex
+LaTeX2e <2009/09/24>
+Babel <v3.8l> and hyphenation patterns for english, usenglishmax, dumylang, noh
+yphenation, ibycus, monogreek, greek, ancientgreek, loaded.
+(/usr/share/texmf-texlive/tex/latex/base/article.cls
+Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
+(/usr/share/texmf-texlive/tex/latex/base/size10.clo))
+(/usr/share/texmf-texlive/tex/latex/lkproof/proof.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(/usr/share/texmf-texlive/tex/latex/amsmath/amstext.sty
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsgen.sty))
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsbsy.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsopn.sty))
+(/usr/share/texmf-texlive/tex/latex/geometry/geometry.sty
+(/usr/share/texmf-texlive/tex/latex/graphics/keyval.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifpdf.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifvtex.sty)
+(/usr/share/texmf-texlive/tex/xelatex/xetexconfig/geometry.cfg))
+(/usr/share/texmf-texlive/tex/latex/preprint/fullpage.sty)
+(/usr/share/texmf-texlive/tex/latex/iwona/iwona.sty)
+(/usr/share/texmf-texlive/tex/latex/base/fontenc.sty
+(/usr/share/texmf-texlive/tex/latex/base/t1enc.def)
+(/usr/share/texmf-texlive/tex/latex/iwona/t1iwonalc.fd))
+(tmp/proof-tree.K.ctx.False.aux)
+*geometry auto-detecting driver*
+*geometry detected driver: pdftex*
+(/usr/share/texmf-texlive/tex/latex/iwona/ot1iwonalcm.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omliwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omsiwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omxiwonalc.fd) [1{/var/lib/texmf/font
+s/map/pdftex/updmap/pdftex.map}] (tmp/proof-tree.K.ctx.False.aux) ){/usr/share/
+texmf-texlive/fonts/enc/dvips/iwona/iwona-ec.enc}{/usr/share/texmf-texlive/font
+s/enc/dvips/iwona/iwonacap-ec.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iwo
+na/iwona-sy.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iwona/iwona-mi.enc}</
+usr/share/texmf-texlive/fonts/type1/public/iwona/iwonacl.pfb></usr/share/texmf-
+texlive/fonts/type1/public/iwona/iwonacli.pfb>
+Output written on tmp/proof-tree.K.ctx.False.pdf (1 page, 31379 bytes).
+Transcript written on tmp/proof-tree.K.ctx.False.log.
+make[1]: Leaving directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
+./tm2latex.sh tmp/proof-tree K.lam  ''                     '\x:P.\y:Q.x'
+┬ []
+├ infer (Lam "x" (TyVar "P") (Lam "y" (TyVar "Q") (TmVar "x")))
+├─┬ [("x",TyVar "P")]
+│ ├ infer (Lam "y" (TyVar "Q") (TmVar "x"))
+│ ├─┬ [("x",TyVar "P"),("y",TyVar "Q")]
+│ │ ├ infer (TmVar "x")
+│ │ ╞ TyVar "P"
+│ │ ╘ ()
+│ ╞ TyVar "Q" :->: TyVar "P"
+│ ╘ ()
+╞ TyVar "P" :->: (TyVar "Q" :->: TyVar "P")
+╘ ()
+
+make[1]: Entering directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
+pdflatex -output-directory=tmp tmp/proof-tree.K.lam.True.tex
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian)
+entering extended mode
+(./tmp/proof-tree.K.lam.True.tex
+LaTeX2e <2009/09/24>
+Babel <v3.8l> and hyphenation patterns for english, usenglishmax, dumylang, noh
+yphenation, ibycus, monogreek, greek, ancientgreek, loaded.
+(/usr/share/texmf-texlive/tex/latex/base/article.cls
+Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
+(/usr/share/texmf-texlive/tex/latex/base/size10.clo))
+(/usr/share/texmf-texlive/tex/latex/lkproof/proof.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(/usr/share/texmf-texlive/tex/latex/amsmath/amstext.sty
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsgen.sty))
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsbsy.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsopn.sty))
+(/usr/share/texmf-texlive/tex/latex/geometry/geometry.sty
+(/usr/share/texmf-texlive/tex/latex/graphics/keyval.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifpdf.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifvtex.sty)
+(/usr/share/texmf-texlive/tex/xelatex/xetexconfig/geometry.cfg))
+(/usr/share/texmf-texlive/tex/latex/preprint/fullpage.sty)
+(/usr/share/texmf-texlive/tex/latex/iwona/iwona.sty)
+(/usr/share/texmf-texlive/tex/latex/base/fontenc.sty
+(/usr/share/texmf-texlive/tex/latex/base/t1enc.def)
+(/usr/share/texmf-texlive/tex/latex/iwona/t1iwonalc.fd))
+(tmp/proof-tree.K.lam.True.aux)
+*geometry auto-detecting driver*
+*geometry detected driver: pdftex*
+(/usr/share/texmf-texlive/tex/latex/iwona/ot1iwonalcm.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omliwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omsiwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omxiwonalc.fd) [1{/var/lib/texmf/font
+s/map/pdftex/updmap/pdftex.map}] (tmp/proof-tree.K.lam.True.aux) ){/usr/share/t
+exmf-texlive/fonts/enc/dvips/iwona/iwona-ec.enc}{/usr/share/texmf-texlive/fonts
+/enc/dvips/iwona/iwonacap-ec.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iwon
+a/iwona-sy.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iwona/iwona-rm.enc}{/u
+sr/share/texmf-texlive/fonts/enc/dvips/iwona/iwona-mi.enc}</usr/share/texmf-tex
+live/fonts/type1/public/iwona/iwonacl.pfb></usr/share/texmf-texlive/fonts/type1
+/public/iwona/iwonacli.pfb>
+Output written on tmp/proof-tree.K.lam.True.pdf (1 page, 37468 bytes).
+Transcript written on tmp/proof-tree.K.lam.True.log.
+make[1]: Leaving directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
+┬ []
+├ infer (Lam "x" (TyVar "P") (Lam "y" (TyVar "Q") (TmVar "x")))
+├─┬ [("x",TyVar "P")]
+│ ├ infer (Lam "y" (TyVar "Q") (TmVar "x"))
+│ ├─┬ [("x",TyVar "P"),("y",TyVar "Q")]
+│ │ ├ infer (TmVar "x")
+│ │ ╞ TyVar "P"
+│ │ ╘ ()
+│ ╞ TyVar "Q" :->: TyVar "P"
+│ ╘ ()
+╞ TyVar "P" :->: (TyVar "Q" :->: TyVar "P")
+╘ ()
+
+make[1]: Entering directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
+pdflatex -output-directory=tmp tmp/proof-tree.K.lam.False.tex
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian)
+entering extended mode
+(./tmp/proof-tree.K.lam.False.tex
+LaTeX2e <2009/09/24>
+Babel <v3.8l> and hyphenation patterns for english, usenglishmax, dumylang, noh
+yphenation, ibycus, monogreek, greek, ancientgreek, loaded.
+(/usr/share/texmf-texlive/tex/latex/base/article.cls
+Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
+(/usr/share/texmf-texlive/tex/latex/base/size10.clo))
+(/usr/share/texmf-texlive/tex/latex/lkproof/proof.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(/usr/share/texmf-texlive/tex/latex/amsmath/amstext.sty
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsgen.sty))
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsbsy.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsopn.sty))
+(/usr/share/texmf-texlive/tex/latex/geometry/geometry.sty
+(/usr/share/texmf-texlive/tex/latex/graphics/keyval.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifpdf.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifvtex.sty)
+(/usr/share/texmf-texlive/tex/xelatex/xetexconfig/geometry.cfg))
+(/usr/share/texmf-texlive/tex/latex/preprint/fullpage.sty)
+(/usr/share/texmf-texlive/tex/latex/iwona/iwona.sty)
+(/usr/share/texmf-texlive/tex/latex/base/fontenc.sty
+(/usr/share/texmf-texlive/tex/latex/base/t1enc.def)
+(/usr/share/texmf-texlive/tex/latex/iwona/t1iwonalc.fd))
+(tmp/proof-tree.K.lam.False.aux)
+*geometry auto-detecting driver*
+*geometry detected driver: pdftex*
+(/usr/share/texmf-texlive/tex/latex/iwona/ot1iwonalcm.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omliwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omsiwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omxiwonalc.fd) [1{/var/lib/texmf/font
+s/map/pdftex/updmap/pdftex.map}] (tmp/proof-tree.K.lam.False.aux) ){/usr/share/
+texmf-texlive/fonts/enc/dvips/iwona/iwona-ec.enc}{/usr/share/texmf-texlive/font
+s/enc/dvips/iwona/iwonacap-ec.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iwo
+na/iwona-sy.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iwona/iwona-mi.enc}</
+usr/share/texmf-texlive/fonts/type1/public/iwona/iwonacl.pfb></usr/share/texmf-
+texlive/fonts/type1/public/iwona/iwonacli.pfb>
+Output written on tmp/proof-tree.K.lam.False.pdf (1 page, 34108 bytes).
+Transcript written on tmp/proof-tree.K.lam.False.log.
+make[1]: Leaving directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
+./tm2latex.sh tmp/proof-tree I.ctx  'x:P'                  'x'
+┬ [("x",TyVar "P")]
+├ infer (TmVar "x")
+╞ TyVar "P"
+╘ ()
+
+make[1]: Entering directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
+pdflatex -output-directory=tmp tmp/proof-tree.I.ctx.True.tex
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian)
+entering extended mode
+(./tmp/proof-tree.I.ctx.True.tex
+LaTeX2e <2009/09/24>
+Babel <v3.8l> and hyphenation patterns for english, usenglishmax, dumylang, noh
+yphenation, ibycus, monogreek, greek, ancientgreek, loaded.
+(/usr/share/texmf-texlive/tex/latex/base/article.cls
+Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
+(/usr/share/texmf-texlive/tex/latex/base/size10.clo))
+(/usr/share/texmf-texlive/tex/latex/lkproof/proof.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(/usr/share/texmf-texlive/tex/latex/amsmath/amstext.sty
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsgen.sty))
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsbsy.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsopn.sty))
+(/usr/share/texmf-texlive/tex/latex/geometry/geometry.sty
+(/usr/share/texmf-texlive/tex/latex/graphics/keyval.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifpdf.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifvtex.sty)
+(/usr/share/texmf-texlive/tex/xelatex/xetexconfig/geometry.cfg))
+(/usr/share/texmf-texlive/tex/latex/preprint/fullpage.sty)
+(/usr/share/texmf-texlive/tex/latex/iwona/iwona.sty)
+(/usr/share/texmf-texlive/tex/latex/base/fontenc.sty
+(/usr/share/texmf-texlive/tex/latex/base/t1enc.def)
+(/usr/share/texmf-texlive/tex/latex/iwona/t1iwonalc.fd))
+(tmp/proof-tree.I.ctx.True.aux)
+*geometry auto-detecting driver*
+*geometry detected driver: pdftex*
+(/usr/share/texmf-texlive/tex/latex/iwona/ot1iwonalcm.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omliwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omsiwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omxiwonalc.fd) [1{/var/lib/texmf/font
+s/map/pdftex/updmap/pdftex.map}] (tmp/proof-tree.I.ctx.True.aux) ){/usr/share/t
+exmf-texlive/fonts/enc/dvips/iwona/iwona-ec.enc}{/usr/share/texmf-texlive/fonts
+/enc/dvips/iwona/iwonacap-ec.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iwon
+a/iwona-sy.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iwona/iwona-rm.enc}{/u
+sr/share/texmf-texlive/fonts/enc/dvips/iwona/iwona-mi.enc}</usr/share/texmf-tex
+live/fonts/type1/public/iwona/iwonacl.pfb></usr/share/texmf-texlive/fonts/type1
+/public/iwona/iwonacli.pfb>
+Output written on tmp/proof-tree.I.ctx.True.pdf (1 page, 30290 bytes).
+Transcript written on tmp/proof-tree.I.ctx.True.log.
+make[1]: Leaving directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
+┬ [("x",TyVar "P")]
+├ infer (TmVar "x")
+╞ TyVar "P"
+╘ ()
+
+make[1]: Entering directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
+pdflatex -output-directory=tmp tmp/proof-tree.I.ctx.False.tex
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian)
+entering extended mode
+(./tmp/proof-tree.I.ctx.False.tex
+LaTeX2e <2009/09/24>
+Babel <v3.8l> and hyphenation patterns for english, usenglishmax, dumylang, noh
+yphenation, ibycus, monogreek, greek, ancientgreek, loaded.
+(/usr/share/texmf-texlive/tex/latex/base/article.cls
+Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
+(/usr/share/texmf-texlive/tex/latex/base/size10.clo))
+(/usr/share/texmf-texlive/tex/latex/lkproof/proof.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(/usr/share/texmf-texlive/tex/latex/amsmath/amstext.sty
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsgen.sty))
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsbsy.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsopn.sty))
+(/usr/share/texmf-texlive/tex/latex/geometry/geometry.sty
+(/usr/share/texmf-texlive/tex/latex/graphics/keyval.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifpdf.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifvtex.sty)
+(/usr/share/texmf-texlive/tex/xelatex/xetexconfig/geometry.cfg))
+(/usr/share/texmf-texlive/tex/latex/preprint/fullpage.sty)
+(/usr/share/texmf-texlive/tex/latex/iwona/iwona.sty)
+(/usr/share/texmf-texlive/tex/latex/base/fontenc.sty
+(/usr/share/texmf-texlive/tex/latex/base/t1enc.def)
+(/usr/share/texmf-texlive/tex/latex/iwona/t1iwonalc.fd))
+(tmp/proof-tree.I.ctx.False.aux)
+*geometry auto-detecting driver*
+*geometry detected driver: pdftex*
+(/usr/share/texmf-texlive/tex/latex/iwona/ot1iwonalcm.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omliwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omsiwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omxiwonalc.fd) [1{/var/lib/texmf/font
+s/map/pdftex/updmap/pdftex.map}] (tmp/proof-tree.I.ctx.False.aux) ){/usr/share/
+texmf-texlive/fonts/enc/dvips/iwona/iwona-ec.enc}{/usr/share/texmf-texlive/font
+s/enc/dvips/iwona/iwonacap-ec.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iwo
+na/iwona-sy.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iwona/iwona-mi.enc}</
+usr/share/texmf-texlive/fonts/type1/public/iwona/iwonacl.pfb></usr/share/texmf-
+texlive/fonts/type1/public/iwona/iwonacli.pfb>
+Output written on tmp/proof-tree.I.ctx.False.pdf (1 page, 26524 bytes).
+Transcript written on tmp/proof-tree.I.ctx.False.log.
+make[1]: Leaving directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
+./tm2latex.sh tmp/proof-tree I.lam  ''                     '\x:P.x'
+┬ []
+├ infer (Lam "x" (TyVar "P") (TmVar "x"))
+├─┬ [("x",TyVar "P")]
+│ ├ infer (TmVar "x")
+│ ╞ TyVar "P"
+│ ╘ ()
+╞ TyVar "P" :->: TyVar "P"
+╘ ()
+
+make[1]: Entering directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
+pdflatex -output-directory=tmp tmp/proof-tree.I.lam.True.tex
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian)
+entering extended mode
+(./tmp/proof-tree.I.lam.True.tex
+LaTeX2e <2009/09/24>
+Babel <v3.8l> and hyphenation patterns for english, usenglishmax, dumylang, noh
+yphenation, ibycus, monogreek, greek, ancientgreek, loaded.
+(/usr/share/texmf-texlive/tex/latex/base/article.cls
+Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
+(/usr/share/texmf-texlive/tex/latex/base/size10.clo))
+(/usr/share/texmf-texlive/tex/latex/lkproof/proof.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(/usr/share/texmf-texlive/tex/latex/amsmath/amstext.sty
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsgen.sty))
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsbsy.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsopn.sty))
+(/usr/share/texmf-texlive/tex/latex/geometry/geometry.sty
+(/usr/share/texmf-texlive/tex/latex/graphics/keyval.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifpdf.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifvtex.sty)
+(/usr/share/texmf-texlive/tex/xelatex/xetexconfig/geometry.cfg))
+(/usr/share/texmf-texlive/tex/latex/preprint/fullpage.sty)
+(/usr/share/texmf-texlive/tex/latex/iwona/iwona.sty)
+(/usr/share/texmf-texlive/tex/latex/base/fontenc.sty
+(/usr/share/texmf-texlive/tex/latex/base/t1enc.def)
+(/usr/share/texmf-texlive/tex/latex/iwona/t1iwonalc.fd))
+(tmp/proof-tree.I.lam.True.aux)
+*geometry auto-detecting driver*
+*geometry detected driver: pdftex*
+(/usr/share/texmf-texlive/tex/latex/iwona/ot1iwonalcm.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omliwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omsiwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omxiwonalc.fd) [1{/var/lib/texmf/font
+s/map/pdftex/updmap/pdftex.map}] (tmp/proof-tree.I.lam.True.aux) ){/usr/share/t
+exmf-texlive/fonts/enc/dvips/iwona/iwona-ec.enc}{/usr/share/texmf-texlive/fonts
+/enc/dvips/iwona/iwonacap-ec.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iwon
+a/iwona-sy.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iwona/iwona-rm.enc}{/u
+sr/share/texmf-texlive/fonts/enc/dvips/iwona/iwona-mi.enc}</usr/share/texmf-tex
+live/fonts/type1/public/iwona/iwonacl.pfb></usr/share/texmf-texlive/fonts/type1
+/public/iwona/iwonacli.pfb>
+Output written on tmp/proof-tree.I.lam.True.pdf (1 page, 37017 bytes).
+Transcript written on tmp/proof-tree.I.lam.True.log.
+make[1]: Leaving directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
+┬ []
+├ infer (Lam "x" (TyVar "P") (TmVar "x"))
+├─┬ [("x",TyVar "P")]
+│ ├ infer (TmVar "x")
+│ ╞ TyVar "P"
+│ ╘ ()
+╞ TyVar "P" :->: TyVar "P"
+╘ ()
+
+make[1]: Entering directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
+pdflatex -output-directory=tmp tmp/proof-tree.I.lam.False.tex
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian)
+entering extended mode
+(./tmp/proof-tree.I.lam.False.tex
+LaTeX2e <2009/09/24>
+Babel <v3.8l> and hyphenation patterns for english, usenglishmax, dumylang, noh
+yphenation, ibycus, monogreek, greek, ancientgreek, loaded.
+(/usr/share/texmf-texlive/tex/latex/base/article.cls
+Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
+(/usr/share/texmf-texlive/tex/latex/base/size10.clo))
+(/usr/share/texmf-texlive/tex/latex/lkproof/proof.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(/usr/share/texmf-texlive/tex/latex/amsmath/amstext.sty
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsgen.sty))
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsbsy.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsopn.sty))
+(/usr/share/texmf-texlive/tex/latex/geometry/geometry.sty
+(/usr/share/texmf-texlive/tex/latex/graphics/keyval.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifpdf.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifvtex.sty)
+(/usr/share/texmf-texlive/tex/xelatex/xetexconfig/geometry.cfg))
+(/usr/share/texmf-texlive/tex/latex/preprint/fullpage.sty)
+(/usr/share/texmf-texlive/tex/latex/iwona/iwona.sty)
+(/usr/share/texmf-texlive/tex/latex/base/fontenc.sty
+(/usr/share/texmf-texlive/tex/latex/base/t1enc.def)
+(/usr/share/texmf-texlive/tex/latex/iwona/t1iwonalc.fd))
+(tmp/proof-tree.I.lam.False.aux)
+*geometry auto-detecting driver*
+*geometry detected driver: pdftex*
+(/usr/share/texmf-texlive/tex/latex/iwona/ot1iwonalcm.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omliwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omsiwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omxiwonalc.fd) [1{/var/lib/texmf/font
+s/map/pdftex/updmap/pdftex.map}] (tmp/proof-tree.I.lam.False.aux) ){/usr/share/
+texmf-texlive/fonts/enc/dvips/iwona/iwona-ec.enc}{/usr/share/texmf-texlive/font
+s/enc/dvips/iwona/iwonacap-ec.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iwo
+na/iwona-sy.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iwona/iwona-mi.enc}</
+usr/share/texmf-texlive/fonts/type1/public/iwona/iwonacl.pfb></usr/share/texmf-
+texlive/fonts/type1/public/iwona/iwonacli.pfb>
+Output written on tmp/proof-tree.I.lam.False.pdf (1 page, 33697 bytes).
+Transcript written on tmp/proof-tree.I.lam.False.log.
+make[1]: Leaving directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
+./tm2latex.sh tmp/proof-tree MP.ctx 'x:P,y:P->Q'           'yx'
+┬ [("x",TyVar "P"),("y",TyVar "P" :->: TyVar "Q")]
+├ infer (TmVar "y" :@: TmVar "x")
+├─┬ [("x",TyVar "P"),("y",TyVar "P" :->: TyVar "Q")]
+│ ├ infer (TmVar "y")
+│ ╞ TyVar "P" :->: TyVar "Q"
+│ ╘ ()
+├─┬ [("x",TyVar "P"),("y",TyVar "P" :->: TyVar "Q")]
+│ ├ infer (TmVar "x")
+│ ╞ TyVar "P"
+│ ╘ ()
+╞ TyVar "Q"
+╘ ()
+
+make[1]: Entering directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
+pdflatex -output-directory=tmp tmp/proof-tree.MP.ctx.True.tex
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian)
+entering extended mode
+(./tmp/proof-tree.MP.ctx.True.tex
+LaTeX2e <2009/09/24>
+Babel <v3.8l> and hyphenation patterns for english, usenglishmax, dumylang, noh
+yphenation, ibycus, monogreek, greek, ancientgreek, loaded.
+(/usr/share/texmf-texlive/tex/latex/base/article.cls
+Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
+(/usr/share/texmf-texlive/tex/latex/base/size10.clo))
+(/usr/share/texmf-texlive/tex/latex/lkproof/proof.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(/usr/share/texmf-texlive/tex/latex/amsmath/amstext.sty
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsgen.sty))
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsbsy.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsopn.sty))
+(/usr/share/texmf-texlive/tex/latex/geometry/geometry.sty
+(/usr/share/texmf-texlive/tex/latex/graphics/keyval.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifpdf.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifvtex.sty)
+(/usr/share/texmf-texlive/tex/xelatex/xetexconfig/geometry.cfg))
+(/usr/share/texmf-texlive/tex/latex/preprint/fullpage.sty)
+(/usr/share/texmf-texlive/tex/latex/iwona/iwona.sty)
+(/usr/share/texmf-texlive/tex/latex/base/fontenc.sty
+(/usr/share/texmf-texlive/tex/latex/base/t1enc.def)
+(/usr/share/texmf-texlive/tex/latex/iwona/t1iwonalc.fd))
+(tmp/proof-tree.MP.ctx.True.aux)
+*geometry auto-detecting driver*
+*geometry detected driver: pdftex*
+(/usr/share/texmf-texlive/tex/latex/iwona/ot1iwonalcm.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omliwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omsiwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omxiwonalc.fd) [1{/var/lib/texmf/font
+s/map/pdftex/updmap/pdftex.map}] (tmp/proof-tree.MP.ctx.True.aux) ){/usr/share/
+texmf-texlive/fonts/enc/dvips/iwona/iwona-ec.enc}{/usr/share/texmf-texlive/font
+s/enc/dvips/iwona/iwonacap-ec.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iwo
+na/iwona-sy.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iwona/iwona-rm.enc}{/
+usr/share/texmf-texlive/fonts/enc/dvips/iwona/iwona-mi.enc}</usr/share/texmf-te
+xlive/fonts/type1/public/iwona/iwonacl.pfb></usr/share/texmf-texlive/fonts/type
+1/public/iwona/iwonacli.pfb>
+Output written on tmp/proof-tree.MP.ctx.True.pdf (1 page, 35072 bytes).
+Transcript written on tmp/proof-tree.MP.ctx.True.log.
+make[1]: Leaving directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
+┬ [("x",TyVar "P"),("y",TyVar "P" :->: TyVar "Q")]
+├ infer (TmVar "y" :@: TmVar "x")
+├─┬ [("x",TyVar "P"),("y",TyVar "P" :->: TyVar "Q")]
+│ ├ infer (TmVar "y")
+│ ╞ TyVar "P" :->: TyVar "Q"
+│ ╘ ()
+├─┬ [("x",TyVar "P"),("y",TyVar "P" :->: TyVar "Q")]
+│ ├ infer (TmVar "x")
+│ ╞ TyVar "P"
+│ ╘ ()
+╞ TyVar "Q"
+╘ ()
+
+make[1]: Entering directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
+pdflatex -output-directory=tmp tmp/proof-tree.MP.ctx.False.tex
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian)
+entering extended mode
+(./tmp/proof-tree.MP.ctx.False.tex
+LaTeX2e <2009/09/24>
+Babel <v3.8l> and hyphenation patterns for english, usenglishmax, dumylang, noh
+yphenation, ibycus, monogreek, greek, ancientgreek, loaded.
+(/usr/share/texmf-texlive/tex/latex/base/article.cls
+Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
+(/usr/share/texmf-texlive/tex/latex/base/size10.clo))
+(/usr/share/texmf-texlive/tex/latex/lkproof/proof.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(/usr/share/texmf-texlive/tex/latex/amsmath/amstext.sty
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsgen.sty))
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsbsy.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsopn.sty))
+(/usr/share/texmf-texlive/tex/latex/geometry/geometry.sty
+(/usr/share/texmf-texlive/tex/latex/graphics/keyval.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifpdf.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifvtex.sty)
+(/usr/share/texmf-texlive/tex/xelatex/xetexconfig/geometry.cfg))
+(/usr/share/texmf-texlive/tex/latex/preprint/fullpage.sty)
+(/usr/share/texmf-texlive/tex/latex/iwona/iwona.sty)
+(/usr/share/texmf-texlive/tex/latex/base/fontenc.sty
+(/usr/share/texmf-texlive/tex/latex/base/t1enc.def)
+(/usr/share/texmf-texlive/tex/latex/iwona/t1iwonalc.fd))
+(tmp/proof-tree.MP.ctx.False.aux)
+*geometry auto-detecting driver*
+*geometry detected driver: pdftex*
+(/usr/share/texmf-texlive/tex/latex/iwona/ot1iwonalcm.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omliwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omsiwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omxiwonalc.fd) [1{/var/lib/texmf/font
+s/map/pdftex/updmap/pdftex.map}] (tmp/proof-tree.MP.ctx.False.aux) ){/usr/share
+/texmf-texlive/fonts/enc/dvips/iwona/iwona-ec.enc}{/usr/share/texmf-texlive/fon
+ts/enc/dvips/iwona/iwonacap-ec.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iw
+ona/iwona-sy.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iwona/iwona-mi.enc}<
+/usr/share/texmf-texlive/fonts/type1/public/iwona/iwonacl.pfb></usr/share/texmf
+-texlive/fonts/type1/public/iwona/iwonacli.pfb>
+Output written on tmp/proof-tree.MP.ctx.False.pdf (1 page, 32067 bytes).
+Transcript written on tmp/proof-tree.MP.ctx.False.log.
+make[1]: Leaving directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
+./tm2latex.sh tmp/proof-tree MP.lam ''                     '\x:P.\y:P->Q.yx'
+┬ []
+├ infer (Lam "x" (TyVar "P") (Lam "y" (TyVar "P" :->: TyVar "Q") (TmVar "y" :@: TmVar "x")))
+├─┬ [("x",TyVar "P")]
+│ ├ infer (Lam "y" (TyVar "P" :->: TyVar "Q") (TmVar "y" :@: TmVar "x"))
+│ ├─┬ [("x",TyVar "P"),("y",TyVar "P" :->: TyVar "Q")]
+│ │ ├ infer (TmVar "y" :@: TmVar "x")
+│ │ ├─┬ [("x",TyVar "P"),("y",TyVar "P" :->: TyVar "Q")]
+│ │ │ ├ infer (TmVar "y")
+│ │ │ ╞ TyVar "P" :->: TyVar "Q"
+│ │ │ ╘ ()
+│ │ ├─┬ [("x",TyVar "P"),("y",TyVar "P" :->: TyVar "Q")]
+│ │ │ ├ infer (TmVar "x")
+│ │ │ ╞ TyVar "P"
+│ │ │ ╘ ()
+│ │ ╞ TyVar "Q"
+│ │ ╘ ()
+│ ╞ (TyVar "P" :->: TyVar "Q") :->: TyVar "Q"
+│ ╘ ()
+╞ TyVar "P" :->: ((TyVar "P" :->: TyVar "Q") :->: TyVar "Q")
+╘ ()
+
+make[1]: Entering directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
+pdflatex -output-directory=tmp tmp/proof-tree.MP.lam.True.tex
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian)
+entering extended mode
+(./tmp/proof-tree.MP.lam.True.tex
+LaTeX2e <2009/09/24>
+Babel <v3.8l> and hyphenation patterns for english, usenglishmax, dumylang, noh
+yphenation, ibycus, monogreek, greek, ancientgreek, loaded.
+(/usr/share/texmf-texlive/tex/latex/base/article.cls
+Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
+(/usr/share/texmf-texlive/tex/latex/base/size10.clo))
+(/usr/share/texmf-texlive/tex/latex/lkproof/proof.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(/usr/share/texmf-texlive/tex/latex/amsmath/amstext.sty
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsgen.sty))
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsbsy.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsopn.sty))
+(/usr/share/texmf-texlive/tex/latex/geometry/geometry.sty
+(/usr/share/texmf-texlive/tex/latex/graphics/keyval.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifpdf.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifvtex.sty)
+(/usr/share/texmf-texlive/tex/xelatex/xetexconfig/geometry.cfg))
+(/usr/share/texmf-texlive/tex/latex/preprint/fullpage.sty)
+(/usr/share/texmf-texlive/tex/latex/iwona/iwona.sty)
+(/usr/share/texmf-texlive/tex/latex/base/fontenc.sty
+(/usr/share/texmf-texlive/tex/latex/base/t1enc.def)
+(/usr/share/texmf-texlive/tex/latex/iwona/t1iwonalc.fd))
+(tmp/proof-tree.MP.lam.True.aux)
+*geometry auto-detecting driver*
+*geometry detected driver: pdftex*
+(/usr/share/texmf-texlive/tex/latex/iwona/ot1iwonalcm.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omliwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omsiwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omxiwonalc.fd) [1{/var/lib/texmf/font
+s/map/pdftex/updmap/pdftex.map}] (tmp/proof-tree.MP.lam.True.aux) ){/usr/share/
+texmf-texlive/fonts/enc/dvips/iwona/iwona-ec.enc}{/usr/share/texmf-texlive/font
+s/enc/dvips/iwona/iwonacap-ec.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iwo
+na/iwona-sy.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iwona/iwona-rm.enc}{/
+usr/share/texmf-texlive/fonts/enc/dvips/iwona/iwona-mi.enc}</usr/share/texmf-te
+xlive/fonts/type1/public/iwona/iwonacl.pfb></usr/share/texmf-texlive/fonts/type
+1/public/iwona/iwonacli.pfb>
+Output written on tmp/proof-tree.MP.lam.True.pdf (1 page, 37969 bytes).
+Transcript written on tmp/proof-tree.MP.lam.True.log.
+make[1]: Leaving directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
+┬ []
+├ infer (Lam "x" (TyVar "P") (Lam "y" (TyVar "P" :->: TyVar "Q") (TmVar "y" :@: TmVar "x")))
+├─┬ [("x",TyVar "P")]
+│ ├ infer (Lam "y" (TyVar "P" :->: TyVar "Q") (TmVar "y" :@: TmVar "x"))
+│ ├─┬ [("x",TyVar "P"),("y",TyVar "P" :->: TyVar "Q")]
+│ │ ├ infer (TmVar "y" :@: TmVar "x")
+│ │ ├─┬ [("x",TyVar "P"),("y",TyVar "P" :->: TyVar "Q")]
+│ │ │ ├ infer (TmVar "y")
+│ │ │ ╞ TyVar "P" :->: TyVar "Q"
+│ │ │ ╘ ()
+│ │ ├─┬ [("x",TyVar "P"),("y",TyVar "P" :->: TyVar "Q")]
+│ │ │ ├ infer (TmVar "x")
+│ │ │ ╞ TyVar "P"
+│ │ │ ╘ ()
+│ │ ╞ TyVar "Q"
+│ │ ╘ ()
+│ ╞ (TyVar "P" :->: TyVar "Q") :->: TyVar "Q"
+│ ╘ ()
+╞ TyVar "P" :->: ((TyVar "P" :->: TyVar "Q") :->: TyVar "Q")
+╘ ()
+
+make[1]: Entering directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
+pdflatex -output-directory=tmp tmp/proof-tree.MP.lam.False.tex
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian)
+entering extended mode
+(./tmp/proof-tree.MP.lam.False.tex
+LaTeX2e <2009/09/24>
+Babel <v3.8l> and hyphenation patterns for english, usenglishmax, dumylang, noh
+yphenation, ibycus, monogreek, greek, ancientgreek, loaded.
+(/usr/share/texmf-texlive/tex/latex/base/article.cls
+Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
+(/usr/share/texmf-texlive/tex/latex/base/size10.clo))
+(/usr/share/texmf-texlive/tex/latex/lkproof/proof.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(/usr/share/texmf-texlive/tex/latex/amsmath/amstext.sty
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsgen.sty))
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsbsy.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsopn.sty))
+(/usr/share/texmf-texlive/tex/latex/geometry/geometry.sty
+(/usr/share/texmf-texlive/tex/latex/graphics/keyval.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifpdf.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifvtex.sty)
+(/usr/share/texmf-texlive/tex/xelatex/xetexconfig/geometry.cfg))
+(/usr/share/texmf-texlive/tex/latex/preprint/fullpage.sty)
+(/usr/share/texmf-texlive/tex/latex/iwona/iwona.sty)
+(/usr/share/texmf-texlive/tex/latex/base/fontenc.sty
+(/usr/share/texmf-texlive/tex/latex/base/t1enc.def)
+(/usr/share/texmf-texlive/tex/latex/iwona/t1iwonalc.fd))
+(tmp/proof-tree.MP.lam.False.aux)
+*geometry auto-detecting driver*
+*geometry detected driver: pdftex*
+(/usr/share/texmf-texlive/tex/latex/iwona/ot1iwonalcm.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omliwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omsiwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omxiwonalc.fd) [1{/var/lib/texmf/font
+s/map/pdftex/updmap/pdftex.map}] (tmp/proof-tree.MP.lam.False.aux) ){/usr/share
+/texmf-texlive/fonts/enc/dvips/iwona/iwona-rm.enc}{/usr/share/texmf-texlive/fon
+ts/enc/dvips/iwona/iwona-ec.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iwona
+/iwonacap-ec.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iwona/iwona-sy.enc}{
+/usr/share/texmf-texlive/fonts/enc/dvips/iwona/iwona-mi.enc}</usr/share/texmf-t
+exlive/fonts/type1/public/iwona/iwonacl.pfb></usr/share/texmf-texlive/fonts/typ
+e1/public/iwona/iwonacli.pfb>
+Output written on tmp/proof-tree.MP.lam.False.pdf (1 page, 34857 bytes).
+Transcript written on tmp/proof-tree.MP.lam.False.log.
+make[1]: Leaving directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
+./tm2latex.sh tmp/proof-tree ZERO   ''                     '\s:A->A.\z:A.z'
+┬ []
+├ infer (Lam "s" (TyVar "A" :->: TyVar "A") (Lam "z" (TyVar "A") (TmVar "z")))
+├─┬ [("s",TyVar "A" :->: TyVar "A")]
+│ ├ infer (Lam "z" (TyVar "A") (TmVar "z"))
+│ ├─┬ [("s",TyVar "A" :->: TyVar "A"),("z",TyVar "A")]
+│ │ ├ infer (TmVar "z")
+│ │ ╞ TyVar "A"
+│ │ ╘ ()
+│ ╞ TyVar "A" :->: TyVar "A"
+│ ╘ ()
+╞ (TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")
+╘ ()
+
+make[1]: Entering directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
+pdflatex -output-directory=tmp tmp/proof-tree.ZERO.True.tex
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian)
+entering extended mode
+(./tmp/proof-tree.ZERO.True.tex
+LaTeX2e <2009/09/24>
+Babel <v3.8l> and hyphenation patterns for english, usenglishmax, dumylang, noh
+yphenation, ibycus, monogreek, greek, ancientgreek, loaded.
+(/usr/share/texmf-texlive/tex/latex/base/article.cls
+Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
+(/usr/share/texmf-texlive/tex/latex/base/size10.clo))
+(/usr/share/texmf-texlive/tex/latex/lkproof/proof.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(/usr/share/texmf-texlive/tex/latex/amsmath/amstext.sty
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsgen.sty))
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsbsy.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsopn.sty))
+(/usr/share/texmf-texlive/tex/latex/geometry/geometry.sty
+(/usr/share/texmf-texlive/tex/latex/graphics/keyval.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifpdf.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifvtex.sty)
+(/usr/share/texmf-texlive/tex/xelatex/xetexconfig/geometry.cfg))
+(/usr/share/texmf-texlive/tex/latex/preprint/fullpage.sty)
+(/usr/share/texmf-texlive/tex/latex/iwona/iwona.sty)
+(/usr/share/texmf-texlive/tex/latex/base/fontenc.sty
+(/usr/share/texmf-texlive/tex/latex/base/t1enc.def)
+(/usr/share/texmf-texlive/tex/latex/iwona/t1iwonalc.fd))
+(tmp/proof-tree.ZERO.True.aux)
+*geometry auto-detecting driver*
+*geometry detected driver: pdftex*
+(/usr/share/texmf-texlive/tex/latex/iwona/ot1iwonalcm.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omliwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omsiwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omxiwonalc.fd) [1{/var/lib/texmf/font
+s/map/pdftex/updmap/pdftex.map}] (tmp/proof-tree.ZERO.True.aux) ){/usr/share/te
+xmf-texlive/fonts/enc/dvips/iwona/iwona-ec.enc}{/usr/share/texmf-texlive/fonts/
+enc/dvips/iwona/iwonacap-ec.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iwona
+/iwona-sy.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iwona/iwona-rm.enc}{/us
+r/share/texmf-texlive/fonts/enc/dvips/iwona/iwona-mi.enc}</usr/share/texmf-texl
+ive/fonts/type1/public/iwona/iwonacl.pfb></usr/share/texmf-texlive/fonts/type1/
+public/iwona/iwonacli.pfb>
+Output written on tmp/proof-tree.ZERO.True.pdf (1 page, 37586 bytes).
+Transcript written on tmp/proof-tree.ZERO.True.log.
+make[1]: Leaving directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
+┬ []
+├ infer (Lam "s" (TyVar "A" :->: TyVar "A") (Lam "z" (TyVar "A") (TmVar "z")))
+├─┬ [("s",TyVar "A" :->: TyVar "A")]
+│ ├ infer (Lam "z" (TyVar "A") (TmVar "z"))
+│ ├─┬ [("s",TyVar "A" :->: TyVar "A"),("z",TyVar "A")]
+│ │ ├ infer (TmVar "z")
+│ │ ╞ TyVar "A"
+│ │ ╘ ()
+│ ╞ TyVar "A" :->: TyVar "A"
+│ ╘ ()
+╞ (TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")
+╘ ()
+
+make[1]: Entering directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
+pdflatex -output-directory=tmp tmp/proof-tree.ZERO.False.tex
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian)
+entering extended mode
+(./tmp/proof-tree.ZERO.False.tex
+LaTeX2e <2009/09/24>
+Babel <v3.8l> and hyphenation patterns for english, usenglishmax, dumylang, noh
+yphenation, ibycus, monogreek, greek, ancientgreek, loaded.
+(/usr/share/texmf-texlive/tex/latex/base/article.cls
+Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
+(/usr/share/texmf-texlive/tex/latex/base/size10.clo))
+(/usr/share/texmf-texlive/tex/latex/lkproof/proof.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(/usr/share/texmf-texlive/tex/latex/amsmath/amstext.sty
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsgen.sty))
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsbsy.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsopn.sty))
+(/usr/share/texmf-texlive/tex/latex/geometry/geometry.sty
+(/usr/share/texmf-texlive/tex/latex/graphics/keyval.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifpdf.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifvtex.sty)
+(/usr/share/texmf-texlive/tex/xelatex/xetexconfig/geometry.cfg))
+(/usr/share/texmf-texlive/tex/latex/preprint/fullpage.sty)
+(/usr/share/texmf-texlive/tex/latex/iwona/iwona.sty)
+(/usr/share/texmf-texlive/tex/latex/base/fontenc.sty
+(/usr/share/texmf-texlive/tex/latex/base/t1enc.def)
+(/usr/share/texmf-texlive/tex/latex/iwona/t1iwonalc.fd))
+(tmp/proof-tree.ZERO.False.aux)
+*geometry auto-detecting driver*
+*geometry detected driver: pdftex*
+(/usr/share/texmf-texlive/tex/latex/iwona/ot1iwonalcm.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omliwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omsiwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omxiwonalc.fd) [1{/var/lib/texmf/font
+s/map/pdftex/updmap/pdftex.map}] (tmp/proof-tree.ZERO.False.aux) ){/usr/share/t
+exmf-texlive/fonts/enc/dvips/iwona/iwona-rm.enc}{/usr/share/texmf-texlive/fonts
+/enc/dvips/iwona/iwona-ec.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iwona/i
+wonacap-ec.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iwona/iwona-sy.enc}{/u
+sr/share/texmf-texlive/fonts/enc/dvips/iwona/iwona-mi.enc}</usr/share/texmf-tex
+live/fonts/type1/public/iwona/iwonacl.pfb></usr/share/texmf-texlive/fonts/type1
+/public/iwona/iwonacli.pfb>
+Output written on tmp/proof-tree.ZERO.False.pdf (1 page, 34412 bytes).
+Transcript written on tmp/proof-tree.ZERO.False.log.
+make[1]: Leaving directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
+./tm2latex.sh tmp/proof-tree SUCC   ''                     '\n:(A->A)->(A->A).\s:A->A.\z:A.s(nsz)'
+┬ []
+├ infer (Lam "n" ((TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")) (Lam "s" (TyVar "A" :->: TyVar "A") (Lam "z" (TyVar "A") (TmVar "s" :@: ((TmVar "n" :@: TmVar "s") :@: TmVar "z")))))
+├─┬ [("n",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A"))]
+│ ├ infer (Lam "s" (TyVar "A" :->: TyVar "A") (Lam "z" (TyVar "A") (TmVar "s" :@: ((TmVar "n" :@: TmVar "s") :@: TmVar "z"))))
+│ ├─┬ [("n",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("s",TyVar "A" :->: TyVar "A")]
+│ │ ├ infer (Lam "z" (TyVar "A") (TmVar "s" :@: ((TmVar "n" :@: TmVar "s") :@: TmVar "z")))
+│ │ ├─┬ [("n",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("s",TyVar "A" :->: TyVar "A"),("z",TyVar "A")]
+│ │ │ ├ infer (TmVar "s" :@: ((TmVar "n" :@: TmVar "s") :@: TmVar "z"))
+│ │ │ ├─┬ [("n",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("s",TyVar "A" :->: TyVar "A"),("z",TyVar "A")]
+│ │ │ │ ├ infer (TmVar "s")
+│ │ │ │ ╞ TyVar "A" :->: TyVar "A"
+│ │ │ │ ╘ ()
+│ │ │ ├─┬ [("n",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("s",TyVar "A" :->: TyVar "A"),("z",TyVar "A")]
+│ │ │ │ ├ infer ((TmVar "n" :@: TmVar "s") :@: TmVar "z")
+│ │ │ │ ├─┬ [("n",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("s",TyVar "A" :->: TyVar "A"),("z",TyVar "A")]
+│ │ │ │ │ ├ infer (TmVar "n" :@: TmVar "s")
+│ │ │ │ │ ├─┬ [("n",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("s",TyVar "A" :->: TyVar "A"),("z",TyVar "A")]
+│ │ │ │ │ │ ├ infer (TmVar "n")
+│ │ │ │ │ │ ╞ (TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")
+│ │ │ │ │ │ ╘ ()
+│ │ │ │ │ ├─┬ [("n",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("s",TyVar "A" :->: TyVar "A"),("z",TyVar "A")]
+│ │ │ │ │ │ ├ infer (TmVar "s")
+│ │ │ │ │ │ ╞ TyVar "A" :->: TyVar "A"
+│ │ │ │ │ │ ╘ ()
+│ │ │ │ │ ╞ TyVar "A" :->: TyVar "A"
+│ │ │ │ │ ╘ ()
+│ │ │ │ ├─┬ [("n",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("s",TyVar "A" :->: TyVar "A"),("z",TyVar "A")]
+│ │ │ │ │ ├ infer (TmVar "z")
+│ │ │ │ │ ╞ TyVar "A"
+│ │ │ │ │ ╘ ()
+│ │ │ │ ╞ TyVar "A"
+│ │ │ │ ╘ ()
+│ │ │ ╞ TyVar "A"
+│ │ │ ╘ ()
+│ │ ╞ TyVar "A" :->: TyVar "A"
+│ │ ╘ ()
+│ ╞ (TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")
+│ ╘ ()
+╞ ((TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")) :->: ((TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A"))
+╘ ()
+
+make[1]: Entering directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
+pdflatex -output-directory=tmp tmp/proof-tree.SUCC.True.tex
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian)
+entering extended mode
+(./tmp/proof-tree.SUCC.True.tex
+LaTeX2e <2009/09/24>
+Babel <v3.8l> and hyphenation patterns for english, usenglishmax, dumylang, noh
+yphenation, ibycus, monogreek, greek, ancientgreek, loaded.
+(/usr/share/texmf-texlive/tex/latex/base/article.cls
+Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
+(/usr/share/texmf-texlive/tex/latex/base/size10.clo))
+(/usr/share/texmf-texlive/tex/latex/lkproof/proof.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(/usr/share/texmf-texlive/tex/latex/amsmath/amstext.sty
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsgen.sty))
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsbsy.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsopn.sty))
+(/usr/share/texmf-texlive/tex/latex/geometry/geometry.sty
+(/usr/share/texmf-texlive/tex/latex/graphics/keyval.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifpdf.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifvtex.sty)
+(/usr/share/texmf-texlive/tex/xelatex/xetexconfig/geometry.cfg))
+(/usr/share/texmf-texlive/tex/latex/preprint/fullpage.sty)
+(/usr/share/texmf-texlive/tex/latex/iwona/iwona.sty)
+(/usr/share/texmf-texlive/tex/latex/base/fontenc.sty
+(/usr/share/texmf-texlive/tex/latex/base/t1enc.def)
+(/usr/share/texmf-texlive/tex/latex/iwona/t1iwonalc.fd))
+(tmp/proof-tree.SUCC.True.aux)
+*geometry auto-detecting driver*
+*geometry detected driver: pdftex*
+(/usr/share/texmf-texlive/tex/latex/iwona/ot1iwonalcm.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omliwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omsiwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omxiwonalc.fd) [1{/var/lib/texmf/font
+s/map/pdftex/updmap/pdftex.map}] (tmp/proof-tree.SUCC.True.aux) ){/usr/share/te
+xmf-texlive/fonts/enc/dvips/iwona/iwona-ec.enc}{/usr/share/texmf-texlive/fonts/
+enc/dvips/iwona/iwonacap-ec.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iwona
+/iwona-sy.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iwona/iwona-rm.enc}{/us
+r/share/texmf-texlive/fonts/enc/dvips/iwona/iwona-mi.enc}</usr/share/texmf-texl
+ive/fonts/type1/public/iwona/iwonacl.pfb></usr/share/texmf-texlive/fonts/type1/
+public/iwona/iwonacli.pfb>
+Output written on tmp/proof-tree.SUCC.True.pdf (1 page, 38184 bytes).
+Transcript written on tmp/proof-tree.SUCC.True.log.
+make[1]: Leaving directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
+┬ []
+├ infer (Lam "n" ((TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")) (Lam "s" (TyVar "A" :->: TyVar "A") (Lam "z" (TyVar "A") (TmVar "s" :@: ((TmVar "n" :@: TmVar "s") :@: TmVar "z")))))
+├─┬ [("n",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A"))]
+│ ├ infer (Lam "s" (TyVar "A" :->: TyVar "A") (Lam "z" (TyVar "A") (TmVar "s" :@: ((TmVar "n" :@: TmVar "s") :@: TmVar "z"))))
+│ ├─┬ [("n",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("s",TyVar "A" :->: TyVar "A")]
+│ │ ├ infer (Lam "z" (TyVar "A") (TmVar "s" :@: ((TmVar "n" :@: TmVar "s") :@: TmVar "z")))
+│ │ ├─┬ [("n",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("s",TyVar "A" :->: TyVar "A"),("z",TyVar "A")]
+│ │ │ ├ infer (TmVar "s" :@: ((TmVar "n" :@: TmVar "s") :@: TmVar "z"))
+│ │ │ ├─┬ [("n",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("s",TyVar "A" :->: TyVar "A"),("z",TyVar "A")]
+│ │ │ │ ├ infer (TmVar "s")
+│ │ │ │ ╞ TyVar "A" :->: TyVar "A"
+│ │ │ │ ╘ ()
+│ │ │ ├─┬ [("n",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("s",TyVar "A" :->: TyVar "A"),("z",TyVar "A")]
+│ │ │ │ ├ infer ((TmVar "n" :@: TmVar "s") :@: TmVar "z")
+│ │ │ │ ├─┬ [("n",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("s",TyVar "A" :->: TyVar "A"),("z",TyVar "A")]
+│ │ │ │ │ ├ infer (TmVar "n" :@: TmVar "s")
+│ │ │ │ │ ├─┬ [("n",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("s",TyVar "A" :->: TyVar "A"),("z",TyVar "A")]
+│ │ │ │ │ │ ├ infer (TmVar "n")
+│ │ │ │ │ │ ╞ (TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")
+│ │ │ │ │ │ ╘ ()
+│ │ │ │ │ ├─┬ [("n",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("s",TyVar "A" :->: TyVar "A"),("z",TyVar "A")]
+│ │ │ │ │ │ ├ infer (TmVar "s")
+│ │ │ │ │ │ ╞ TyVar "A" :->: TyVar "A"
+│ │ │ │ │ │ ╘ ()
+│ │ │ │ │ ╞ TyVar "A" :->: TyVar "A"
+│ │ │ │ │ ╘ ()
+│ │ │ │ ├─┬ [("n",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("s",TyVar "A" :->: TyVar "A"),("z",TyVar "A")]
+│ │ │ │ │ ├ infer (TmVar "z")
+│ │ │ │ │ ╞ TyVar "A"
+│ │ │ │ │ ╘ ()
+│ │ │ │ ╞ TyVar "A"
+│ │ │ │ ╘ ()
+│ │ │ ╞ TyVar "A"
+│ │ │ ╘ ()
+│ │ ╞ TyVar "A" :->: TyVar "A"
+│ │ ╘ ()
+│ ╞ (TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")
+│ ╘ ()
+╞ ((TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")) :->: ((TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A"))
+╘ ()
+
+make[1]: Entering directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
+pdflatex -output-directory=tmp tmp/proof-tree.SUCC.False.tex
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian)
+entering extended mode
+(./tmp/proof-tree.SUCC.False.tex
+LaTeX2e <2009/09/24>
+Babel <v3.8l> and hyphenation patterns for english, usenglishmax, dumylang, noh
+yphenation, ibycus, monogreek, greek, ancientgreek, loaded.
+(/usr/share/texmf-texlive/tex/latex/base/article.cls
+Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
+(/usr/share/texmf-texlive/tex/latex/base/size10.clo))
+(/usr/share/texmf-texlive/tex/latex/lkproof/proof.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(/usr/share/texmf-texlive/tex/latex/amsmath/amstext.sty
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsgen.sty))
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsbsy.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsopn.sty))
+(/usr/share/texmf-texlive/tex/latex/geometry/geometry.sty
+(/usr/share/texmf-texlive/tex/latex/graphics/keyval.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifpdf.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifvtex.sty)
+(/usr/share/texmf-texlive/tex/xelatex/xetexconfig/geometry.cfg))
+(/usr/share/texmf-texlive/tex/latex/preprint/fullpage.sty)
+(/usr/share/texmf-texlive/tex/latex/iwona/iwona.sty)
+(/usr/share/texmf-texlive/tex/latex/base/fontenc.sty
+(/usr/share/texmf-texlive/tex/latex/base/t1enc.def)
+(/usr/share/texmf-texlive/tex/latex/iwona/t1iwonalc.fd))
+(tmp/proof-tree.SUCC.False.aux)
+*geometry auto-detecting driver*
+*geometry detected driver: pdftex*
+(/usr/share/texmf-texlive/tex/latex/iwona/ot1iwonalcm.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omliwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omsiwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omxiwonalc.fd) [1{/var/lib/texmf/font
+s/map/pdftex/updmap/pdftex.map}] (tmp/proof-tree.SUCC.False.aux) ){/usr/share/t
+exmf-texlive/fonts/enc/dvips/iwona/iwona-ec.enc}{/usr/share/texmf-texlive/fonts
+/enc/dvips/iwona/iwonacap-ec.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iwon
+a/iwona-sy.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iwona/iwona-mi.enc}{/u
+sr/share/texmf-texlive/fonts/enc/dvips/iwona/iwona-rm.enc}</usr/share/texmf-tex
+live/fonts/type1/public/iwona/iwonacl.pfb></usr/share/texmf-texlive/fonts/type1
+/public/iwona/iwonacli.pfb>
+Output written on tmp/proof-tree.SUCC.False.pdf (1 page, 34791 bytes).
+Transcript written on tmp/proof-tree.SUCC.False.log.
+make[1]: Leaving directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
+./tm2latex.sh tmp/proof-tree ADD    '' '\m:(A->A)->(A->A).\n:(A->A)->(A->A).\s:A->A.\z:A.ms(nsz)'
+┬ []
+├ infer (Lam "m" ((TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")) (Lam "n" ((TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")) (Lam "s" (TyVar "A" :->: TyVar "A") (Lam "z" (TyVar "A") ((TmVar "m" :@: TmVar "s") :@: ((TmVar "n" :@: TmVar "s") :@: TmVar "z"))))))
+├─┬ [("m",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A"))]
+│ ├ infer (Lam "n" ((TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")) (Lam "s" (TyVar "A" :->: TyVar "A") (Lam "z" (TyVar "A") ((TmVar "m" :@: TmVar "s") :@: ((TmVar "n" :@: TmVar "s") :@: TmVar "z")))))
+│ ├─┬ [("m",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("n",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A"))]
+│ │ ├ infer (Lam "s" (TyVar "A" :->: TyVar "A") (Lam "z" (TyVar "A") ((TmVar "m" :@: TmVar "s") :@: ((TmVar "n" :@: TmVar "s") :@: TmVar "z"))))
+│ │ ├─┬ [("m",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("n",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("s",TyVar "A" :->: TyVar "A")]
+│ │ │ ├ infer (Lam "z" (TyVar "A") ((TmVar "m" :@: TmVar "s") :@: ((TmVar "n" :@: TmVar "s") :@: TmVar "z")))
+│ │ │ ├─┬ [("m",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("n",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("s",TyVar "A" :->: TyVar "A"),("z",TyVar "A")]
+│ │ │ │ ├ infer ((TmVar "m" :@: TmVar "s") :@: ((TmVar "n" :@: TmVar "s") :@: TmVar "z"))
+│ │ │ │ ├─┬ [("m",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("n",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("s",TyVar "A" :->: TyVar "A"),("z",TyVar "A")]
+│ │ │ │ │ ├ infer (TmVar "m" :@: TmVar "s")
+│ │ │ │ │ ├─┬ [("m",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("n",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("s",TyVar "A" :->: TyVar "A"),("z",TyVar "A")]
+│ │ │ │ │ │ ├ infer (TmVar "m")
+│ │ │ │ │ │ ╞ (TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")
+│ │ │ │ │ │ ╘ ()
+│ │ │ │ │ ├─┬ [("m",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("n",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("s",TyVar "A" :->: TyVar "A"),("z",TyVar "A")]
+│ │ │ │ │ │ ├ infer (TmVar "s")
+│ │ │ │ │ │ ╞ TyVar "A" :->: TyVar "A"
+│ │ │ │ │ │ ╘ ()
+│ │ │ │ │ ╞ TyVar "A" :->: TyVar "A"
+│ │ │ │ │ ╘ ()
+│ │ │ │ ├─┬ [("m",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("n",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("s",TyVar "A" :->: TyVar "A"),("z",TyVar "A")]
+│ │ │ │ │ ├ infer ((TmVar "n" :@: TmVar "s") :@: TmVar "z")
+│ │ │ │ │ ├─┬ [("m",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("n",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("s",TyVar "A" :->: TyVar "A"),("z",TyVar "A")]
+│ │ │ │ │ │ ├ infer (TmVar "n" :@: TmVar "s")
+│ │ │ │ │ │ ├─┬ [("m",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("n",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("s",TyVar "A" :->: TyVar "A"),("z",TyVar "A")]
+│ │ │ │ │ │ │ ├ infer (TmVar "n")
+│ │ │ │ │ │ │ ╞ (TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")
+│ │ │ │ │ │ │ ╘ ()
+│ │ │ │ │ │ ├─┬ [("m",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("n",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("s",TyVar "A" :->: TyVar "A"),("z",TyVar "A")]
+│ │ │ │ │ │ │ ├ infer (TmVar "s")
+│ │ │ │ │ │ │ ╞ TyVar "A" :->: TyVar "A"
+│ │ │ │ │ │ │ ╘ ()
+│ │ │ │ │ │ ╞ TyVar "A" :->: TyVar "A"
+│ │ │ │ │ │ ╘ ()
+│ │ │ │ │ ├─┬ [("m",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("n",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("s",TyVar "A" :->: TyVar "A"),("z",TyVar "A")]
+│ │ │ │ │ │ ├ infer (TmVar "z")
+│ │ │ │ │ │ ╞ TyVar "A"
+│ │ │ │ │ │ ╘ ()
+│ │ │ │ │ ╞ TyVar "A"
+│ │ │ │ │ ╘ ()
+│ │ │ │ ╞ TyVar "A"
+│ │ │ │ ╘ ()
+│ │ │ ╞ TyVar "A" :->: TyVar "A"
+│ │ │ ╘ ()
+│ │ ╞ (TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")
+│ │ ╘ ()
+│ ╞ ((TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")) :->: ((TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A"))
+│ ╘ ()
+╞ ((TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")) :->: (((TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")) :->: ((TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")))
+╘ ()
+
+make[1]: Entering directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
+pdflatex -output-directory=tmp tmp/proof-tree.ADD.True.tex
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian)
+entering extended mode
+(./tmp/proof-tree.ADD.True.tex
+LaTeX2e <2009/09/24>
+Babel <v3.8l> and hyphenation patterns for english, usenglishmax, dumylang, noh
+yphenation, ibycus, monogreek, greek, ancientgreek, loaded.
+(/usr/share/texmf-texlive/tex/latex/base/article.cls
+Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
+(/usr/share/texmf-texlive/tex/latex/base/size10.clo))
+(/usr/share/texmf-texlive/tex/latex/lkproof/proof.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(/usr/share/texmf-texlive/tex/latex/amsmath/amstext.sty
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsgen.sty))
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsbsy.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsopn.sty))
+(/usr/share/texmf-texlive/tex/latex/geometry/geometry.sty
+(/usr/share/texmf-texlive/tex/latex/graphics/keyval.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifpdf.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifvtex.sty)
+(/usr/share/texmf-texlive/tex/xelatex/xetexconfig/geometry.cfg))
+(/usr/share/texmf-texlive/tex/latex/preprint/fullpage.sty)
+(/usr/share/texmf-texlive/tex/latex/iwona/iwona.sty)
+(/usr/share/texmf-texlive/tex/latex/base/fontenc.sty
+(/usr/share/texmf-texlive/tex/latex/base/t1enc.def)
+(/usr/share/texmf-texlive/tex/latex/iwona/t1iwonalc.fd))
+(tmp/proof-tree.ADD.True.aux)
+*geometry auto-detecting driver*
+*geometry detected driver: pdftex*
+(/usr/share/texmf-texlive/tex/latex/iwona/ot1iwonalcm.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omliwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omsiwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omxiwonalc.fd) [1{/var/lib/texmf/font
+s/map/pdftex/updmap/pdftex.map}] (tmp/proof-tree.ADD.True.aux) ){/usr/share/tex
+mf-texlive/fonts/enc/dvips/iwona/iwona-ec.enc}{/usr/share/texmf-texlive/fonts/e
+nc/dvips/iwona/iwonacap-ec.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iwona/
+iwona-sy.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iwona/iwona-rm.enc}{/usr
+/share/texmf-texlive/fonts/enc/dvips/iwona/iwona-mi.enc}</usr/share/texmf-texli
+ve/fonts/type1/public/iwona/iwonacl.pfb></usr/share/texmf-texlive/fonts/type1/p
+ublic/iwona/iwonacli.pfb>
+Output written on tmp/proof-tree.ADD.True.pdf (1 page, 38542 bytes).
+Transcript written on tmp/proof-tree.ADD.True.log.
+make[1]: Leaving directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
+┬ []
+├ infer (Lam "m" ((TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")) (Lam "n" ((TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")) (Lam "s" (TyVar "A" :->: TyVar "A") (Lam "z" (TyVar "A") ((TmVar "m" :@: TmVar "s") :@: ((TmVar "n" :@: TmVar "s") :@: TmVar "z"))))))
+├─┬ [("m",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A"))]
+│ ├ infer (Lam "n" ((TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")) (Lam "s" (TyVar "A" :->: TyVar "A") (Lam "z" (TyVar "A") ((TmVar "m" :@: TmVar "s") :@: ((TmVar "n" :@: TmVar "s") :@: TmVar "z")))))
+│ ├─┬ [("m",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("n",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A"))]
+│ │ ├ infer (Lam "s" (TyVar "A" :->: TyVar "A") (Lam "z" (TyVar "A") ((TmVar "m" :@: TmVar "s") :@: ((TmVar "n" :@: TmVar "s") :@: TmVar "z"))))
+│ │ ├─┬ [("m",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("n",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("s",TyVar "A" :->: TyVar "A")]
+│ │ │ ├ infer (Lam "z" (TyVar "A") ((TmVar "m" :@: TmVar "s") :@: ((TmVar "n" :@: TmVar "s") :@: TmVar "z")))
+│ │ │ ├─┬ [("m",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("n",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("s",TyVar "A" :->: TyVar "A"),("z",TyVar "A")]
+│ │ │ │ ├ infer ((TmVar "m" :@: TmVar "s") :@: ((TmVar "n" :@: TmVar "s") :@: TmVar "z"))
+│ │ │ │ ├─┬ [("m",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("n",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("s",TyVar "A" :->: TyVar "A"),("z",TyVar "A")]
+│ │ │ │ │ ├ infer (TmVar "m" :@: TmVar "s")
+│ │ │ │ │ ├─┬ [("m",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("n",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("s",TyVar "A" :->: TyVar "A"),("z",TyVar "A")]
+│ │ │ │ │ │ ├ infer (TmVar "m")
+│ │ │ │ │ │ ╞ (TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")
+│ │ │ │ │ │ ╘ ()
+│ │ │ │ │ ├─┬ [("m",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("n",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("s",TyVar "A" :->: TyVar "A"),("z",TyVar "A")]
+│ │ │ │ │ │ ├ infer (TmVar "s")
+│ │ │ │ │ │ ╞ TyVar "A" :->: TyVar "A"
+│ │ │ │ │ │ ╘ ()
+│ │ │ │ │ ╞ TyVar "A" :->: TyVar "A"
+│ │ │ │ │ ╘ ()
+│ │ │ │ ├─┬ [("m",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("n",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("s",TyVar "A" :->: TyVar "A"),("z",TyVar "A")]
+│ │ │ │ │ ├ infer ((TmVar "n" :@: TmVar "s") :@: TmVar "z")
+│ │ │ │ │ ├─┬ [("m",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("n",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("s",TyVar "A" :->: TyVar "A"),("z",TyVar "A")]
+│ │ │ │ │ │ ├ infer (TmVar "n" :@: TmVar "s")
+│ │ │ │ │ │ ├─┬ [("m",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("n",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("s",TyVar "A" :->: TyVar "A"),("z",TyVar "A")]
+│ │ │ │ │ │ │ ├ infer (TmVar "n")
+│ │ │ │ │ │ │ ╞ (TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")
+│ │ │ │ │ │ │ ╘ ()
+│ │ │ │ │ │ ├─┬ [("m",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("n",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("s",TyVar "A" :->: TyVar "A"),("z",TyVar "A")]
+│ │ │ │ │ │ │ ├ infer (TmVar "s")
+│ │ │ │ │ │ │ ╞ TyVar "A" :->: TyVar "A"
+│ │ │ │ │ │ │ ╘ ()
+│ │ │ │ │ │ ╞ TyVar "A" :->: TyVar "A"
+│ │ │ │ │ │ ╘ ()
+│ │ │ │ │ ├─┬ [("m",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("n",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("s",TyVar "A" :->: TyVar "A"),("z",TyVar "A")]
+│ │ │ │ │ │ ├ infer (TmVar "z")
+│ │ │ │ │ │ ╞ TyVar "A"
+│ │ │ │ │ │ ╘ ()
+│ │ │ │ │ ╞ TyVar "A"
+│ │ │ │ │ ╘ ()
+│ │ │ │ ╞ TyVar "A"
+│ │ │ │ ╘ ()
+│ │ │ ╞ TyVar "A" :->: TyVar "A"
+│ │ │ ╘ ()
+│ │ ╞ (TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")
+│ │ ╘ ()
+│ ╞ ((TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")) :->: ((TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A"))
+│ ╘ ()
+╞ ((TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")) :->: (((TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")) :->: ((TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")))
+╘ ()
+
+make[1]: Entering directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
+pdflatex -output-directory=tmp tmp/proof-tree.ADD.False.tex
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian)
+entering extended mode
+(./tmp/proof-tree.ADD.False.tex
+LaTeX2e <2009/09/24>
+Babel <v3.8l> and hyphenation patterns for english, usenglishmax, dumylang, noh
+yphenation, ibycus, monogreek, greek, ancientgreek, loaded.
+(/usr/share/texmf-texlive/tex/latex/base/article.cls
+Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
+(/usr/share/texmf-texlive/tex/latex/base/size10.clo))
+(/usr/share/texmf-texlive/tex/latex/lkproof/proof.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(/usr/share/texmf-texlive/tex/latex/amsmath/amstext.sty
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsgen.sty))
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsbsy.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsopn.sty))
+(/usr/share/texmf-texlive/tex/latex/geometry/geometry.sty
+(/usr/share/texmf-texlive/tex/latex/graphics/keyval.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifpdf.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifvtex.sty)
+(/usr/share/texmf-texlive/tex/xelatex/xetexconfig/geometry.cfg))
+(/usr/share/texmf-texlive/tex/latex/preprint/fullpage.sty)
+(/usr/share/texmf-texlive/tex/latex/iwona/iwona.sty)
+(/usr/share/texmf-texlive/tex/latex/base/fontenc.sty
+(/usr/share/texmf-texlive/tex/latex/base/t1enc.def)
+(/usr/share/texmf-texlive/tex/latex/iwona/t1iwonalc.fd))
+(tmp/proof-tree.ADD.False.aux)
+*geometry auto-detecting driver*
+*geometry detected driver: pdftex*
+(/usr/share/texmf-texlive/tex/latex/iwona/ot1iwonalcm.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omliwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omsiwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omxiwonalc.fd) [1{/var/lib/texmf/font
+s/map/pdftex/updmap/pdftex.map}] (tmp/proof-tree.ADD.False.aux) ){/usr/share/te
+xmf-texlive/fonts/enc/dvips/iwona/iwona-ec.enc}{/usr/share/texmf-texlive/fonts/
+enc/dvips/iwona/iwonacap-ec.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iwona
+/iwona-sy.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iwona/iwona-mi.enc}{/us
+r/share/texmf-texlive/fonts/enc/dvips/iwona/iwona-rm.enc}</usr/share/texmf-texl
+ive/fonts/type1/public/iwona/iwonacl.pfb></usr/share/texmf-texlive/fonts/type1/
+public/iwona/iwonacli.pfb>
+Output written on tmp/proof-tree.ADD.False.pdf (1 page, 34968 bytes).
+Transcript written on tmp/proof-tree.ADD.False.log.
+make[1]: Leaving directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
+./tm2latex.sh tmp/proof-tree MULT   '' '\m:(A->A)->(A->A).\n:(A->A)->(A->A).\s:A->A.\z:A.m(ns)z'
+┬ []
+├ infer (Lam "m" ((TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")) (Lam "n" ((TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")) (Lam "s" (TyVar "A" :->: TyVar "A") (Lam "z" (TyVar "A") ((TmVar "m" :@: (TmVar "n" :@: TmVar "s")) :@: TmVar "z")))))
+├─┬ [("m",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A"))]
+│ ├ infer (Lam "n" ((TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")) (Lam "s" (TyVar "A" :->: TyVar "A") (Lam "z" (TyVar "A") ((TmVar "m" :@: (TmVar "n" :@: TmVar "s")) :@: TmVar "z"))))
+│ ├─┬ [("m",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("n",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A"))]
+│ │ ├ infer (Lam "s" (TyVar "A" :->: TyVar "A") (Lam "z" (TyVar "A") ((TmVar "m" :@: (TmVar "n" :@: TmVar "s")) :@: TmVar "z")))
+│ │ ├─┬ [("m",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("n",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("s",TyVar "A" :->: TyVar "A")]
+│ │ │ ├ infer (Lam "z" (TyVar "A") ((TmVar "m" :@: (TmVar "n" :@: TmVar "s")) :@: TmVar "z"))
+│ │ │ ├─┬ [("m",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("n",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("s",TyVar "A" :->: TyVar "A"),("z",TyVar "A")]
+│ │ │ │ ├ infer ((TmVar "m" :@: (TmVar "n" :@: TmVar "s")) :@: TmVar "z")
+│ │ │ │ ├─┬ [("m",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("n",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("s",TyVar "A" :->: TyVar "A"),("z",TyVar "A")]
+│ │ │ │ │ ├ infer (TmVar "m" :@: (TmVar "n" :@: TmVar "s"))
+│ │ │ │ │ ├─┬ [("m",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("n",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("s",TyVar "A" :->: TyVar "A"),("z",TyVar "A")]
+│ │ │ │ │ │ ├ infer (TmVar "m")
+│ │ │ │ │ │ ╞ (TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")
+│ │ │ │ │ │ ╘ ()
+│ │ │ │ │ ├─┬ [("m",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("n",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("s",TyVar "A" :->: TyVar "A"),("z",TyVar "A")]
+│ │ │ │ │ │ ├ infer (TmVar "n" :@: TmVar "s")
+│ │ │ │ │ │ ├─┬ [("m",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("n",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("s",TyVar "A" :->: TyVar "A"),("z",TyVar "A")]
+│ │ │ │ │ │ │ ├ infer (TmVar "n")
+│ │ │ │ │ │ │ ╞ (TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")
+│ │ │ │ │ │ │ ╘ ()
+│ │ │ │ │ │ ├─┬ [("m",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("n",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("s",TyVar "A" :->: TyVar "A"),("z",TyVar "A")]
+│ │ │ │ │ │ │ ├ infer (TmVar "s")
+│ │ │ │ │ │ │ ╞ TyVar "A" :->: TyVar "A"
+│ │ │ │ │ │ │ ╘ ()
+│ │ │ │ │ │ ╞ TyVar "A" :->: TyVar "A"
+│ │ │ │ │ │ ╘ ()
+│ │ │ │ │ ╞ TyVar "A" :->: TyVar "A"
+│ │ │ │ │ ╘ ()
+│ │ │ │ ├─┬ [("m",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("n",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("s",TyVar "A" :->: TyVar "A"),("z",TyVar "A")]
+│ │ │ │ │ ├ infer (TmVar "z")
+│ │ │ │ │ ╞ TyVar "A"
+│ │ │ │ │ ╘ ()
+│ │ │ │ ╞ TyVar "A"
+│ │ │ │ ╘ ()
+│ │ │ ╞ TyVar "A" :->: TyVar "A"
+│ │ │ ╘ ()
+│ │ ╞ (TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")
+│ │ ╘ ()
+│ ╞ ((TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")) :->: ((TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A"))
+│ ╘ ()
+╞ ((TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")) :->: (((TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")) :->: ((TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")))
+╘ ()
+
+make[1]: Entering directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
+pdflatex -output-directory=tmp tmp/proof-tree.MULT.True.tex
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian)
+entering extended mode
+(./tmp/proof-tree.MULT.True.tex
+LaTeX2e <2009/09/24>
+Babel <v3.8l> and hyphenation patterns for english, usenglishmax, dumylang, noh
+yphenation, ibycus, monogreek, greek, ancientgreek, loaded.
+(/usr/share/texmf-texlive/tex/latex/base/article.cls
+Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
+(/usr/share/texmf-texlive/tex/latex/base/size10.clo))
+(/usr/share/texmf-texlive/tex/latex/lkproof/proof.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(/usr/share/texmf-texlive/tex/latex/amsmath/amstext.sty
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsgen.sty))
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsbsy.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsopn.sty))
+(/usr/share/texmf-texlive/tex/latex/geometry/geometry.sty
+(/usr/share/texmf-texlive/tex/latex/graphics/keyval.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifpdf.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifvtex.sty)
+(/usr/share/texmf-texlive/tex/xelatex/xetexconfig/geometry.cfg))
+(/usr/share/texmf-texlive/tex/latex/preprint/fullpage.sty)
+(/usr/share/texmf-texlive/tex/latex/iwona/iwona.sty)
+(/usr/share/texmf-texlive/tex/latex/base/fontenc.sty
+(/usr/share/texmf-texlive/tex/latex/base/t1enc.def)
+(/usr/share/texmf-texlive/tex/latex/iwona/t1iwonalc.fd))
+(tmp/proof-tree.MULT.True.aux)
+*geometry auto-detecting driver*
+*geometry detected driver: pdftex*
+(/usr/share/texmf-texlive/tex/latex/iwona/ot1iwonalcm.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omliwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omsiwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omxiwonalc.fd) [1{/var/lib/texmf/font
+s/map/pdftex/updmap/pdftex.map}] (tmp/proof-tree.MULT.True.aux) ){/usr/share/te
+xmf-texlive/fonts/enc/dvips/iwona/iwona-ec.enc}{/usr/share/texmf-texlive/fonts/
+enc/dvips/iwona/iwonacap-ec.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iwona
+/iwona-sy.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iwona/iwona-rm.enc}{/us
+r/share/texmf-texlive/fonts/enc/dvips/iwona/iwona-mi.enc}</usr/share/texmf-texl
+ive/fonts/type1/public/iwona/iwonacl.pfb></usr/share/texmf-texlive/fonts/type1/
+public/iwona/iwonacli.pfb>
+Output written on tmp/proof-tree.MULT.True.pdf (1 page, 38507 bytes).
+Transcript written on tmp/proof-tree.MULT.True.log.
+make[1]: Leaving directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
+┬ []
+├ infer (Lam "m" ((TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")) (Lam "n" ((TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")) (Lam "s" (TyVar "A" :->: TyVar "A") (Lam "z" (TyVar "A") ((TmVar "m" :@: (TmVar "n" :@: TmVar "s")) :@: TmVar "z")))))
+├─┬ [("m",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A"))]
+│ ├ infer (Lam "n" ((TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")) (Lam "s" (TyVar "A" :->: TyVar "A") (Lam "z" (TyVar "A") ((TmVar "m" :@: (TmVar "n" :@: TmVar "s")) :@: TmVar "z"))))
+│ ├─┬ [("m",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("n",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A"))]
+│ │ ├ infer (Lam "s" (TyVar "A" :->: TyVar "A") (Lam "z" (TyVar "A") ((TmVar "m" :@: (TmVar "n" :@: TmVar "s")) :@: TmVar "z")))
+│ │ ├─┬ [("m",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("n",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("s",TyVar "A" :->: TyVar "A")]
+│ │ │ ├ infer (Lam "z" (TyVar "A") ((TmVar "m" :@: (TmVar "n" :@: TmVar "s")) :@: TmVar "z"))
+│ │ │ ├─┬ [("m",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("n",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("s",TyVar "A" :->: TyVar "A"),("z",TyVar "A")]
+│ │ │ │ ├ infer ((TmVar "m" :@: (TmVar "n" :@: TmVar "s")) :@: TmVar "z")
+│ │ │ │ ├─┬ [("m",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("n",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("s",TyVar "A" :->: TyVar "A"),("z",TyVar "A")]
+│ │ │ │ │ ├ infer (TmVar "m" :@: (TmVar "n" :@: TmVar "s"))
+│ │ │ │ │ ├─┬ [("m",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("n",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("s",TyVar "A" :->: TyVar "A"),("z",TyVar "A")]
+│ │ │ │ │ │ ├ infer (TmVar "m")
+│ │ │ │ │ │ ╞ (TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")
+│ │ │ │ │ │ ╘ ()
+│ │ │ │ │ ├─┬ [("m",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("n",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("s",TyVar "A" :->: TyVar "A"),("z",TyVar "A")]
+│ │ │ │ │ │ ├ infer (TmVar "n" :@: TmVar "s")
+│ │ │ │ │ │ ├─┬ [("m",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("n",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("s",TyVar "A" :->: TyVar "A"),("z",TyVar "A")]
+│ │ │ │ │ │ │ ├ infer (TmVar "n")
+│ │ │ │ │ │ │ ╞ (TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")
+│ │ │ │ │ │ │ ╘ ()
+│ │ │ │ │ │ ├─┬ [("m",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("n",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("s",TyVar "A" :->: TyVar "A"),("z",TyVar "A")]
+│ │ │ │ │ │ │ ├ infer (TmVar "s")
+│ │ │ │ │ │ │ ╞ TyVar "A" :->: TyVar "A"
+│ │ │ │ │ │ │ ╘ ()
+│ │ │ │ │ │ ╞ TyVar "A" :->: TyVar "A"
+│ │ │ │ │ │ ╘ ()
+│ │ │ │ │ ╞ TyVar "A" :->: TyVar "A"
+│ │ │ │ │ ╘ ()
+│ │ │ │ ├─┬ [("m",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("n",(TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")),("s",TyVar "A" :->: TyVar "A"),("z",TyVar "A")]
+│ │ │ │ │ ├ infer (TmVar "z")
+│ │ │ │ │ ╞ TyVar "A"
+│ │ │ │ │ ╘ ()
+│ │ │ │ ╞ TyVar "A"
+│ │ │ │ ╘ ()
+│ │ │ ╞ TyVar "A" :->: TyVar "A"
+│ │ │ ╘ ()
+│ │ ╞ (TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")
+│ │ ╘ ()
+│ ╞ ((TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")) :->: ((TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A"))
+│ ╘ ()
+╞ ((TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")) :->: (((TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")) :->: ((TyVar "A" :->: TyVar "A") :->: (TyVar "A" :->: TyVar "A")))
+╘ ()
+
+make[1]: Entering directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
+pdflatex -output-directory=tmp tmp/proof-tree.MULT.False.tex
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian)
+entering extended mode
+(./tmp/proof-tree.MULT.False.tex
+LaTeX2e <2009/09/24>
+Babel <v3.8l> and hyphenation patterns for english, usenglishmax, dumylang, noh
+yphenation, ibycus, monogreek, greek, ancientgreek, loaded.
+(/usr/share/texmf-texlive/tex/latex/base/article.cls
+Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
+(/usr/share/texmf-texlive/tex/latex/base/size10.clo))
+(/usr/share/texmf-texlive/tex/latex/lkproof/proof.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(/usr/share/texmf-texlive/tex/latex/amsmath/amstext.sty
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsgen.sty))
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsbsy.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsopn.sty))
+(/usr/share/texmf-texlive/tex/latex/geometry/geometry.sty
+(/usr/share/texmf-texlive/tex/latex/graphics/keyval.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifpdf.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifvtex.sty)
+(/usr/share/texmf-texlive/tex/xelatex/xetexconfig/geometry.cfg))
+(/usr/share/texmf-texlive/tex/latex/preprint/fullpage.sty)
+(/usr/share/texmf-texlive/tex/latex/iwona/iwona.sty)
+(/usr/share/texmf-texlive/tex/latex/base/fontenc.sty
+(/usr/share/texmf-texlive/tex/latex/base/t1enc.def)
+(/usr/share/texmf-texlive/tex/latex/iwona/t1iwonalc.fd))
+(tmp/proof-tree.MULT.False.aux)
+*geometry auto-detecting driver*
+*geometry detected driver: pdftex*
+(/usr/share/texmf-texlive/tex/latex/iwona/ot1iwonalcm.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omliwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omsiwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omxiwonalc.fd) [1{/var/lib/texmf/font
+s/map/pdftex/updmap/pdftex.map}] (tmp/proof-tree.MULT.False.aux) ){/usr/share/t
+exmf-texlive/fonts/enc/dvips/iwona/iwona-ec.enc}{/usr/share/texmf-texlive/fonts
+/enc/dvips/iwona/iwonacap-ec.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iwon
+a/iwona-sy.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iwona/iwona-mi.enc}{/u
+sr/share/texmf-texlive/fonts/enc/dvips/iwona/iwona-rm.enc}</usr/share/texmf-tex
+live/fonts/type1/public/iwona/iwonacl.pfb></usr/share/texmf-texlive/fonts/type1
+/public/iwona/iwonacli.pfb>
+Output written on tmp/proof-tree.MULT.False.pdf (1 page, 34886 bytes).
+Transcript written on tmp/proof-tree.MULT.False.log.
+make[1]: Leaving directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
+./tm2latex.sh tmp/proof-tree Y.err  ''                        '\f:A->A.(\x:A.f(xx))(\x:A.f(xx))'
+┬ []
+├ infer (Lam "f" (TyVar "A" :->: TyVar "A") (Lam "x" (TyVar "A") (TmVar "f" :@: (TmVar "x" :@: TmVar "x")) :@: Lam "x" (TyVar "A") (TmVar "f" :@: (TmVar "x" :@: TmVar "x"))))
+├─┬ [("f",TyVar "A" :->: TyVar "A")]
+│ ├ infer (Lam "x" (TyVar "A") (TmVar "f" :@: (TmVar "x" :@: TmVar "x")) :@: Lam "x" (TyVar "A") (TmVar "f" :@: (TmVar "x" :@: TmVar "x")))
+│ ├─┬ [("f",TyVar "A" :->: TyVar "A")]
+│ │ ├ infer (Lam "x" (TyVar "A") (TmVar "f" :@: (TmVar "x" :@: TmVar "x")))
+│ │ ├─┬ [("f",TyVar "A" :->: TyVar "A"),("x",TyVar "A")]
+│ │ │ ├ infer (TmVar "f" :@: (TmVar "x" :@: TmVar "x"))
+│ │ │ ├─┬ [("f",TyVar "A" :->: TyVar "A"),("x",TyVar "A")]
+│ │ │ │ ├ infer (TmVar "f")
+│ │ │ │ ╞ TyVar "A" :->: TyVar "A"
+│ │ │ │ ╘ ()
+│ │ │ ├─┬ [("f",TyVar "A" :->: TyVar "A"),("x",TyVar "A")]
+│ │ │ │ ├ infer (TmVar "x" :@: TmVar "x")
+│ │ │ │ ├─┬ [("f",TyVar "A" :->: TyVar "A"),("x",TyVar "A")]
+│ │ │ │ │ ├ infer (TmVar "x")
+│ │ │ │ │ ╞ TyVar "A"
+│ │ │ │ │ ╘ ()
+│ │ │ │ ├─┬ [("f",TyVar "A" :->: TyVar "A"),("x",TyVar "A")]
+│ │ │ │ │ ├ infer (TmVar "x")
+│ │ │ │ │ ╞ TyVar "A"
+│ │ │ │ │ ╘ ()
+│ │ │ │ ╘ <error: here>
+│ │ │ ╘ <error: there>
+│ │ ╘ <error: there>
+│ ╘ <error: there>
+╘ <error: there>
+
+make[1]: Entering directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
+pdflatex -output-directory=tmp tmp/proof-tree.Y.err.True.tex
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian)
+entering extended mode
+(./tmp/proof-tree.Y.err.True.tex
+LaTeX2e <2009/09/24>
+Babel <v3.8l> and hyphenation patterns for english, usenglishmax, dumylang, noh
+yphenation, ibycus, monogreek, greek, ancientgreek, loaded.
+(/usr/share/texmf-texlive/tex/latex/base/article.cls
+Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
+(/usr/share/texmf-texlive/tex/latex/base/size10.clo))
+(/usr/share/texmf-texlive/tex/latex/lkproof/proof.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(/usr/share/texmf-texlive/tex/latex/amsmath/amstext.sty
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsgen.sty))
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsbsy.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsopn.sty))
+(/usr/share/texmf-texlive/tex/latex/geometry/geometry.sty
+(/usr/share/texmf-texlive/tex/latex/graphics/keyval.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifpdf.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifvtex.sty)
+(/usr/share/texmf-texlive/tex/xelatex/xetexconfig/geometry.cfg))
+(/usr/share/texmf-texlive/tex/latex/preprint/fullpage.sty)
+(/usr/share/texmf-texlive/tex/latex/iwona/iwona.sty)
+(/usr/share/texmf-texlive/tex/latex/base/fontenc.sty
+(/usr/share/texmf-texlive/tex/latex/base/t1enc.def)
+(/usr/share/texmf-texlive/tex/latex/iwona/t1iwonalc.fd))
+(tmp/proof-tree.Y.err.True.aux)
+*geometry auto-detecting driver*
+*geometry detected driver: pdftex*
+(/usr/share/texmf-texlive/tex/latex/iwona/ot1iwonalcm.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omliwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omsiwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omxiwonalc.fd) [1{/var/lib/texmf/font
+s/map/pdftex/updmap/pdftex.map}] (tmp/proof-tree.Y.err.True.aux) ){/usr/share/t
+exmf-texlive/fonts/enc/dvips/iwona/iwona-ec.enc}{/usr/share/texmf-texlive/fonts
+/enc/dvips/iwona/iwonacap-ec.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iwon
+a/iwona-sy.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iwona/iwona-rm.enc}{/u
+sr/share/texmf-texlive/fonts/enc/dvips/iwona/iwona-mi.enc}</usr/share/texmf-tex
+live/fonts/type1/public/iwona/iwonacl.pfb></usr/share/texmf-texlive/fonts/type1
+/public/iwona/iwonacli.pfb>
+Output written on tmp/proof-tree.Y.err.True.pdf (1 page, 38032 bytes).
+Transcript written on tmp/proof-tree.Y.err.True.log.
+make[1]: Leaving directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
+┬ []
+├ infer (Lam "f" (TyVar "A" :->: TyVar "A") (Lam "x" (TyVar "A") (TmVar "f" :@: (TmVar "x" :@: TmVar "x")) :@: Lam "x" (TyVar "A") (TmVar "f" :@: (TmVar "x" :@: TmVar "x"))))
+├─┬ [("f",TyVar "A" :->: TyVar "A")]
+│ ├ infer (Lam "x" (TyVar "A") (TmVar "f" :@: (TmVar "x" :@: TmVar "x")) :@: Lam "x" (TyVar "A") (TmVar "f" :@: (TmVar "x" :@: TmVar "x")))
+│ ├─┬ [("f",TyVar "A" :->: TyVar "A")]
+│ │ ├ infer (Lam "x" (TyVar "A") (TmVar "f" :@: (TmVar "x" :@: TmVar "x")))
+│ │ ├─┬ [("f",TyVar "A" :->: TyVar "A"),("x",TyVar "A")]
+│ │ │ ├ infer (TmVar "f" :@: (TmVar "x" :@: TmVar "x"))
+│ │ │ ├─┬ [("f",TyVar "A" :->: TyVar "A"),("x",TyVar "A")]
+│ │ │ │ ├ infer (TmVar "f")
+│ │ │ │ ╞ TyVar "A" :->: TyVar "A"
+│ │ │ │ ╘ ()
+│ │ │ ├─┬ [("f",TyVar "A" :->: TyVar "A"),("x",TyVar "A")]
+│ │ │ │ ├ infer (TmVar "x" :@: TmVar "x")
+│ │ │ │ ├─┬ [("f",TyVar "A" :->: TyVar "A"),("x",TyVar "A")]
+│ │ │ │ │ ├ infer (TmVar "x")
+│ │ │ │ │ ╞ TyVar "A"
+│ │ │ │ │ ╘ ()
+│ │ │ │ ├─┬ [("f",TyVar "A" :->: TyVar "A"),("x",TyVar "A")]
+│ │ │ │ │ ├ infer (TmVar "x")
+│ │ │ │ │ ╞ TyVar "A"
+│ │ │ │ │ ╘ ()
+│ │ │ │ ╘ <error: here>
+│ │ │ ╘ <error: there>
+│ │ ╘ <error: there>
+│ ╘ <error: there>
+╘ <error: there>
+
+make[1]: Entering directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
+pdflatex -output-directory=tmp tmp/proof-tree.Y.err.False.tex
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian)
+entering extended mode
+(./tmp/proof-tree.Y.err.False.tex
+LaTeX2e <2009/09/24>
+Babel <v3.8l> and hyphenation patterns for english, usenglishmax, dumylang, noh
+yphenation, ibycus, monogreek, greek, ancientgreek, loaded.
+(/usr/share/texmf-texlive/tex/latex/base/article.cls
+Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
+(/usr/share/texmf-texlive/tex/latex/base/size10.clo))
+(/usr/share/texmf-texlive/tex/latex/lkproof/proof.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(/usr/share/texmf-texlive/tex/latex/amsmath/amstext.sty
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsgen.sty))
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsbsy.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsopn.sty))
+(/usr/share/texmf-texlive/tex/latex/geometry/geometry.sty
+(/usr/share/texmf-texlive/tex/latex/graphics/keyval.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifpdf.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifvtex.sty)
+(/usr/share/texmf-texlive/tex/xelatex/xetexconfig/geometry.cfg))
+(/usr/share/texmf-texlive/tex/latex/preprint/fullpage.sty)
+(/usr/share/texmf-texlive/tex/latex/iwona/iwona.sty)
+(/usr/share/texmf-texlive/tex/latex/base/fontenc.sty
+(/usr/share/texmf-texlive/tex/latex/base/t1enc.def)
+(/usr/share/texmf-texlive/tex/latex/iwona/t1iwonalc.fd))
+(tmp/proof-tree.Y.err.False.aux)
+*geometry auto-detecting driver*
+*geometry detected driver: pdftex*
+(/usr/share/texmf-texlive/tex/latex/iwona/ot1iwonalcm.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omliwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omsiwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omxiwonalc.fd) [1{/var/lib/texmf/font
+s/map/pdftex/updmap/pdftex.map}] (tmp/proof-tree.Y.err.False.aux) ){/usr/share/
+texmf-texlive/fonts/enc/dvips/iwona/iwona-ec.enc}{/usr/share/texmf-texlive/font
+s/enc/dvips/iwona/iwona-rm.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iwona/
+iwonacap-ec.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iwona/iwona-sy.enc}{/
+usr/share/texmf-texlive/fonts/enc/dvips/iwona/iwona-mi.enc}</usr/share/texmf-te
+xlive/fonts/type1/public/iwona/iwonacl.pfb></usr/share/texmf-texlive/fonts/type
+1/public/iwona/iwonacli.pfb>
+Output written on tmp/proof-tree.Y.err.False.pdf (1 page, 36711 bytes).
+Transcript written on tmp/proof-tree.Y.err.False.log.
+make[1]: Leaving directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
+./tm2latex.sh tmp/proof-tree Y.ctx  'a:A->(A->A),y:(A->A)->A' '\f:A->A.(\x:A.f(axx))(y(\x:A.f(axx)))'
+┬ [("a",TyVar "A" :->: (TyVar "A" :->: TyVar "A")),("y",(TyVar "A" :->: TyVar "A") :->: TyVar "A")]
+├ infer (Lam "f" (TyVar "A" :->: TyVar "A") (Lam "x" (TyVar "A") (TmVar "f" :@: ((TmVar "a" :@: TmVar "x") :@: TmVar "x")) :@: (TmVar "y" :@: Lam "x" (TyVar "A") (TmVar "f" :@: ((TmVar "a" :@: TmVar "x") :@: TmVar "x")))))
+├─┬ [("a",TyVar "A" :->: (TyVar "A" :->: TyVar "A")),("y",(TyVar "A" :->: TyVar "A") :->: TyVar "A"),("f",TyVar "A" :->: TyVar "A")]
+│ ├ infer (Lam "x" (TyVar "A") (TmVar "f" :@: ((TmVar "a" :@: TmVar "x") :@: TmVar "x")) :@: (TmVar "y" :@: Lam "x" (TyVar "A") (TmVar "f" :@: ((TmVar "a" :@: TmVar "x") :@: TmVar "x"))))
+│ ├─┬ [("a",TyVar "A" :->: (TyVar "A" :->: TyVar "A")),("y",(TyVar "A" :->: TyVar "A") :->: TyVar "A"),("f",TyVar "A" :->: TyVar "A")]
+│ │ ├ infer (Lam "x" (TyVar "A") (TmVar "f" :@: ((TmVar "a" :@: TmVar "x") :@: TmVar "x")))
+│ │ ├─┬ [("a",TyVar "A" :->: (TyVar "A" :->: TyVar "A")),("y",(TyVar "A" :->: TyVar "A") :->: TyVar "A"),("f",TyVar "A" :->: TyVar "A"),("x",TyVar "A")]
+│ │ │ ├ infer (TmVar "f" :@: ((TmVar "a" :@: TmVar "x") :@: TmVar "x"))
+│ │ │ ├─┬ [("a",TyVar "A" :->: (TyVar "A" :->: TyVar "A")),("y",(TyVar "A" :->: TyVar "A") :->: TyVar "A"),("f",TyVar "A" :->: TyVar "A"),("x",TyVar "A")]
+│ │ │ │ ├ infer (TmVar "f")
+│ │ │ │ ╞ TyVar "A" :->: TyVar "A"
+│ │ │ │ ╘ ()
+│ │ │ ├─┬ [("a",TyVar "A" :->: (TyVar "A" :->: TyVar "A")),("y",(TyVar "A" :->: TyVar "A") :->: TyVar "A"),("f",TyVar "A" :->: TyVar "A"),("x",TyVar "A")]
+│ │ │ │ ├ infer ((TmVar "a" :@: TmVar "x") :@: TmVar "x")
+│ │ │ │ ├─┬ [("a",TyVar "A" :->: (TyVar "A" :->: TyVar "A")),("y",(TyVar "A" :->: TyVar "A") :->: TyVar "A"),("f",TyVar "A" :->: TyVar "A"),("x",TyVar "A")]
+│ │ │ │ │ ├ infer (TmVar "a" :@: TmVar "x")
+│ │ │ │ │ ├─┬ [("a",TyVar "A" :->: (TyVar "A" :->: TyVar "A")),("y",(TyVar "A" :->: TyVar "A") :->: TyVar "A"),("f",TyVar "A" :->: TyVar "A"),("x",TyVar "A")]
+│ │ │ │ │ │ ├ infer (TmVar "a")
+│ │ │ │ │ │ ╞ TyVar "A" :->: (TyVar "A" :->: TyVar "A")
+│ │ │ │ │ │ ╘ ()
+│ │ │ │ │ ├─┬ [("a",TyVar "A" :->: (TyVar "A" :->: TyVar "A")),("y",(TyVar "A" :->: TyVar "A") :->: TyVar "A"),("f",TyVar "A" :->: TyVar "A"),("x",TyVar "A")]
+│ │ │ │ │ │ ├ infer (TmVar "x")
+│ │ │ │ │ │ ╞ TyVar "A"
+│ │ │ │ │ │ ╘ ()
+│ │ │ │ │ ╞ TyVar "A" :->: TyVar "A"
+│ │ │ │ │ ╘ ()
+│ │ │ │ ├─┬ [("a",TyVar "A" :->: (TyVar "A" :->: TyVar "A")),("y",(TyVar "A" :->: TyVar "A") :->: TyVar "A"),("f",TyVar "A" :->: TyVar "A"),("x",TyVar "A")]
+│ │ │ │ │ ├ infer (TmVar "x")
+│ │ │ │ │ ╞ TyVar "A"
+│ │ │ │ │ ╘ ()
+│ │ │ │ ╞ TyVar "A"
+│ │ │ │ ╘ ()
+│ │ │ ╞ TyVar "A"
+│ │ │ ╘ ()
+│ │ ╞ TyVar "A" :->: TyVar "A"
+│ │ ╘ ()
+│ ├─┬ [("a",TyVar "A" :->: (TyVar "A" :->: TyVar "A")),("y",(TyVar "A" :->: TyVar "A") :->: TyVar "A"),("f",TyVar "A" :->: TyVar "A")]
+│ │ ├ infer (TmVar "y" :@: Lam "x" (TyVar "A") (TmVar "f" :@: ((TmVar "a" :@: TmVar "x") :@: TmVar "x")))
+│ │ ├─┬ [("a",TyVar "A" :->: (TyVar "A" :->: TyVar "A")),("y",(TyVar "A" :->: TyVar "A") :->: TyVar "A"),("f",TyVar "A" :->: TyVar "A")]
+│ │ │ ├ infer (TmVar "y")
+│ │ │ ╞ (TyVar "A" :->: TyVar "A") :->: TyVar "A"
+│ │ │ ╘ ()
+│ │ ├─┬ [("a",TyVar "A" :->: (TyVar "A" :->: TyVar "A")),("y",(TyVar "A" :->: TyVar "A") :->: TyVar "A"),("f",TyVar "A" :->: TyVar "A")]
+│ │ │ ├ infer (Lam "x" (TyVar "A") (TmVar "f" :@: ((TmVar "a" :@: TmVar "x") :@: TmVar "x")))
+│ │ │ ├─┬ [("a",TyVar "A" :->: (TyVar "A" :->: TyVar "A")),("y",(TyVar "A" :->: TyVar "A") :->: TyVar "A"),("f",TyVar "A" :->: TyVar "A"),("x",TyVar "A")]
+│ │ │ │ ├ infer (TmVar "f" :@: ((TmVar "a" :@: TmVar "x") :@: TmVar "x"))
+│ │ │ │ ├─┬ [("a",TyVar "A" :->: (TyVar "A" :->: TyVar "A")),("y",(TyVar "A" :->: TyVar "A") :->: TyVar "A"),("f",TyVar "A" :->: TyVar "A"),("x",TyVar "A")]
+│ │ │ │ │ ├ infer (TmVar "f")
+│ │ │ │ │ ╞ TyVar "A" :->: TyVar "A"
+│ │ │ │ │ ╘ ()
+│ │ │ │ ├─┬ [("a",TyVar "A" :->: (TyVar "A" :->: TyVar "A")),("y",(TyVar "A" :->: TyVar "A") :->: TyVar "A"),("f",TyVar "A" :->: TyVar "A"),("x",TyVar "A")]
+│ │ │ │ │ ├ infer ((TmVar "a" :@: TmVar "x") :@: TmVar "x")
+│ │ │ │ │ ├─┬ [("a",TyVar "A" :->: (TyVar "A" :->: TyVar "A")),("y",(TyVar "A" :->: TyVar "A") :->: TyVar "A"),("f",TyVar "A" :->: TyVar "A"),("x",TyVar "A")]
+│ │ │ │ │ │ ├ infer (TmVar "a" :@: TmVar "x")
+│ │ │ │ │ │ ├─┬ [("a",TyVar "A" :->: (TyVar "A" :->: TyVar "A")),("y",(TyVar "A" :->: TyVar "A") :->: TyVar "A"),("f",TyVar "A" :->: TyVar "A"),("x",TyVar "A")]
+│ │ │ │ │ │ │ ├ infer (TmVar "a")
+│ │ │ │ │ │ │ ╞ TyVar "A" :->: (TyVar "A" :->: TyVar "A")
+│ │ │ │ │ │ │ ╘ ()
+│ │ │ │ │ │ ├─┬ [("a",TyVar "A" :->: (TyVar "A" :->: TyVar "A")),("y",(TyVar "A" :->: TyVar "A") :->: TyVar "A"),("f",TyVar "A" :->: TyVar "A"),("x",TyVar "A")]
+│ │ │ │ │ │ │ ├ infer (TmVar "x")
+│ │ │ │ │ │ │ ╞ TyVar "A"
+│ │ │ │ │ │ │ ╘ ()
+│ │ │ │ │ │ ╞ TyVar "A" :->: TyVar "A"
+│ │ │ │ │ │ ╘ ()
+│ │ │ │ │ ├─┬ [("a",TyVar "A" :->: (TyVar "A" :->: TyVar "A")),("y",(TyVar "A" :->: TyVar "A") :->: TyVar "A"),("f",TyVar "A" :->: TyVar "A"),("x",TyVar "A")]
+│ │ │ │ │ │ ├ infer (TmVar "x")
+│ │ │ │ │ │ ╞ TyVar "A"
+│ │ │ │ │ │ ╘ ()
+│ │ │ │ │ ╞ TyVar "A"
+│ │ │ │ │ ╘ ()
+│ │ │ │ ╞ TyVar "A"
+│ │ │ │ ╘ ()
+│ │ │ ╞ TyVar "A" :->: TyVar "A"
+│ │ │ ╘ ()
+│ │ ╞ TyVar "A"
+│ │ ╘ ()
+│ ╞ TyVar "A"
+│ ╘ ()
+╞ (TyVar "A" :->: TyVar "A") :->: TyVar "A"
+╘ ()
+
+make[1]: Entering directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
+pdflatex -output-directory=tmp tmp/proof-tree.Y.ctx.True.tex
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian)
+entering extended mode
+(./tmp/proof-tree.Y.ctx.True.tex
+LaTeX2e <2009/09/24>
+Babel <v3.8l> and hyphenation patterns for english, usenglishmax, dumylang, noh
+yphenation, ibycus, monogreek, greek, ancientgreek, loaded.
+(/usr/share/texmf-texlive/tex/latex/base/article.cls
+Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
+(/usr/share/texmf-texlive/tex/latex/base/size10.clo))
+(/usr/share/texmf-texlive/tex/latex/lkproof/proof.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(/usr/share/texmf-texlive/tex/latex/amsmath/amstext.sty
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsgen.sty))
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsbsy.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsopn.sty))
+(/usr/share/texmf-texlive/tex/latex/geometry/geometry.sty
+(/usr/share/texmf-texlive/tex/latex/graphics/keyval.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifpdf.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifvtex.sty)
+(/usr/share/texmf-texlive/tex/xelatex/xetexconfig/geometry.cfg))
+(/usr/share/texmf-texlive/tex/latex/preprint/fullpage.sty)
+(/usr/share/texmf-texlive/tex/latex/iwona/iwona.sty)
+(/usr/share/texmf-texlive/tex/latex/base/fontenc.sty
+(/usr/share/texmf-texlive/tex/latex/base/t1enc.def)
+(/usr/share/texmf-texlive/tex/latex/iwona/t1iwonalc.fd))
+(tmp/proof-tree.Y.ctx.True.aux)
+*geometry auto-detecting driver*
+*geometry detected driver: pdftex*
+(/usr/share/texmf-texlive/tex/latex/iwona/ot1iwonalcm.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omliwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omsiwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omxiwonalc.fd)
+Overfull \hbox (321.55673pt too wide) detected at line 10
+[]
+[1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
+(tmp/proof-tree.Y.ctx.True.aux) )
+(see the transcript file for additional information){/usr/share/texmf-texlive/f
+onts/enc/dvips/iwona/iwona-ec.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iwo
+na/iwonacap-ec.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iwona/iwona-sy.enc
+}{/usr/share/texmf-texlive/fonts/enc/dvips/iwona/iwona-rm.enc}{/usr/share/texmf
+-texlive/fonts/enc/dvips/iwona/iwona-mi.enc}</usr/share/texmf-texlive/fonts/typ
+e1/public/iwona/iwonacl.pfb></usr/share/texmf-texlive/fonts/type1/public/iwona/
+iwonacli.pfb>
+Output written on tmp/proof-tree.Y.ctx.True.pdf (1 page, 38481 bytes).
+Transcript written on tmp/proof-tree.Y.ctx.True.log.
+make[1]: Leaving directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
+┬ [("a",TyVar "A" :->: (TyVar "A" :->: TyVar "A")),("y",(TyVar "A" :->: TyVar "A") :->: TyVar "A")]
+├ infer (Lam "f" (TyVar "A" :->: TyVar "A") (Lam "x" (TyVar "A") (TmVar "f" :@: ((TmVar "a" :@: TmVar "x") :@: TmVar "x")) :@: (TmVar "y" :@: Lam "x" (TyVar "A") (TmVar "f" :@: ((TmVar "a" :@: TmVar "x") :@: TmVar "x")))))
+├─┬ [("a",TyVar "A" :->: (TyVar "A" :->: TyVar "A")),("y",(TyVar "A" :->: TyVar "A") :->: TyVar "A"),("f",TyVar "A" :->: TyVar "A")]
+│ ├ infer (Lam "x" (TyVar "A") (TmVar "f" :@: ((TmVar "a" :@: TmVar "x") :@: TmVar "x")) :@: (TmVar "y" :@: Lam "x" (TyVar "A") (TmVar "f" :@: ((TmVar "a" :@: TmVar "x") :@: TmVar "x"))))
+│ ├─┬ [("a",TyVar "A" :->: (TyVar "A" :->: TyVar "A")),("y",(TyVar "A" :->: TyVar "A") :->: TyVar "A"),("f",TyVar "A" :->: TyVar "A")]
+│ │ ├ infer (Lam "x" (TyVar "A") (TmVar "f" :@: ((TmVar "a" :@: TmVar "x") :@: TmVar "x")))
+│ │ ├─┬ [("a",TyVar "A" :->: (TyVar "A" :->: TyVar "A")),("y",(TyVar "A" :->: TyVar "A") :->: TyVar "A"),("f",TyVar "A" :->: TyVar "A"),("x",TyVar "A")]
+│ │ │ ├ infer (TmVar "f" :@: ((TmVar "a" :@: TmVar "x") :@: TmVar "x"))
+│ │ │ ├─┬ [("a",TyVar "A" :->: (TyVar "A" :->: TyVar "A")),("y",(TyVar "A" :->: TyVar "A") :->: TyVar "A"),("f",TyVar "A" :->: TyVar "A"),("x",TyVar "A")]
+│ │ │ │ ├ infer (TmVar "f")
+│ │ │ │ ╞ TyVar "A" :->: TyVar "A"
+│ │ │ │ ╘ ()
+│ │ │ ├─┬ [("a",TyVar "A" :->: (TyVar "A" :->: TyVar "A")),("y",(TyVar "A" :->: TyVar "A") :->: TyVar "A"),("f",TyVar "A" :->: TyVar "A"),("x",TyVar "A")]
+│ │ │ │ ├ infer ((TmVar "a" :@: TmVar "x") :@: TmVar "x")
+│ │ │ │ ├─┬ [("a",TyVar "A" :->: (TyVar "A" :->: TyVar "A")),("y",(TyVar "A" :->: TyVar "A") :->: TyVar "A"),("f",TyVar "A" :->: TyVar "A"),("x",TyVar "A")]
+│ │ │ │ │ ├ infer (TmVar "a" :@: TmVar "x")
+│ │ │ │ │ ├─┬ [("a",TyVar "A" :->: (TyVar "A" :->: TyVar "A")),("y",(TyVar "A" :->: TyVar "A") :->: TyVar "A"),("f",TyVar "A" :->: TyVar "A"),("x",TyVar "A")]
+│ │ │ │ │ │ ├ infer (TmVar "a")
+│ │ │ │ │ │ ╞ TyVar "A" :->: (TyVar "A" :->: TyVar "A")
+│ │ │ │ │ │ ╘ ()
+│ │ │ │ │ ├─┬ [("a",TyVar "A" :->: (TyVar "A" :->: TyVar "A")),("y",(TyVar "A" :->: TyVar "A") :->: TyVar "A"),("f",TyVar "A" :->: TyVar "A"),("x",TyVar "A")]
+│ │ │ │ │ │ ├ infer (TmVar "x")
+│ │ │ │ │ │ ╞ TyVar "A"
+│ │ │ │ │ │ ╘ ()
+│ │ │ │ │ ╞ TyVar "A" :->: TyVar "A"
+│ │ │ │ │ ╘ ()
+│ │ │ │ ├─┬ [("a",TyVar "A" :->: (TyVar "A" :->: TyVar "A")),("y",(TyVar "A" :->: TyVar "A") :->: TyVar "A"),("f",TyVar "A" :->: TyVar "A"),("x",TyVar "A")]
+│ │ │ │ │ ├ infer (TmVar "x")
+│ │ │ │ │ ╞ TyVar "A"
+│ │ │ │ │ ╘ ()
+│ │ │ │ ╞ TyVar "A"
+│ │ │ │ ╘ ()
+│ │ │ ╞ TyVar "A"
+│ │ │ ╘ ()
+│ │ ╞ TyVar "A" :->: TyVar "A"
+│ │ ╘ ()
+│ ├─┬ [("a",TyVar "A" :->: (TyVar "A" :->: TyVar "A")),("y",(TyVar "A" :->: TyVar "A") :->: TyVar "A"),("f",TyVar "A" :->: TyVar "A")]
+│ │ ├ infer (TmVar "y" :@: Lam "x" (TyVar "A") (TmVar "f" :@: ((TmVar "a" :@: TmVar "x") :@: TmVar "x")))
+│ │ ├─┬ [("a",TyVar "A" :->: (TyVar "A" :->: TyVar "A")),("y",(TyVar "A" :->: TyVar "A") :->: TyVar "A"),("f",TyVar "A" :->: TyVar "A")]
+│ │ │ ├ infer (TmVar "y")
+│ │ │ ╞ (TyVar "A" :->: TyVar "A") :->: TyVar "A"
+│ │ │ ╘ ()
+│ │ ├─┬ [("a",TyVar "A" :->: (TyVar "A" :->: TyVar "A")),("y",(TyVar "A" :->: TyVar "A") :->: TyVar "A"),("f",TyVar "A" :->: TyVar "A")]
+│ │ │ ├ infer (Lam "x" (TyVar "A") (TmVar "f" :@: ((TmVar "a" :@: TmVar "x") :@: TmVar "x")))
+│ │ │ ├─┬ [("a",TyVar "A" :->: (TyVar "A" :->: TyVar "A")),("y",(TyVar "A" :->: TyVar "A") :->: TyVar "A"),("f",TyVar "A" :->: TyVar "A"),("x",TyVar "A")]
+│ │ │ │ ├ infer (TmVar "f" :@: ((TmVar "a" :@: TmVar "x") :@: TmVar "x"))
+│ │ │ │ ├─┬ [("a",TyVar "A" :->: (TyVar "A" :->: TyVar "A")),("y",(TyVar "A" :->: TyVar "A") :->: TyVar "A"),("f",TyVar "A" :->: TyVar "A"),("x",TyVar "A")]
+│ │ │ │ │ ├ infer (TmVar "f")
+│ │ │ │ │ ╞ TyVar "A" :->: TyVar "A"
+│ │ │ │ │ ╘ ()
+│ │ │ │ ├─┬ [("a",TyVar "A" :->: (TyVar "A" :->: TyVar "A")),("y",(TyVar "A" :->: TyVar "A") :->: TyVar "A"),("f",TyVar "A" :->: TyVar "A"),("x",TyVar "A")]
+│ │ │ │ │ ├ infer ((TmVar "a" :@: TmVar "x") :@: TmVar "x")
+│ │ │ │ │ ├─┬ [("a",TyVar "A" :->: (TyVar "A" :->: TyVar "A")),("y",(TyVar "A" :->: TyVar "A") :->: TyVar "A"),("f",TyVar "A" :->: TyVar "A"),("x",TyVar "A")]
+│ │ │ │ │ │ ├ infer (TmVar "a" :@: TmVar "x")
+│ │ │ │ │ │ ├─┬ [("a",TyVar "A" :->: (TyVar "A" :->: TyVar "A")),("y",(TyVar "A" :->: TyVar "A") :->: TyVar "A"),("f",TyVar "A" :->: TyVar "A"),("x",TyVar "A")]
+│ │ │ │ │ │ │ ├ infer (TmVar "a")
+│ │ │ │ │ │ │ ╞ TyVar "A" :->: (TyVar "A" :->: TyVar "A")
+│ │ │ │ │ │ │ ╘ ()
+│ │ │ │ │ │ ├─┬ [("a",TyVar "A" :->: (TyVar "A" :->: TyVar "A")),("y",(TyVar "A" :->: TyVar "A") :->: TyVar "A"),("f",TyVar "A" :->: TyVar "A"),("x",TyVar "A")]
+│ │ │ │ │ │ │ ├ infer (TmVar "x")
+│ │ │ │ │ │ │ ╞ TyVar "A"
+│ │ │ │ │ │ │ ╘ ()
+│ │ │ │ │ │ ╞ TyVar "A" :->: TyVar "A"
+│ │ │ │ │ │ ╘ ()
+│ │ │ │ │ ├─┬ [("a",TyVar "A" :->: (TyVar "A" :->: TyVar "A")),("y",(TyVar "A" :->: TyVar "A") :->: TyVar "A"),("f",TyVar "A" :->: TyVar "A"),("x",TyVar "A")]
+│ │ │ │ │ │ ├ infer (TmVar "x")
+│ │ │ │ │ │ ╞ TyVar "A"
+│ │ │ │ │ │ ╘ ()
+│ │ │ │ │ ╞ TyVar "A"
+│ │ │ │ │ ╘ ()
+│ │ │ │ ╞ TyVar "A"
+│ │ │ │ ╘ ()
+│ │ │ ╞ TyVar "A" :->: TyVar "A"
+│ │ │ ╘ ()
+│ │ ╞ TyVar "A"
+│ │ ╘ ()
+│ ╞ TyVar "A"
+│ ╘ ()
+╞ (TyVar "A" :->: TyVar "A") :->: TyVar "A"
+╘ ()
+
+make[1]: Entering directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
+pdflatex -output-directory=tmp tmp/proof-tree.Y.ctx.False.tex
+This is pdfTeX, Version 3.1415926-1.40.10 (TeX Live 2009/Debian)
+entering extended mode
+(./tmp/proof-tree.Y.ctx.False.tex
+LaTeX2e <2009/09/24>
+Babel <v3.8l> and hyphenation patterns for english, usenglishmax, dumylang, noh
+yphenation, ibycus, monogreek, greek, ancientgreek, loaded.
+(/usr/share/texmf-texlive/tex/latex/base/article.cls
+Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
+(/usr/share/texmf-texlive/tex/latex/base/size10.clo))
+(/usr/share/texmf-texlive/tex/latex/lkproof/proof.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(/usr/share/texmf-texlive/tex/latex/amsmath/amstext.sty
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsgen.sty))
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsbsy.sty)
+(/usr/share/texmf-texlive/tex/latex/amsmath/amsopn.sty))
+(/usr/share/texmf-texlive/tex/latex/geometry/geometry.sty
+(/usr/share/texmf-texlive/tex/latex/graphics/keyval.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifpdf.sty)
+(/usr/share/texmf-texlive/tex/generic/oberdiek/ifvtex.sty)
+(/usr/share/texmf-texlive/tex/xelatex/xetexconfig/geometry.cfg))
+(/usr/share/texmf-texlive/tex/latex/preprint/fullpage.sty)
+(/usr/share/texmf-texlive/tex/latex/iwona/iwona.sty)
+(/usr/share/texmf-texlive/tex/latex/base/fontenc.sty
+(/usr/share/texmf-texlive/tex/latex/base/t1enc.def)
+(/usr/share/texmf-texlive/tex/latex/iwona/t1iwonalc.fd))
+(tmp/proof-tree.Y.ctx.False.aux)
+*geometry auto-detecting driver*
+*geometry detected driver: pdftex*
+(/usr/share/texmf-texlive/tex/latex/iwona/ot1iwonalcm.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omliwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omsiwonalc.fd)
+(/usr/share/texmf-texlive/tex/latex/iwona/omxiwonalc.fd)
+Overfull \hbox (143.25784pt too wide) detected at line 10
+[]
+[1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
+(tmp/proof-tree.Y.ctx.False.aux) )
+(see the transcript file for additional information){/usr/share/texmf-texlive/f
+onts/enc/dvips/iwona/iwona-ec.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iwo
+na/iwonacap-ec.enc}{/usr/share/texmf-texlive/fonts/enc/dvips/iwona/iwona-rm.enc
+}{/usr/share/texmf-texlive/fonts/enc/dvips/iwona/iwona-sy.enc}{/usr/share/texmf
+-texlive/fonts/enc/dvips/iwona/iwona-mi.enc}</usr/share/texmf-texlive/fonts/typ
+e1/public/iwona/iwonacl.pfb></usr/share/texmf-texlive/fonts/type1/public/iwona/
+iwonacli.pfb>
+Output written on tmp/proof-tree.Y.ctx.False.pdf (1 page, 29137 bytes).
+Transcript written on tmp/proof-tree.Y.ctx.False.log.
+make[1]: Leaving directory `/home/collins/v/haskell-call-trace.git/experiments/proof-trees'
