@@ -131,6 +131,7 @@ trace' getLevel incLevel print name f = Curry.curry k where
 -- level, if we create a new cache on each call. E.g.
 powM :: Int -> Int -> IO Int
 powM b p = do
+  levelRef <- newIORef 0
   cacheRef <- newIORef Map.empty
   fix (trace levelRef "powM" . memoize cacheRef . openPowM) b p
   where
@@ -246,3 +247,4 @@ main = do
   putStrLn (pow'   2 6 `seq` "")
   putStrLn (pow''  2 6 `seq` "")
   putStrLn (pow''' 2 6 `seq` "")
+  powM 2 6 >> putStrLn ""
