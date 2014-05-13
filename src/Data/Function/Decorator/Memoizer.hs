@@ -192,7 +192,8 @@ castMemoize lookup insert tag f = curry k where
         ret <- uncurryM f args
         -- Careful: we need to look up the cache again since the call
         -- may have mutated it.
-        insert tag . H . Map.insert args ret =<< getCache
+        cache <- getCache
+        insert tag $ H (Map.insert args ret cache)
         return ret
 
   getCache :: MonadM t (Map.Map (ArgsM t) (RetM t))
