@@ -333,6 +333,17 @@ data H (c :: * -> Constraint) where
 unH :: (forall a. c a => a -> b) -> H c -> b
 unH f (H x) = f x
 
+coerceH :: forall c1 c2. Implies c1 c2 -> H c1 -> H c2
+coerceH impl (H (x :: a)) =
+  case impl (Reify :: Reify c1 a) of
+    Reify -> H x
+
+coerceH' :: forall c1 c2. Implies' c1 c2 -> H c1 -> H c2
+coerceH' impl (H (x :: a)) = impl' H x where
+  impl' :: forall b. (c2 a => b) -> (c1 a => b)
+  impl' = impl
+
+{-
 data Where = Here | LeftLater Where | RightLater Where
 
 class CoerceH (w::Where) cs c where
@@ -348,3 +359,4 @@ instance CoerceH w cs c => CoerceH (LeftLater w) (cs :&&: c') c where
 instance CoerceH w cs c => CoerceH (RightLater w) (c' :&&: cs) c where
   coerceH _ h =
     coerceH (Proxy::Proxy w) (pi2 h)
+-}
