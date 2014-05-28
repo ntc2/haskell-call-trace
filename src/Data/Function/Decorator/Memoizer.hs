@@ -15,7 +15,6 @@ import Prelude hiding (lookup , curry , uncurry)
 
 import Control.Applicative
 import Control.Exception
-import Data.Maybe (fromJust)
 import Data.Proxy
 import Data.Typeable
 -- XXX: Do I need to specify the strictness here? Probably I do, since
@@ -233,8 +232,7 @@ exceptionMemoize :: forall n t.
   Proxy n -> (t -> t) -> InjectIO n t
 exceptionMemoize p openF = curry k where
   k :: UncurriedM (InjectIO n t)
-  -- Always have 'Map.lookup args <$> add args cache == Just ret'.
-  k args = fromJust . Map.lookup args <$> add args Map.empty
+  k args = (Map.! args) <$> add args Map.empty
   add :: Args n t -> Map.Map (Args n t) (Ret n t) ->
          IO (Map.Map (Args n t) (Ret n t))
   add args cache = do
