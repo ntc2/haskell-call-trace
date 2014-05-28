@@ -52,6 +52,7 @@ import Text.Printf
 import Data.Function.Decorator.Curry hiding (Args , Ret)
 import Data.Function.Decorator.Memoizer
 import Data.Function.Decorator.Memoizer.Unsafe
+import Data.Function.Decorator.Unsafe (InjectIO)
 
 ----------------------------------------------------------------
 -- Logging tests.
@@ -439,6 +440,9 @@ tracedMemoizedPureFib =
         unsafeMemoize (Proxy::Proxy $(nat 1)) .
         openPureFib
 
+exceptionMemoizedFib :: InjectIO $(nat 1) PureFibTy
+exceptionMemoizedFib = exceptionMemoize $(proxyNat 1) openPureFib
+
 unsafeMain :: IO ()
 unsafeMain = do
   putStrLn ""
@@ -459,6 +463,12 @@ unsafeMain = do
   _ <- printf "(tracedMemoizedPureFib 30 = %i)\n" (tracedMemoizedPureFib 30)
   return ()
 
+  putStrLn ""
+  putStrLn "(Safe) Exception Memoized"
+  putStrLn "----------------------------------------------------------------"
+  _ <- printf "(exceptionMemoizedFib 30 = %i)\n" =<< (exceptionMemoizedFib 30)
+  _ <- printf "(exceptionMemoizedFib 300 = %i)\n" =<< (exceptionMemoizedFib 300)
+  return ()
 
 ----------------------------------------------------------------
 
