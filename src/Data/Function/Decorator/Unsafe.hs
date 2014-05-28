@@ -6,12 +6,12 @@
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE ConstraintKinds #-}
-{-# LANGUAGE BangPatterns #-}
 
 module Data.Function.Decorator.Unsafe where
 
 import Prelude hiding (curry , uncurry)
 
+import Control.Exception (evaluate)
 import Data.Proxy
 import System.IO.Unsafe
 
@@ -54,5 +54,7 @@ unsafePurify p makeDecorator = unsafePerformIO $ do
     -- Subtle: make our 'return' strict to ensure that effects in
     -- recursive calls wrapped in 'unsafePerformIO' are correctly
     -- sequenced.
-    return' !x       = return x
+    --
+    -- Here 'return' !x = return x' also works.
+    return'          = evaluate
     unsafePerformIO' = unsafePerformIO
