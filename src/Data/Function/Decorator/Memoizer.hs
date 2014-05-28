@@ -7,12 +7,16 @@
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE ConstraintKinds #-}
 {-# LANGUAGE UndecidableInstances #-}
+{-# LANGUAGE DeriveDataTypeable #-}
 
 module Data.Function.Decorator.Memoizer where
 
-import Prelude hiding (lookup , curry)
+import Prelude hiding (lookup , curry , uncurry)
 
 import Control.Applicative
+import Control.Exception
+import Data.Maybe (fromJust)
+import Data.Proxy
 import Data.Typeable
 -- XXX: Do I need to specify the strictness here? Probably I do, since
 -- I'm going to insert empty dicts as needed, but would I still need
@@ -23,6 +27,8 @@ import Text.Printf
 
 import Data.Function.Decorator.ConstraintLogic
 import Data.Function.Decorator.Curry
+-- Our usage here is completely safe.
+import Data.Function.Decorator.Unsafe
 
 ----------------------------------------------------------------
 -- A memoizer with a simple interface.
@@ -206,3 +212,48 @@ castMemoize lookup insert tag f = curry k where
     Nothing -> error msg where
       msg = printf ("Unable to cast cache in 'castMemoizer' with tag %s\n" ++
                     "This may indicate a tag collision!") tag
+
+----------------------------------------------------------------
+-- Exception-based memoizer for pure open functions.
+
+-- XXX: Crazy idea: could we add concurrency by running different
+-- recursive calls in different threads? This could be pointless if we
+-- don't coordinate to avoid repeating the same call of course...
+
+-- Memoize and open pure function by calling it using a pure cache for
+-- recursive calls, s.t. the pure cache raises exceptions on missing
+-- keys.  We catch the missing key exceptions and recursively compute
+-- the corresponding missing values, before starting over with the
+-- updated cache.
+exceptionMemoize :: forall n t.
+  ( UnsafePurifiable n t
+  , Ord (Args n t)
+  , Typeable (Args n t)
+  ) =>
+  Proxy n -> (t -> t) -> InjectIO n t
+exceptionMemoize p openF = curry k where
+  k :: UncurriedM (InjectIO n t)
+  -- Always have 'Map.lookup args <$> add args cache == Just ret'.
+  k args = fromJust . Map.lookup args <$> add args Map.empty
+  add :: Args n t -> Map.Map (Args n t) (Ret n t) ->
+         IO (Map.Map (Args n t) (Ret n t))
+  add args cache = do
+    e <- try . evaluate $ uncurry p f args
+    case e of
+      Left (MissingKeyError key) -> add args =<< add key cache
+      Right ret -> return $ Map.insert args ret cache
+    where
+      f = openF $ curry lookup
+      lookup key = case Map.lookup key cache of
+        Just ret -> ret
+        Nothing -> throw $ MissingKeyError key
+
+data MissingKeyError a = MissingKeyError a
+  deriving Typeable
+
+-- Custom 'Show' instance to avoid putting 'Show (Args n t)'
+-- constraint on 'exceptionMemoize'.
+instance Show (MissingKeyError a) where
+  show _ = "MissingKeyError"
+
+instance Typeable a => Exception (MissingKeyError a)
